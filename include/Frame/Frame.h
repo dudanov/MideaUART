@@ -18,6 +18,7 @@ class Frame {
     this->m_trimData();
     this->m_appendData(data);
     this->m_data[OFFSET_LENGTH] = this->m_data.size();
+    this->m_data[OFFSET_SYNC] = this->m_data[OFFSET_LENGTH] ^ this->m_data[OFFSET_APPTYPE];
     this->appendCS();
   }
   const uint8_t *data() const { return this->m_data.data(); }

@@ -87,19 +87,19 @@ void AirConditioner::m_getCapabilities() {
   auto data = GetCapabilitiesData();
   this->m_autoconfStatus = AUTOCONF_PROGRESS;
   this->m_queueRequest(FrameType::DEVICE_QUERY, data, [this](FrameData data) -> ResponseStatus {
-        if (!data.hasID(0xB5))
-          return ResponseStatus::RESPONSE_WRONG;
-        if (this->m_capabilities.read(data)) {
-          auto data = GetCapabilitiesData();
-          this->m_sendFrame(FrameType::DEVICE_QUERY, data);
-          return ResponseStatus::RESPONSE_PARTIAL;
-        }
-        this->m_autoconfStatus = AUTOCONF_OK;
-        return ResponseStatus::RESPONSE_OK;
-      },
-      [this]() {
-        this->m_autoconfStatus = AUTOCONF_ERROR;
-      });
+    if (!data.hasID(0xB5))
+      return ResponseStatus::RESPONSE_WRONG;
+    if (this->m_capabilities.read(data)) {
+      auto data = GetCapabilitiesSecondData();
+      this->m_sendFrame(FrameType::DEVICE_QUERY, data);
+      return ResponseStatus::RESPONSE_PARTIAL;
+    }
+    this->m_autoconfStatus = AUTOCONF_OK;
+    return ResponseStatus::RESPONSE_OK;
+  },
+  [this]() {
+    this->m_autoconfStatus = AUTOCONF_ERROR;
+  });
 }
 
 void AirConditioner::m_getStatus() {

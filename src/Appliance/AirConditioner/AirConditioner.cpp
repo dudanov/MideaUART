@@ -35,7 +35,8 @@ static bool checkConstraints(const Mode &mode, const Preset &preset) {
   }
 }
 
-void AirConditioner::control(Control &control) {
+void AirConditioner::control(const Control &ctrl) {
+  Control control = ctrl;
   StatusData status = this->m_status;
   bool needUpdate = false;
   if (control.mode.hasUpdate(status.getMode())) {

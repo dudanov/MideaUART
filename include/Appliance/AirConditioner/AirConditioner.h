@@ -37,7 +37,7 @@ class AirConditioner : public ApplianceBase {
   AirConditioner() : ApplianceBase(AIR_CONDITIONER) {}
   void m_setup() override;
   void m_onIdle() override { this->m_getStatus(); }
-  void control(Control &control);
+  void control(const Control &control);
   float getTargetTemp() const { return this->m_targetTemp; }
   float getIndoorTemp() const { return this->m_indoorTemp; }
   float getOutdoorTemp() const { return this->m_outdoorTemp; }

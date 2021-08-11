@@ -63,6 +63,7 @@ void AirConditioner::control(const Control &control) {
   }
   if (needUpdate) {
     status.setBeeper(this->m_beeper);
+    status.appendCRC();
     this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, status,
                     std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
   }

@@ -94,17 +94,17 @@ class DisplayToggleData : public FrameData {
  public:
   DisplayToggleData() : FrameData({0x41, 0x61, 0x00, 0xFF, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00,
                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                   0x00, FrameData::m_getRandom()}) {}
+                                   0x00, FrameData::m_getRandom()}) { this->appendCRC(); }
 };
 
 class GetCapabilitiesData : public FrameData {
  public:
-  GetCapabilitiesData() : FrameData({0xB5, 0x01, 0x11}) {}
+  GetCapabilitiesData() : FrameData({0xB5, 0x01, 0x11}) { this->appendCRC(); }
 };
 
 class GetCapabilitiesSecondData : public FrameData {
  public:
-  GetCapabilitiesSecondData() : FrameData({0xB5, 0x01, 0x01, 0x00}) {}
+  GetCapabilitiesSecondData() : FrameData({0xB5, 0x01, 0x01, 0x00}) { this->appendCRC(); }
 };
 
 }  // namespace ac

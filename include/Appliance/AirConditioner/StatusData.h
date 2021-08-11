@@ -34,7 +34,7 @@ class StatusData : public FrameData {
 
   /* SWING MODE */
   SwingMode getSwingMode() const { return static_cast<SwingMode>(this->m_getValue(7, 0, 0b1111)); }
-  void setSwingMode(SwingMode mode) { this->m_data[13] = 0x30 | mode; }
+  void setSwingMode(SwingMode mode) { this->m_data[7] = 0x30 | mode; }
 
   /* INDOOR TEMPERATURE */
   float getIndoorTemp() const;

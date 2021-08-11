@@ -67,14 +67,14 @@ void AirConditioner::control(const Control &ctrl) {
   if (needUpdate) {
     status.setBeeper(this->m_beeper);
     status.appendCRC();
-    this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, status,
+    this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
                     std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
   }
 }
 
 void AirConditioner::m_getPowerUsage() {
   auto data = QueryPowerData();
-  this->m_queueRequest(FrameType::DEVICE_QUERY, data, [this](FrameData data) -> ResponseStatus {
+  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data), [this](FrameData data) -> ResponseStatus {
     const auto status = data.as<StatusData>();
     if (!status.hasPowerInfo())
       return ResponseStatus::RESPONSE_WRONG;
@@ -89,7 +89,7 @@ void AirConditioner::m_getPowerUsage() {
 void AirConditioner::m_getCapabilities() {
   auto data = GetCapabilitiesData();
   this->m_autoconfStatus = AUTOCONF_PROGRESS;
-  this->m_queueRequest(FrameType::DEVICE_QUERY, data, [this](FrameData data) -> ResponseStatus {
+  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data), [this](FrameData data) -> ResponseStatus {
     if (!data.hasID(0xB5))
       return ResponseStatus::RESPONSE_WRONG;
     if (this->m_capabilities.read(data)) {
@@ -107,13 +107,13 @@ void AirConditioner::m_getCapabilities() {
 
 void AirConditioner::m_getStatus() {
   auto data = QueryStateData();
-  this->m_queueRequest(FrameType::DEVICE_QUERY, data,
+  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
                     std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }
 
 void AirConditioner::m_displayToggle() {
   auto data = DisplayToggleData();
-  this->m_queueRequestPriority(FrameType::DEVICE_QUERY, data,
+  this->m_queueRequestPriority(FrameType::DEVICE_QUERY, std::move(data),
                     std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }
 

@@ -107,10 +107,10 @@ void ApplianceBase::m_sendNetworkNotify(FrameType msgType) {
   notify.setIP(WiFi.localIP());
   if (msgType == NETWORK_NOTIFY) {
     //ESP_LOGD(TAG, "Enqueuing a DEVICE_NETWORK(0x0D) notification...");
-    this->m_queueRequest(msgType, notify);
+    this->m_queueRequest(msgType, std::move(notify));
   } else {
     //ESP_LOGD(TAG, "Answer to QUERY_NETWORK(0x63) request...");
-    this->m_sendFrame(msgType, notify);
+    this->m_sendFrame(msgType, std::move(notify));
   }
 }
 
@@ -151,12 +151,12 @@ void ApplianceBase::m_sendFrame(FrameType type, const FrameData &data) {
 
 void ApplianceBase::m_queueRequest(FrameType type, const FrameData &data, ResponseHandler onData, Handler onSucess, Handler onError) {
   //ESP_LOGD(TAG, "Enqueuing the request...");
-  this->m_queue.push_back(new Request{data, std::move(onData), std::move(onSucess), std::move(onError), type});
+  this->m_queue.push_back(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
 }
 
 void ApplianceBase::m_queueRequestPriority(FrameType type, const FrameData &data, ResponseHandler onData, Handler onSucess, Handler onError) {
   //ESP_LOGD(TAG, "Priority request queuing...");
-  this->m_queue.push_front(new Request{data, std::move(onData), std::move(onSucess), std::move(onError), type});
+  this->m_queue.push_front(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
 }
 
 } // namespace midea

@@ -23,7 +23,7 @@ bool ApplianceBase::FrameReceiver::read(Stream *stream) {
       continue;
     }
     this->m_data.push_back(data);
-    if (len >= OFFSET_LENGTH && len >= this->m_len())
+    if (len > OFFSET_DATA && len >= this->m_len())
       return true;
   }
   return false;

@@ -41,7 +41,7 @@ class AirConditioner : public ApplianceBase {
   float getTargetTemp() const { return this->m_targetTemp; }
   float getIndoorTemp() const { return this->m_indoorTemp; }
   float getOutdoorTemp() const { return this->m_outdoorTemp; }
-  float getIndoorHum() const { return this->m_targetTemp; }
+  float getIndoorHum() const { return this->m_indoorHumidity; }
   float getPowerUsage() const { return this->m_powerUsage; }
   Mode getMode() const { return this->m_mode; }
   SwingMode getSwingMode() const { return this->m_swingMode; }

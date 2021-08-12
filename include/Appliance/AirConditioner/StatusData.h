@@ -17,9 +17,6 @@ class StatusData : public FrameData {
   /// Copy status from another StatusData
   void copyStatus(const StatusData &p) { memcpy(this->m_data.data() + 1, p.data() + 1, 10); }
 
-  bool hasStatus() const { return this->hasID(0xC0); }
-  bool hasPowerInfo() const { return this->hasID(0xC1); }
-
   /* TARGET TEMPERATURE */
   float getTargetTemp() const;
   void setTargetTemp(float temp);

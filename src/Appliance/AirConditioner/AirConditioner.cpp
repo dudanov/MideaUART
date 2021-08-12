@@ -38,9 +38,9 @@ static bool checkConstraints(const Mode &mode, const Preset &preset) {
 void AirConditioner::control(const Control &ctrl) {
   Control control = ctrl;
   StatusData status = this->m_status;
-  bool needUpdate = false;
+  bool hasUpdate = false;
   if (control.mode.hasUpdate(status.getMode())) {
-    needUpdate = true;
+    hasUpdate = true;
     status.setMode(control.mode.value());
     if (!checkConstraints(control.mode.value(), status.getPreset()))
       status.setPreset(Preset::PRESET_NONE);
@@ -48,23 +48,23 @@ void AirConditioner::control(const Control &ctrl) {
   if (control.preset.hasUpdate(status.getPreset())
           && checkConstraints(status.getMode(), control.preset.value())) {
     status.setPreset(control.preset.value());
-    needUpdate = true;
+    hasUpdate = true;
   }
   if (control.targetTemp.hasUpdate(status.getTargetTemp())) {
     status.setTargetTemp(control.targetTemp.value());
-    needUpdate = true;
+    hasUpdate = true;
   }
   if (control.swingMode.hasUpdate(status.getSwingMode())) {
     status.setSwingMode(control.swingMode.value());
-    needUpdate = true;
+    hasUpdate = true;
   }
   if (status.getMode() == Mode::MODE_AUTO)
     control.fanMode = FanMode::FAN_AUTO;
   if (control.fanMode.hasUpdate(status.getFanMode())) {
     status.setFanMode(control.fanMode.value());
-    needUpdate = true;
+    hasUpdate = true;
   }
-  if (needUpdate) {
+  if (hasUpdate) {
     status.setBeeper(this->m_beeper);
     status.appendCRC();
     this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
@@ -75,7 +75,7 @@ void AirConditioner::control(const Control &ctrl) {
 void AirConditioner::m_getPowerUsage() {
   auto data = QueryPowerData();
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data), [this](FrameData data) -> ResponseStatus {
-    const auto status = data.as<StatusData>();
+    const auto status = data.to<StatusData>();
     if (!status.hasPowerInfo())
       return ResponseStatus::RESPONSE_WRONG;
     if (this->m_powerUsage != status.getPowerUsage()) {
@@ -126,20 +126,20 @@ void setProperty(T &property, const T &value, bool &update) {
 }
 
 ResponseStatus AirConditioner::m_readStatus(FrameData data) {
-  const auto newStatus = data.as<StatusData>();
-  if (!newStatus.hasStatus())
+  if (!data.hasStatus())
     return ResponseStatus::RESPONSE_WRONG;
+  bool hasUpdate = false;
+  const StatusData newStatus = data.to<StatusData>();
   this->m_status.copyStatus(newStatus);
-  bool needUpdate = false;
-  setProperty(this->m_mode, newStatus.getMode(), needUpdate);
-  setProperty(this->m_preset, newStatus.getPreset(), needUpdate);
-  setProperty(this->m_fanMode, newStatus.getFanMode(), needUpdate);
-  setProperty(this->m_swingMode, newStatus.getSwingMode(), needUpdate);
-  setProperty(this->m_targetTemp, newStatus.getTargetTemp(), needUpdate);
-  setProperty(this->m_indoorTemp, newStatus.getIndoorTemp(), needUpdate);
-  setProperty(this->m_outdoorTemp, newStatus.getOutdoorTemp(), needUpdate);
-  setProperty(this->m_indoorHumidity, newStatus.getHumiditySetpoint(), needUpdate);
-  if (needUpdate)
+  setProperty(this->m_mode, newStatus.getMode(), hasUpdate);
+  setProperty(this->m_preset, newStatus.getPreset(), hasUpdate);
+  setProperty(this->m_fanMode, newStatus.getFanMode(), hasUpdate);
+  setProperty(this->m_swingMode, newStatus.getSwingMode(), hasUpdate);
+  setProperty(this->m_targetTemp, newStatus.getTargetTemp(), hasUpdate);
+  setProperty(this->m_indoorTemp, newStatus.getIndoorTemp(), hasUpdate);
+  setProperty(this->m_outdoorTemp, newStatus.getOutdoorTemp(), hasUpdate);
+  setProperty(this->m_indoorHumidity, newStatus.getHumiditySetpoint(), hasUpdate);
+  if (hasUpdate)
     this->sendUpdate();
   return ResponseStatus::RESPONSE_OK;
 }

@@ -5,9 +5,6 @@
 
 namespace dudanov {
 namespace midea {
-
-class FrameData;
-
 namespace ac {
 
 class Capabilities {

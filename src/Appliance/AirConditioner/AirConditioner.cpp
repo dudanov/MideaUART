@@ -35,8 +35,7 @@ static bool checkConstraints(const Mode &mode, const Preset &preset) {
   }
 }
 
-void AirConditioner::control(const Control &ctrl) {
-  Control control = ctrl;
+void AirConditioner::control(const Control &control) {
   StatusData status = this->m_status;
   bool hasUpdate = false;
   if (control.mode.hasUpdate(status.getMode())) {
@@ -58,9 +57,9 @@ void AirConditioner::control(const Control &ctrl) {
     status.setSwingMode(control.swingMode.value());
     hasUpdate = true;
   }
-  if (status.getMode() == Mode::MODE_AUTO)
-    control.fanMode = FanMode::FAN_AUTO;
-  if (control.fanMode.hasUpdate(status.getFanMode())) {
+  if (status.getMode() == Mode::MODE_AUTO) {
+    status.setFanMode(FanMode::FAN_AUTO);
+  } else if (control.fanMode.hasUpdate(status.getFanMode())) {
     status.setFanMode(control.fanMode.value());
     hasUpdate = true;
   }

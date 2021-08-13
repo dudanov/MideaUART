@@ -74,14 +74,14 @@ void StatusData::setPreset(Preset preset) {
   }
 }
 
+static uint8_t bcd2u8(uint8_t bcd) { return 10 * (bcd >> 4) + (bcd & 0b1111); }
+
 float StatusData::getPowerUsage() const {
   uint32_t power = 0;
   const uint8_t *ptr = this->m_data.data() + 18;
-  for (uint32_t weight = 1;; weight *= 10, ptr--) {
-    power += (*ptr % 16) * weight;
-    weight *= 10;
-    power += (*ptr / 16) * weight;
-    if (weight == 100000)
+  for (uint32_t weight = 1;; weight *= 100, --ptr) {
+    power += weight * bcd2u8(*ptr);
+    if (weight == 10000)
       return static_cast<float>(power) * 0.1f;
   }
 }

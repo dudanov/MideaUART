@@ -7,7 +7,6 @@
 
 namespace dudanov {
 namespace midea {
-class FrameData;
 namespace ac {
 
 // Air conditioner control command
@@ -17,19 +16,6 @@ struct Control {
   Optional<Preset> preset{};
   Optional<FanMode> fanMode{};
   Optional<SwingMode> swingMode{};
-};
-
-enum Properties : uint8_t {
-  PROPERTY_LAST_MARKER,
-  PROPERTY_MODE,
-  PROPERTY_PRESET,
-  PROPERTY_FAN_MODE,
-  PROPERTY_SWING_MODE,
-  PROPERTY_TARGET_TEMP,
-  PROPERTY_INDOOR_TEMP,
-  PROPERTY_OUTDOOR_TEMP,
-  PROPERTY_INDOOR_HUMIDITY,
-  PROPERTY_POWER_USAGE,
 };
 
 class AirConditioner : public ApplianceBase {

@@ -3,8 +3,6 @@
 namespace dudanov {
 namespace midea {
 
-static const char *const TAG = "remote.midea";
-
 // Reverse bits in byte
 static uint8_t s_reverse(uint8_t data) {
   static const uint8_t PROGMEM table[] = {

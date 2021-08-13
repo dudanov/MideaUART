@@ -112,5 +112,5 @@ class IrCommandData : public IRData {
 };
 #endif
 
-}  // namespace midea_ac
-}  // namespace esphome
+}  // namespace midea
+}  // namespace dudanov

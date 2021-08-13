@@ -225,5 +225,5 @@ class ApplianceBase {
   uint8_t m_numAttempts{3};
 };
 
-}  // namespace midea_dongle
-}  // namespace esphome
+}  // namespace midea
+}  // namespace dudanov

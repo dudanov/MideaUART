@@ -5,27 +5,26 @@ namespace midea {
 namespace ac {
 
 float StatusData::getTargetTemp() const {
-  float temp = static_cast<float>(this->m_getValue(2, 0, 0b1111) + 16);
-  if (this->m_getValue(2, 0, 0x10))
-    temp += 0.5;
+  float temp = static_cast<float>(this->m_getValue(2, 15) + 16);
+  if (this->m_getValue(2, 16))
+    temp += 0.5f;
   return temp;
 }
 
 void StatusData::setTargetTemp(float temp) {
-  uint8_t tmp = static_cast<uint8_t>(temp * 16.0) + 4;
-  tmp = ((tmp & 8) << 1) | (tmp >> 4);
-  this->m_setValue(2, 0, 0x1F, tmp);
+  uint8_t tmp = static_cast<uint8_t>(temp * 16.0f) + 4;
+  this->m_setValue(2, ((tmp & 8) << 1) | (tmp >> 4), 31);
 }
 
 static float i16tof(int16_t in) { return static_cast<float>(in - 50) * 0.5f; }
 float StatusData::getIndoorTemp() const { return i16tof(this->m_getValue(11)); }
 float StatusData::getOutdoorTemp() const { return i16tof(this->m_getValue(12)); }
-float StatusData::getHumiditySetpoint() const { return static_cast<float>(this->m_getValue(19, 0, 0x7F)); }
+float StatusData::getHumiditySetpoint() const { return static_cast<float>(this->m_getValue(19, 127)); }
 
 Mode StatusData::getMode() const {
   if (!this->m_getPower())
     return Mode::MODE_OFF;
-  return static_cast<Mode>(this->m_getValue(2, 5));
+  return static_cast<Mode>(this->m_getValue(2, 7, 5));
 }
 
 void StatusData::setMode(Mode mode) {
@@ -34,7 +33,7 @@ void StatusData::setMode(Mode mode) {
     return;
   }
   this->m_setPower(true);
-  this->m_setValue(2, 5, 0b111, mode);
+  this->m_setValue(2, mode, 7, 5);
 }
 
 Preset StatusData::getPreset() const {
@@ -74,7 +73,7 @@ void StatusData::setPreset(Preset preset) {
   }
 }
 
-static uint8_t bcd2u8(uint8_t bcd) { return 10 * (bcd >> 4) + (bcd & 0b1111); }
+static uint8_t bcd2u8(uint8_t bcd) { return 10 * (bcd >> 4) + (bcd & 15); }
 
 float StatusData::getPowerUsage() const {
   uint32_t power = 0;

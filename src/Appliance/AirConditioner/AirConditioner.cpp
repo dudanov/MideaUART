@@ -53,15 +53,20 @@ void AirConditioner::control(const Control &control) {
     status.setTargetTemp(control.targetTemp.value());
     hasUpdate = true;
   }
-  if (control.swingMode.hasUpdate(status.getSwingMode())) {
-    status.setSwingMode(control.swingMode.value());
-    hasUpdate = true;
-  }
-  if (status.getMode() == Mode::MODE_AUTO) {
-    status.setFanMode(FanMode::FAN_AUTO);
-  } else if (control.fanMode.hasUpdate(status.getFanMode())) {
-    status.setFanMode(control.fanMode.value());
-    hasUpdate = true;
+  if (status.getMode() != Mode::MODE_OFF) {
+    if (status.getMode() == Mode::MODE_AUTO || status.getPreset() != Preset::PRESET_NONE) {
+      if (status.getFanMode() != FanMode::FAN_AUTO) {
+        status.setFanMode(FanMode::FAN_AUTO);
+        hasUpdate = true;
+      }
+    } else if (control.fanMode.hasUpdate(status.getFanMode())) {
+      status.setFanMode(control.fanMode.value());
+      hasUpdate = true;
+    }
+    if (control.swingMode.hasUpdate(status.getSwingMode())) {
+      status.setSwingMode(control.swingMode.value());
+      hasUpdate = true;
+    }
   }
   if (hasUpdate) {
     status.setBeeper(this->m_beeper);

@@ -37,38 +37,41 @@ static bool checkConstraints(const Mode &mode, const Preset &preset) {
 
 void AirConditioner::control(const Control &control) {
   StatusData status = this->m_status;
+  Mode mode = this->m_mode;
+  Preset preset = this->m_preset;
   bool hasUpdate = false;
-  if (control.mode.hasUpdate(status.getMode())) {
+  if (control.mode.hasUpdate(mode)) {
     hasUpdate = true;
-    status.setMode(control.mode.value());
-    if (!checkConstraints(control.mode.value(), status.getPreset()))
-      status.setPreset(Preset::PRESET_NONE);
+    mode = control.mode.value();
+    if (!checkConstraints(mode, preset))
+      preset = Preset::PRESET_NONE;
   }
-  if (control.preset.hasUpdate(status.getPreset())
-          && checkConstraints(status.getMode(), control.preset.value())) {
-    status.setPreset(control.preset.value());
+  if (control.preset.hasUpdate(preset) && checkConstraints(mode, control.preset.value())) {
     hasUpdate = true;
+    preset = control.preset.value();
   }
-  if (control.targetTemp.hasUpdate(status.getTargetTemp())) {
-    status.setTargetTemp(control.targetTemp.value());
-    hasUpdate = true;
-  }
-  if (status.getMode() != Mode::MODE_OFF) {
-    if (status.getMode() == Mode::MODE_AUTO || status.getPreset() != Preset::PRESET_NONE) {
-      if (status.getFanMode() != FanMode::FAN_AUTO) {
+  if (mode != Mode::MODE_OFF) {
+    if (mode == Mode::MODE_AUTO || preset != Preset::PRESET_NONE) {
+      if (this->m_fanMode != FanMode::FAN_AUTO) {
         status.setFanMode(FanMode::FAN_AUTO);
         hasUpdate = true;
       }
-    } else if (control.fanMode.hasUpdate(status.getFanMode())) {
+    } else if (control.fanMode.hasUpdate(this->m_fanMode)) {
       status.setFanMode(control.fanMode.value());
       hasUpdate = true;
     }
-    if (control.swingMode.hasUpdate(status.getSwingMode())) {
+    if (control.swingMode.hasUpdate(this->m_swingMode)) {
       status.setSwingMode(control.swingMode.value());
       hasUpdate = true;
     }
   }
+  if (control.targetTemp.hasUpdate(this->m_targetTemp)) {
+    hasUpdate = true;
+    status.setTargetTemp(control.targetTemp.value());
+  }
   if (hasUpdate) {
+    status.setMode(mode);
+    status.setPreset(preset);
     status.setBeeper(this->m_beeper);
     status.appendCRC();
     this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),

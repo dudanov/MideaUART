@@ -1,8 +1,11 @@
 #include "Appliance/AirConditioner/Capabilities.h"
+#include "Helpers/Log.h"
 
 namespace dudanov {
 namespace midea {
 namespace ac {
+
+static const char *TAG = "Capabilities";
 
 enum CapabilityID : uint16_t {
   CAPABILITY_INDOOR_HUMIDITY = 0x0015,
@@ -81,61 +84,78 @@ bool Capabilities::read(const FrameData &frame) {
         this->m_silkyCool = bval;
         break;
       case CAPABILITY_SMART_EYE:
-        this->m_smartEye = bval;
+        this->m_smartEye = uval == 1;
         break;
       case CAPABILITY_WIND_ON_ME:
-        this->m_windOnMe = bval;
+        this->m_windOnMe = uval == 1;
         break;
       case CAPABILITY_WIND_OF_ME:
-        this->m_windOfMe = bval;
+        this->m_windOfMe = uval == 1;
         break;
       case CAPABILITY_ACTIVE_CLEAN:
-        this->m_activeClean = bval;
+        this->m_activeClean = uval == 1;
         break;
       case CAPABILITY_ONE_KEY_NO_WIND_ON_ME:
-        this->m_oneKeyNoWindOnMe = bval;
+        this->m_oneKeyNoWindOnMe = uval == 1;
         break;
       case CAPABILITY_BREEZE_CONTROL:
-        this->m_breezeControl = bval;
+        this->m_breezeControl = uval == 1;
         break;
       case CAPABILITY_FAN_SPEED_CONTROL:
-        this->m_fanSpeedControl = !bval;
+        this->m_fanSpeedControl = uval != 1;
         break;
       case CAPABILITY_PRESET_ECO:
-        this->m_supportedPresets.insert(PRESET_ECO);
+        this->m_ecoMode = uval == 1;
+        this->m_specialEco = uval == 2;
         break;
       case CAPABILITY_PRESET_FREEZE_PROTECTION:
-        this->m_supportedPresets.insert(PRESET_FREEZE_PROTECTION);
+        this->m_frostProtectionMode = uval == 1;
         break;
       case CAPABILITY_MODES:
         switch (uval) {
           case 0:
-            this->m_supportedModes.insert({MODE_OFF, MODE_AUTO, MODE_COOL, MODE_DRY});
+            this->m_heatMode = false;
+            this->m_coolMode = true;
+            this->m_dryMode = true;
+            this->m_autoMode = true;
             break;
           case 1:
-            this->m_supportedModes.insert({MODE_OFF, MODE_AUTO, MODE_COOL, MODE_DRY, MODE_HEAT});
+            this->m_coolMode = true;
+            this->m_heatMode= true;
+            this->m_dryMode = true;
+            this->m_autoMode = true;
             break;
           case 2:
-            this->m_supportedModes.insert({MODE_OFF, MODE_AUTO, MODE_HEAT});
+            this->m_coolMode = false;
+            this->m_dryMode = false;
+            this->m_heatMode = true;
+            this->m_autoMode = true;
             break;
           case 3:
-            this->m_supportedModes.insert({MODE_OFF, MODE_COOL});
+            this->m_coolMode = true;
+            this->m_dryMode = false;
+            this->m_heatMode = false;
+            this->m_autoMode = false;
             break;
         }
         break;
       case CAPABILITY_SWING_MODES:
         switch (uval) {
           case 0:
-            this->m_supportedSwingModes.insert({SWING_OFF, SWING_VERTICAL});
+            this->m_leftrightFan = false;
+            this->m_updownFan = true;
             break;
           case 1:
-            this->m_supportedSwingModes.insert({SWING_OFF, SWING_HORIZONTAL, SWING_VERTICAL, SWING_BOTH});
+            this->m_leftrightFan = true;
+            this->m_updownFan = true;
             break;
           case 2:
-            this->m_supportedSwingModes.insert(SWING_OFF);
+            this->m_leftrightFan = false;
+            this->m_updownFan = false;
             break;
           case 3:
-            this->m_supportedSwingModes.insert({SWING_OFF, SWING_HORIZONTAL});
+            this->m_leftrightFan = true;
+            this->m_updownFan = false;
             break;
         }
         break;
@@ -183,9 +203,20 @@ bool Capabilities::read(const FrameData &frame) {
       case CAPABILITY_PRESET_TURBO:
         switch (uval) {
           case 0:
+            this->m_turboHeat = false;
+            this->m_turboCool = true;
+            break;
           case 1:
-          case 3:
-            this->m_supportedPresets.insert(PRESET_TURBO);
+            this->m_turboHeat = true;
+            this->m_turboCool = true;
+            break;
+          case 2:
+            this->m_turboHeat = false;
+            this->m_turboCool = false;
+            break;
+           case 3:
+            this->m_turboHeat = true;
+            this->m_turboCool = false;
             break;
         }
         break;
@@ -236,8 +267,58 @@ bool Capabilities::read(const FrameData &frame) {
   if (cap.isNeedMore())
     return true; // если предпоследний байт != 0, то нужно опрашивать дальше
 
-  this->m_isReady = true;
   return false;
+}
+
+#define LOG_CAPABILITY(str, condition) \
+  if (condition) \
+    LOG_CONFIG(TAG, str);
+
+void Capabilities::dump() const {
+  LOG_CONFIG(TAG, "CAPABILITIES REPORT:");
+  if (this->m_autoMode) {
+    LOG_CONFIG(TAG, "  [x] AUTO MODE");
+    LOG_CONFIG(TAG, "      - MIN TEMP: %.1f", this->m_minTempAuto);
+    LOG_CONFIG(TAG, "      - MAX TEMP: %.1f", this->m_maxTempAuto);
+  }
+  if (this->m_coolMode) {
+    LOG_CONFIG(TAG, "  [x] COOL MODE");
+    LOG_CONFIG(TAG, "      - MIN TEMP: %.1f", this->m_minTempCool);
+    LOG_CONFIG(TAG, "      - MAX TEMP: %.1f", this->m_maxTempCool);
+  }
+  if (this->m_heatMode) {
+    LOG_CONFIG(TAG, "  [x] HEAT MODE");
+    LOG_CONFIG(TAG, "      - MIN TEMP: %.1f", this->m_minTempHeat);
+    LOG_CONFIG(TAG, "      - MAX TEMP: %.1f", this->m_maxTempHeat);
+  }
+  LOG_CAPABILITY("  [x] DRY MODE", this->m_dryMode);
+  LOG_CAPABILITY("  [x] ECO MODE", this->m_ecoMode);
+  LOG_CAPABILITY("  [x] SPECIAL ECO", this->m_specialEco);
+  LOG_CAPABILITY("  [x] FROST PROTECTION MODE", this->m_frostProtectionMode);
+  LOG_CAPABILITY("  [x] TURBO COOL", this->m_turboCool);
+  LOG_CAPABILITY("  [x] TURBO HEAT", this->m_turboHeat);
+  LOG_CAPABILITY("  [x] FANSPEED CONTROL", this->m_fanSpeedControl);
+  LOG_CAPABILITY("  [x] BREEZE CONTROL", this->m_breezeControl);
+  LOG_CAPABILITY("  [x] LIGHT CONTROL", this->m_lightControl);
+  LOG_CAPABILITY("  [x] UPDOWN FAN", this->m_updownFan);
+  LOG_CAPABILITY("  [x] LEFTRIGHT FAN", this->m_leftrightFan);
+  LOG_CAPABILITY("  [x] AUTO SET HUMIDITY", this->m_autoSetHumidity);
+  LOG_CAPABILITY("  [x] MANUAL SET HUMIDITY", this->m_manualSetHumidity);
+  LOG_CAPABILITY("  [x] INDOOR HUMIDITY", this->m_indoorHumidity);
+  LOG_CAPABILITY("  [x] POWER CAL", this->m_powerCal);
+  LOG_CAPABILITY("  [x] POWER CAL SETTING", this->m_powerCalSetting);
+  LOG_CAPABILITY("  [x] BUZZER", this->m_buzzer);
+  LOG_CAPABILITY("  [x] ACTIVE CLEAN", this->m_activeClean);
+  LOG_CAPABILITY("  [x] DECIMALS", this->m_decimals);
+  LOG_CAPABILITY("  [x] ELECTRIC AUX HEATING", this->m_electricAuxHeating);
+  LOG_CAPABILITY("  [x] NEST CHECK", this->m_nestCheck);
+  LOG_CAPABILITY("  [x] NEST NEED CHANGE", this->m_nestNeedChange);
+  LOG_CAPABILITY("  [x] ONE KEY NO WIND ON ME", this->m_oneKeyNoWindOnMe);
+  LOG_CAPABILITY("  [x] SILKY COOL", this->m_silkyCool);
+  LOG_CAPABILITY("  [x] SMART EYE", this->m_smartEye);
+  LOG_CAPABILITY("  [x] UNIT CHANGEABLE", this->m_unitChangeable);
+  LOG_CAPABILITY("  [x] WIND OF ME", this->m_windOfMe);
+  LOG_CAPABILITY("  [x] WIND ON ME", this->m_windOnMe);
 }
 
 }  // namespace ac

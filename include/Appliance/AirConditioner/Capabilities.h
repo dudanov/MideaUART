@@ -11,8 +11,9 @@ class Capabilities {
  public:
   // Read from frames
   bool read(const FrameData &data);
-  // Is ready for reading Climate traits
-  bool isReady() const { return this->m_isReady; }
+  // Dump capabilities
+  void dump() const;
+
   // Control humidity
   bool autoSetHumidity() const { return this->m_autoSetHumidity; };
   bool activeClean() const { return this->m_activeClean; };
@@ -22,16 +23,8 @@ class Capabilities {
   bool electricAuxHeating() const { return this->m_electricAuxHeating; }
   bool fanSpeedControl() const { return this->m_fanSpeedControl; }
   bool indoorHumidity() const { return this->m_indoorHumidity; }
-  // Ability to turn LED display off
-  bool lightControl() const { return this->m_lightControl; }
   // Control humidity
   bool manualSetHumidity() const { return this->m_manualSetHumidity; }
-  float maxTempAuto() const { return this->m_maxTempAuto; }
-  float maxTempCool() const { return this->m_maxTempCool; }
-  float maxTempHeat() const { return this->m_maxTempHeat; }
-  float minTempAuto() const { return this->m_minTempAuto; }
-  float minTempCool() const { return this->m_minTempCool; }
-  float minTempHeat() const { return this->m_minTempHeat; }
   bool nestCheck() const { return this->m_nestCheck; }
   bool nestNeedChange() const { return this->m_nestNeedChange; }
   bool oneKeyNoWindOnMe() const { return this->m_oneKeyNoWindOnMe; }
@@ -44,12 +37,50 @@ class Capabilities {
   bool unitChangeable() const { return this->m_unitChangeable; }
   bool windOfMe() const { return this->m_windOfMe; }
   bool windOnMe() const { return this->m_windOnMe; }
+  
+  /* MODES */
+
+  bool supportAutoMode() const { return this->m_autoMode; }
+  bool supportCoolMode() const { return this->m_coolMode; }
+  bool supportHeatMode() const { return this->m_heatMode; }
+  bool supportDryMode() const { return this->m_dryMode; }
+
+  /* PRESETS */
+
+  bool supportFrostProtectionPreset() const { return this->m_frostProtectionMode; }
+  bool supportTurboPreset() const { return this->m_turboCool || this->m_turboHeat; }
+  bool supportEcoPreset() const { return this->m_ecoMode || this->m_specialEco; }
+
+  /* SWING MODES */
+
+  bool supportVerticalSwing() const { return this->m_updownFan; }
+  bool supportHorizontalSwing() const { return this->m_leftrightFan; }
+  bool supportBothSwing() const { return this->m_updownFan && this->m_leftrightFan; }
+
+  /* TEMPERATURES */
+
+  float maxTempAuto() const { return this->m_maxTempAuto; }
+  float maxTempCool() const { return this->m_maxTempCool; }
+  float maxTempHeat() const { return this->m_maxTempHeat; }
+  float minTempAuto() const { return this->m_minTempAuto; }
+  float minTempCool() const { return this->m_minTempCool; }
+  float minTempHeat() const { return this->m_minTempHeat; }
+
+  // Ability to turn LED display off
+  bool supportLightControl() const { return this->m_lightControl; }
 
  protected:
-  std::set<Mode> m_supportedModes;
-  std::set<FanMode> m_supportedFanModes;
-  std::set<SwingMode> m_supportedSwingModes;
-  std::set<Preset> m_supportedPresets;
+  bool m_updownFan{false};
+  bool m_leftrightFan{false};
+  bool m_autoMode{false};
+  bool m_coolMode{false};
+  bool m_dryMode{false};
+  bool m_ecoMode{false};
+  bool m_specialEco{false};
+  bool m_frostProtectionMode{false};
+  bool m_heatMode{false};
+  bool m_turboCool{false};
+  bool m_turboHeat{false};
   bool m_autoSetHumidity{false};
   bool m_activeClean{false};
   bool m_breezeControl{false};
@@ -76,8 +107,6 @@ class Capabilities {
   bool m_unitChangeable{false};
   bool m_windOfMe{false};
   bool m_windOnMe{false};
-  // is filled?
-  bool m_isReady{false};
 };
 
 }  // namespace ac

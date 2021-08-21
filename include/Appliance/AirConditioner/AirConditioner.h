@@ -33,6 +33,8 @@ class AirConditioner : public ApplianceBase {
   SwingMode getSwingMode() const { return this->m_swingMode; }
   FanMode getFanMode() const { return this->m_fanMode; }
   Preset getPreset() const { return this->m_preset; }
+  const Capabilities &getCapabilities() const { return this->m_capabilities; }
+  void displayToggle() { this->m_displayToggle(); }
  protected:
   void m_getPowerUsage();
   void m_getCapabilities();

@@ -1,8 +1,8 @@
 {
   "name": "MideaUART",
   "version": "1.0.0",
-  "description": "",
-  "keywords": "midea, iot, conditioner",
+  "description": "A library for controlling Midea home appliances using the UART protocol.",
+  "keywords": "midea, iot, conditioner, uart, serial, control",
   "repository":
   {
     "type": "git",
@@ -20,5 +20,5 @@
   "dependencies": {
   },
   "frameworks": "arduino",
-  "platforms": "*"
+  "platforms": ["espressif8266", "espressif32"]
 }

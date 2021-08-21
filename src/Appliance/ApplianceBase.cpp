@@ -1,6 +1,10 @@
 #include "Appliance/ApplianceBase.h"
-#include <ESP8266WiFi.h>
 #include "Helpers/Log.h"
+#ifdef ARDUINO_ARCH_ESP8266
+#include <ESP8266WiFi.h>
+#else
+#include <WiFi.h>
+#endif
 
 namespace dudanov {
 namespace midea {

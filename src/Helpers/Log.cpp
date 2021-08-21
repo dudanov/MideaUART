@@ -7,7 +7,7 @@ namespace dudanov {
 LoggerFn logger_;
 void setLogger(LoggerFn logger) { logger_ = logger; }
 
-void log_printf_(int level, const char *tag, int line, const char *format, ...) {
+void sv_log_printf_(int level, const char *tag, int line, const char *format, ...) {
   if (logger_ == nullptr)
     return;
   va_list arg;
@@ -16,7 +16,7 @@ void log_printf_(int level, const char *tag, int line, const char *format, ...) 
   va_end(arg);
 }
 
-void log_printf_(int level, const char *tag, int line, const __FlashStringHelper *format, ...) {
+void sv_log_printf_(int level, const char *tag, int line, const __FlashStringHelper *format, ...) {
   if (logger_ == nullptr)
     return;
   va_list arg;

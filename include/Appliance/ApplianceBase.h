@@ -121,10 +121,13 @@ class ApplianceBase {
   void setStream(Stream *stream) { this->m_stream = stream; }
   /// Set minimal period between requests
   void setPeriod(uint32_t period) { this->m_period = period; }
+  uint32_t getPeriod() const { return this->m_period; }
   /// Set waiting response timeout
   void setTimeout(uint32_t timeout) { this->m_timeout = timeout; }
+  uint32_t getTimeout() const { return this->m_timeout; }
   /// Set number of request attempts
   void setNumAttempts(uint8_t numAttempts) { this->m_numAttempts = numAttempts; }
+  uint8_t getNumAttempts() const { return this->m_numAttempts; }
   /// Set beeper feedback
   void setBeeper(bool value);
   /// Add listener for appliance state

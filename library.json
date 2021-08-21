@@ -1,12 +1,12 @@
 {
-  "name": "MideaControl",
+  "name": "MideaUART",
   "version": "1.0.0",
   "description": "",
   "keywords": "midea, iot, conditioner",
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/dudanov/MideaControl.git"
+    "url": "https://github.com/dudanov/MideaUART.git"
   },
   "authors":
   [

@@ -4,10 +4,6 @@
 
 namespace dudanov {
 
-enum LogLevel : uint8_t {
-  LOG_LEVEL_DEBUG,
-};
-
 template<typename T>
 class Optional {
  public:

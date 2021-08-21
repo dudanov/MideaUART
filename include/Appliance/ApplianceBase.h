@@ -1,9 +1,10 @@
 #pragma once
+#include <deque>
 #include <Arduino.h>
 #include "Frame/Frame.h"
 #include "Frame/FrameData.h"
 #include "Helpers/Timer.h"
-#include <deque>
+#include "Helpers/Logger.h"
 
 namespace dudanov {
 namespace midea {
@@ -102,8 +103,6 @@ enum FrameType : uint8_t {
 
 using Handler = std::function<void()>;
 using ResponseHandler = std::function<ResponseStatus(FrameData)>;
-using LoggerFn = std::function<void(LogLevel, const char *)>;
-using IRFunction = std::function<void(const uint8_t *)>;
 using OnStateCallback = std::function<void()>;
 
 class ApplianceBase {
@@ -113,17 +112,6 @@ class ApplianceBase {
   void setup();
   /// Loop
   void loop();
-
-  static void setLogger(LoggerFn logger) { s_logger = logger; }
-  static void setIRTransmitFunction(IRFunction func) { ApplianceBase::s_irTransmit = func; }
-  static void log(LogLevel l, const char *s) {
-    if (s_logger != nullptr)
-      s_logger(l, s);
-  }
-  static void transmitIR(const uint8_t *data) {
-    if (ApplianceBase::s_irTransmit != nullptr)
-      ApplianceBase::s_irTransmit(data);
-  }
 
   /* ############################## */
   /* ### COMMUNICATION SETTINGS ### */
@@ -138,7 +126,7 @@ class ApplianceBase {
   /// Set number of request attempts
   void setNumAttempts(uint8_t numAttempts) { this->m_numAttempts = numAttempts; }
   /// Set beeper feedback
-  void setBeeper(bool value) { this->m_beeper = value; }
+  void setBeeper(bool value);
   /// Add listener for appliance state
   void addOnStateCallback(OnStateCallback cb) { this->m_stateCallbacks.push_back(cb); }
   void sendUpdate() {
@@ -147,14 +135,13 @@ class ApplianceBase {
   }
   AutoconfStatus getAutoconfStatus() const { return this->m_autoconfStatus; }
   void setAutoconf(bool state) { this->m_autoconfStatus = state ? AUTOCONF_PROGRESS : AUTOCONF_DISABLED; }
+  static void setLogger(LoggerFn logger) { dudanov::setLogger(logger); }
 
  protected:
   std::vector<OnStateCallback> m_stateCallbacks;
   // Timer manager
   TimerManager m_timerManager{};
   AutoconfStatus m_autoconfStatus{};
-  static IRFunction s_irTransmit;
-  static LoggerFn s_logger;
   // Beeper feedback flag
   bool m_beeper{};
 
@@ -186,7 +173,7 @@ class ApplianceBase {
   void m_sendNetworkNotify(FrameType msg_type = NETWORK_NOTIFY);
   void m_handler(const Frame &frame);
   bool m_isWaitForResponse() const { return this->m_request != nullptr; }
-  void m_resetAttempts() { this->m_remain_attempts = this->m_numAttempts; }
+  void m_resetAttempts() { this->m_remainAttempts = this->m_numAttempts; }
   void m_destroyRequest();
   void m_resetTimeout();
   void m_sendRequest(Request *request) { this->m_sendFrame(request->requestType, request->request); }
@@ -203,7 +190,7 @@ class ApplianceBase {
   // Current request
   Request *m_request{nullptr};
   // Remaining request attempts
-  uint8_t m_remain_attempts{};
+  uint8_t m_remainAttempts{};
   // Appliance type
   ApplianceType m_appType;
   // Appliance protocol

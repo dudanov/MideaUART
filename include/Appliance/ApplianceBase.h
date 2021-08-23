@@ -9,67 +9,6 @@
 namespace dudanov {
 namespace midea {
 
-/// Enum for all modes a Midea device can be in.
-enum Mode : uint8_t {
-  ///
-  MODE_OFF,
-  /// The Midea device is set to automatically change the heating/cooling cycle
-  MODE_AUTO,
-  /// The Midea device is manually set to cool mode (not in auto mode!)
-  MODE_COOL,
-  /// The Midea device is manually set to dry mode
-  MODE_DRY,
-  /// The Midea device is manually set to heat mode (not in auto mode!)
-  MODE_HEAT,
-  /// The Midea device is manually set to fan only mode
-  MODE_FAN_ONLY,
-};
-
-/// Enum for all modes a Midea fan can be in
-enum FanMode : uint8_t {
-  /// The fan mode is set to Auto
-  FAN_AUTO = 102,
-  /// The fan mode is set to Silent
-  FAN_SILENT = 20,
-  /// The fan mode is set to Low
-  FAN_LOW = 40,
-  /// The fan mode is set to Medium
-  FAN_MEDIUM = 60,
-  /// The fan mode is set to High
-  FAN_HIGH = 80,
-  /// The fan mode is set to Turbo
-  FAN_TURBO = 100,
-};
-
-/// Enum for all modes a Midea swing can be in
-enum SwingMode : uint8_t {
-  /// The sing mode is set to Off
-  SWING_OFF = 0b0000,
-  /// The fan mode is set to Both
-  SWING_BOTH = 0b1111,
-  /// The fan mode is set to Vertical
-  SWING_VERTICAL = 0b1100,
-  /// The fan mode is set to Horizontal
-  SWING_HORIZONTAL = 0b0011,
-};
-
-/// Enum for all presets a Midea can be in
-enum Preset : uint8_t {
-  /// None preset
-  PRESET_NONE,
-  /// The ECO preset
-  PRESET_ECO,
-  /// The TURBO preset
-  PRESET_TURBO,
-  /// The SLEEP preset
-  PRESET_SLEEP,
-  /// The FREEZE_PROTECTION preset
-  PRESET_FREEZE_PROTECTION,
-};
-
-class Frame;
-class ApplianceBase;
-
 enum ApplianceType : uint8_t {
   DEHUMIDIFIER = 0xA1,
   AIR_CONDITIONER = 0xAC,

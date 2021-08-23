@@ -1,6 +1,6 @@
 {
   "name": "MideaUART",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A library for controlling Midea home appliances using the UART protocol.",
   "keywords": "midea, iot, conditioner, uart, serial, control",
   "repository":

@@ -1,4 +1,5 @@
 #include "Appliance/AirConditioner/Capabilities.h"
+#include "Frame/FrameData.h"
 #include "Helpers/Log.h"
 
 namespace dudanov {

@@ -1,10 +1,12 @@
 #pragma once
 #include <Arduino.h>
-#include <Appliance/AirConditioner/StatusData.h>
 #include <set>
 
 namespace dudanov {
 namespace midea {
+
+class FrameData;
+
 namespace ac {
 
 class Capabilities {

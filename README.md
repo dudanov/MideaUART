@@ -1,6 +1,8 @@
 # MideaUART
 Arduino framework library for controlling Midea home appliances using the UART protocol.
 
+Control is possible with a custom dongle. Example of hardware implementation is [IoT Uni Dongle](https://github.com/dudanov/iot-uni-dongle).
+
 ## Using
 It's simple.
 1. Create appliance instance of `dudanov::midea::ac::AirConditioner`.

@@ -1,7 +1,17 @@
 # MideaUART
 Arduino framework library for controlling Midea home appliances using the UART protocol.
 
-Control is possible with a custom dongle. Example of hardware implementation is [IoT Uni Dongle](https://github.com/dudanov/iot-uni-dongle).
+Control is possible with a custom dongle. You can make it yourself according to numerous instructions on the Internet, or you can buy a ready-made one in [Tindie Shop](https://www.tindie.com/products/24607/), thereby supporting me and my work.
+
+A far from complete list of supported brands:
+1. [Midea](https://www.midea.com/)
+2. [Electrolux](https://www.electrolux.ru/)
+3. [Qlima](https://www.qlima.com/)
+4. [Artel](https://www.artelgroup.com/)
+5. [Carrier](https://www.carrier.com/)
+6. [Comfee](http://www.comfee-russia.ru/)
+7. [Inventor](https://www.inventorairconditioner.com/)
+8. [Dimstal/Simando](https://www.simando24.de/)
 
 ## Using
 It's simple.
@@ -63,3 +73,15 @@ void loop() {
   ac.loop();
 }
 ```
+
+## My thanks
+
+to the following people for their contributions to reverse engineering the UART protocol and source code in the following repositories:
+
+* [Mac Zhou](https://github.com/mac-zhou/midea-msmart)
+* [Rene Klootwijk](https://github.com/reneklootwijk/midea-uart)
+* [NeoAcheron](https://github.com/NeoAcheron/midea-ac-py)
+
+### Your thanks
+
+If this project was useful to you, you can [buy me](https://paypal.me/dudan0v) a Cup of coffee :)

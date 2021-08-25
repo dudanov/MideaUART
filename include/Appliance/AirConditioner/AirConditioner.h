@@ -53,8 +53,6 @@ class AirConditioner : public ApplianceBase {
   Preset m_preset{Preset::PRESET_NONE};
   FanMode m_fanMode{FanMode::FAN_AUTO};
   SwingMode m_swingMode{SwingMode::SWING_OFF};
-  Mode m_lastMode{Mode::MODE_AUTO};
-  Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
   bool m_sendControl{};
 };

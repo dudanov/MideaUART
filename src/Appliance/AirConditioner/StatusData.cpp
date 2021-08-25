@@ -24,7 +24,7 @@ float StatusData::getHumiditySetpoint() const { return static_cast<float>(this->
 Mode StatusData::getMode() const {
   if (!this->m_getPower())
     return Mode::MODE_OFF;
-  return static_cast<Mode>(this->m_getValue(2, 7, 5));
+  return this->getRawMode();
 }
 
 void StatusData::setMode(Mode mode) {

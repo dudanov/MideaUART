@@ -79,6 +79,7 @@ class StatusData : public FrameData {
   void setTargetTemp(float temp);
 
   /* MODE */
+  Mode getRawMode() const { return static_cast<Mode>(this->m_getValue(2, 7, 5)); }
   Mode getMode() const;
   void setMode(Mode mode);
 

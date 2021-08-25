@@ -48,9 +48,7 @@ void AirConditioner::control(const Control &control) {
   if (control.mode.hasUpdate(mode)) {
     hasUpdate = true;
     mode = control.mode.value();
-    if (this->m_mode == Mode::MODE_OFF && !control.preset.hasValue())
-      preset = this->m_lastPreset;
-    else if (!checkConstraints(mode, preset))
+    if (!checkConstraints(mode, preset))
       preset = Preset::PRESET_NONE;
   }
   if (control.preset.hasUpdate(preset) && checkConstraints(mode, control.preset.value())) {
@@ -102,7 +100,7 @@ void AirConditioner::setPowerState(bool state) {
   if ((state && isOn) || (!state && !isOn))
     return;
   Control control;
-  control.mode = state ? this->m_lastMode : Mode::MODE_OFF;
+  control.mode = state ? this->m_status.getRawMode() : Mode::MODE_OFF;
   this->control(control);
 }
 
@@ -171,14 +169,7 @@ ResponseStatus AirConditioner::m_readStatus(FrameData data) {
   bool hasUpdate = false;
   const StatusData newStatus = data.to<StatusData>();
   this->m_status.copyStatus(newStatus);
-  if (this->m_mode != newStatus.getMode()) {
-    if (newStatus.getMode() == Mode::MODE_OFF) {
-      this->m_lastMode = this->m_mode;
-      this->m_lastPreset = this->m_preset;
-    }
-    this->m_mode = newStatus.getMode();
-    hasUpdate = true;
-  }
+  setProperty(this->m_mode, newStatus.getMode(), hasUpdate);
   setProperty(this->m_preset, newStatus.getPreset(), hasUpdate);
   setProperty(this->m_fanMode, newStatus.getFanMode(), hasUpdate);
   setProperty(this->m_swingMode, newStatus.getSwingMode(), hasUpdate);

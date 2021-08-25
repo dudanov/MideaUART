@@ -56,6 +56,7 @@ class AirConditioner : public ApplianceBase {
   Mode m_lastMode{Mode::MODE_AUTO};
   Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
+  bool m_sendControl{};
 };
 
 }  // namespace ac

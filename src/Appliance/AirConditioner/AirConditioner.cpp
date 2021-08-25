@@ -39,6 +39,8 @@ static bool checkConstraints(const Mode &mode, const Preset &preset) {
 }
 
 void AirConditioner::control(const Control &control) {
+  if (this->m_sendControl)
+    return;
   StatusData status = this->m_status;
   Mode mode = this->m_mode;
   Preset preset = this->m_preset;
@@ -75,13 +77,23 @@ void AirConditioner::control(const Control &control) {
     status.setTargetTemp(control.targetTemp.value());
   }
   if (hasUpdate) {
+    this->m_sendControl = true;
     status.setMode(mode);
     status.setPreset(preset);
     status.setBeeper(this->m_beeper);
     status.appendCRC();
     LOG_D(TAG, "Enqueuing a priority SET_STATUS(0x40) request...");
     this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
-                    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
+                    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1),
+                    // onSuccess
+                    [this]() {
+                      this->m_sendControl = false;
+                    },
+                    // onError
+                    [this]() {
+                      LOG_W(TAG, "SET_STATUS(0x40) request failed...");
+                      this->m_sendControl = false;
+                    });
   }
 }
 

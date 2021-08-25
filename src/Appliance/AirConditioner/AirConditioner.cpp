@@ -67,7 +67,7 @@ void AirConditioner::control(const Control &control) {
       status.setSwingMode(control.swingMode.value());
       hasUpdate = true;
     }
-  } else {
+  } else if (this->m_mode != Mode::MODE_OFF) {
     this->m_lastMode = this->m_mode;
     this->m_lastPreset = this->m_preset;
   }

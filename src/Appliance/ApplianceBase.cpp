@@ -80,6 +80,8 @@ void ApplianceBase::m_handler(const Frame &frame) {
     auto result = this->m_request->callHandler(frame);
     if (result != RESPONSE_WRONG) {
       if (result == RESPONSE_OK) {
+        if (this->m_request->onSuccess != nullptr)
+          this->m_request->onSuccess();
         this->m_destroyRequest();
       } else {
         this->m_resetAttempts();

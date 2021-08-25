@@ -20,6 +20,11 @@ static inline void changeState(Mode mode, float targetTemp) {
   ac.control(control);
 }
 
+// Example how can change power state
+static inline void setPowerState(bool state) {
+  ac.setPowerState(state);
+}
+
 // Example how can change mode to AUTO and set target temp to 25C
 static inline void changeAuto25() {
   Control control;

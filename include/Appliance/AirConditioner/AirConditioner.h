@@ -49,12 +49,12 @@ class AirConditioner : public ApplianceBase {
   float m_outdoorTemp{};
   float m_targetTemp{};
   float m_powerUsage{};
-  Mode m_mode{};
-  Preset m_preset{};
-  FanMode m_fanMode{};
-  SwingMode m_swingMode{};
+  Mode m_mode{Mode::MODE_OFF};
+  Preset m_preset{Preset::PRESET_NONE};
+  FanMode m_fanMode{FanMode::FAN_AUTO};
+  SwingMode m_swingMode{SwingMode::SWING_OFF};
   Mode m_lastMode{Mode::MODE_AUTO};
-  Preset m_lastPreset{};
+  Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
 };
 

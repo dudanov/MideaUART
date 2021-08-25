@@ -24,6 +24,7 @@ class AirConditioner : public ApplianceBase {
   void m_setup() override;
   void m_onIdle() override { this->m_getStatus(); }
   void control(const Control &control);
+  void setPowerState(bool state);
   float getTargetTemp() const { return this->m_targetTemp; }
   float getIndoorTemp() const { return this->m_indoorTemp; }
   float getOutdoorTemp() const { return this->m_outdoorTemp; }
@@ -52,6 +53,8 @@ class AirConditioner : public ApplianceBase {
   Preset m_preset{};
   FanMode m_fanMode{};
   SwingMode m_swingMode{};
+  Mode m_lastMode{Mode::MODE_AUTO};
+  Preset m_lastPreset{};
   StatusData m_status{};
 };
 

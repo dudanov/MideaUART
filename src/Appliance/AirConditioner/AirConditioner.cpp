@@ -67,6 +67,9 @@ void AirConditioner::control(const Control &control) {
       status.setSwingMode(control.swingMode.value());
       hasUpdate = true;
     }
+  } else {
+    this->m_lastMode = this->m_mode;
+    this->m_lastPreset = this->m_preset;
   }
   if (control.targetTemp.hasUpdate(this->m_targetTemp)) {
     hasUpdate = true;
@@ -81,6 +84,20 @@ void AirConditioner::control(const Control &control) {
     this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
                     std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
   }
+}
+
+void AirConditioner::setPowerState(bool state) {
+  const bool isOn = this->m_mode != Mode::MODE_OFF;
+  if ((state && isOn) || (!state && !isOn))
+    return;
+  Control control;
+  if (state) {
+    control.mode = this->m_lastMode;
+    control.preset = this->m_lastPreset;
+  } else {
+    control.mode = Mode::MODE_OFF;
+  }
+  this->control(control);
 }
 
 void AirConditioner::m_getPowerUsage() {

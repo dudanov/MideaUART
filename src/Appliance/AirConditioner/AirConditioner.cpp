@@ -45,9 +45,11 @@ void AirConditioner::control(const Control &control) {
   Mode mode = this->m_mode;
   Preset preset = this->m_preset;
   bool hasUpdate = false;
+  bool isTurningOn = false;
   if (control.mode.hasUpdate(mode)) {
     hasUpdate = true;
     mode = control.mode.value();
+    isTurningOn = this->m_mode == Mode::MODE_OFF;
     if (!checkConstraints(mode, preset))
       preset = Preset::PRESET_NONE;
   }
@@ -58,16 +60,16 @@ void AirConditioner::control(const Control &control) {
   if (mode != Mode::MODE_OFF) {
     if (mode == Mode::MODE_AUTO || preset != Preset::PRESET_NONE) {
       if (this->m_fanMode != FanMode::FAN_AUTO) {
-        status.setFanMode(FanMode::FAN_AUTO);
         hasUpdate = true;
+        status.setFanMode(FanMode::FAN_AUTO);
       }
     } else if (control.fanMode.hasUpdate(this->m_fanMode)) {
-      status.setFanMode(control.fanMode.value());
       hasUpdate = true;
+      status.setFanMode(control.fanMode.value());
     }
     if (control.swingMode.hasUpdate(this->m_swingMode)) {
-      status.setSwingMode(control.swingMode.value());
       hasUpdate = true;
+      status.setSwingMode(control.swingMode.value());
     }
   }
   if (control.targetTemp.hasUpdate(this->m_targetTemp)) {
@@ -80,19 +82,34 @@ void AirConditioner::control(const Control &control) {
     status.setPreset(preset);
     status.setBeeper(this->m_beeper);
     status.appendCRC();
-    LOG_D(TAG, "Enqueuing a priority SET_STATUS(0x40) request...");
-    this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
-                    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1),
-                    // onSuccess
-                    [this]() {
-                      this->m_sendControl = false;
-                    },
-                    // onError
-                    [this]() {
-                      LOG_W(TAG, "SET_STATUS(0x40) request failed...");
-                      this->m_sendControl = false;
-                    });
+    if (isTurningOn && preset != Preset::PRESET_NONE && preset != Preset::PRESET_SLEEP) {
+      // Last command with preset
+      this->m_setStatus(status);
+      status.setPreset(Preset::PRESET_NONE);
+      status.setBeeper(false);
+      status.updateCRC();
+      // First command without preset
+      this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status));
+    } else {
+      this->m_setStatus(std::move(status));
+    }
   }
+}
+
+void AirConditioner::m_setStatus(StatusData status) {
+  LOG_D(TAG, "Enqueuing a priority SET_STATUS(0x40) request...");
+  this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
+          std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1),
+          // onSuccess
+          [this]() {
+            this->m_sendControl = false;
+          },
+          // onError
+          [this]() {
+            LOG_W(TAG, "SET_STATUS(0x40) request failed...");
+            this->m_sendControl = false;
+          }
+  );
 }
 
 void AirConditioner::setPowerState(bool state) {

@@ -40,6 +40,7 @@ class AirConditioner : public ApplianceBase {
   void m_getPowerUsage();
   void m_getCapabilities();
   void m_getStatus();
+  void m_setStatus(StatusData status);
   void m_displayToggle();
   ResponseStatus m_readStatus(FrameData data);
   Capabilities m_capabilities{};

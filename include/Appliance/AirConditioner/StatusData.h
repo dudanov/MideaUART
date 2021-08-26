@@ -54,12 +54,12 @@ enum SwingMode : uint8_t {
 enum Preset : uint8_t {
   /// None preset
   PRESET_NONE,
-  /// The ECO preset
-  PRESET_ECO,
-  /// The TURBO preset
-  PRESET_TURBO,
   /// The SLEEP preset
   PRESET_SLEEP,
+  /// The TURBO preset
+  PRESET_TURBO,
+  /// The ECO preset
+  PRESET_ECO,
   /// The FREEZE_PROTECTION preset
   PRESET_FREEZE_PROTECTION,
 };

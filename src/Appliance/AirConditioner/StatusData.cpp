@@ -21,19 +21,15 @@ float StatusData::getIndoorTemp() const { return i16tof(this->m_getValue(11)); }
 float StatusData::getOutdoorTemp() const { return i16tof(this->m_getValue(12)); }
 float StatusData::getHumiditySetpoint() const { return static_cast<float>(this->m_getValue(19, 127)); }
 
-Mode StatusData::getMode() const {
-  if (!this->m_getPower())
-    return Mode::MODE_OFF;
-  return this->getRawMode();
-}
+Mode StatusData::getMode() const { return this->m_getPower() ? this->getRawMode() : Mode::MODE_OFF; }
 
 void StatusData::setMode(Mode mode) {
-  if (mode == Mode::MODE_OFF) {
+  if (mode != Mode::MODE_OFF) {
+    this->m_setPower(true);
+    this->m_setValue(2, mode, 7, 5);
+  } else {
     this->m_setPower(false);
-    return;
   }
-  this->m_setPower(true);
-  this->m_setValue(2, mode, 7, 5);
 }
 
 Preset StatusData::getPreset() const {

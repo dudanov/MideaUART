@@ -140,21 +140,28 @@ void AirConditioner::m_getCapabilities() {
   GetCapabilitiesData data{};
   this->m_autoconfStatus = AUTOCONF_PROGRESS;
   LOG_D(TAG, "Enqueuing a priority GET_CAPABILITIES(0xB5) request...");
-  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data), [this](FrameData data) -> ResponseStatus {
-    if (!data.hasID(0xB5))
-      return ResponseStatus::RESPONSE_WRONG;
-    if (this->m_capabilities.read(data)) {
-      GetCapabilitiesSecondData data{};
-      this->m_sendFrame(FrameType::DEVICE_QUERY, data);
-      return ResponseStatus::RESPONSE_PARTIAL;
+  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+    // onData
+    [this](FrameData data) -> ResponseStatus {
+      if (!data.hasID(0xB5))
+        return ResponseStatus::RESPONSE_WRONG;
+      if (this->m_capabilities.read(data)) {
+        GetCapabilitiesSecondData data{};
+        this->m_sendFrame(FrameType::DEVICE_QUERY, data);
+        return ResponseStatus::RESPONSE_PARTIAL;
+      }
+      return ResponseStatus::RESPONSE_OK;
+    },
+    // onSuccess
+    [this]() {
+      this->m_autoconfStatus = AUTOCONF_OK;
+    },
+    // onError
+    [this]() {
+      LOG_W(TAG, "Failed to get 0xB5 capabilities report.");
+      this->m_autoconfStatus = AUTOCONF_ERROR;
     }
-    this->m_autoconfStatus = AUTOCONF_OK;
-    return ResponseStatus::RESPONSE_OK;
-  },
-  [this]() {
-    LOG_W(TAG, "Failed to get 0xB5 capabilities report.");
-    this->m_autoconfStatus = AUTOCONF_ERROR;
-  });
+  );
 }
 
 void AirConditioner::m_getStatus() {

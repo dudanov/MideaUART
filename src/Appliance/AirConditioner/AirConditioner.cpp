@@ -99,16 +99,17 @@ void AirConditioner::control(const Control &control) {
 void AirConditioner::m_setStatus(StatusData status) {
   LOG_D(TAG, "Enqueuing a priority SET_STATUS(0x40) request...");
   this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
-          std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1),
-          // onSuccess
-          [this]() {
-            this->m_sendControl = false;
-          },
-          // onError
-          [this]() {
-            LOG_W(TAG, "SET_STATUS(0x40) request failed...");
-            this->m_sendControl = false;
-          }
+    // onData
+    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1),
+    // onSuccess
+    [this]() {
+      this->m_sendControl = false;
+    },
+    // onError
+    [this]() {
+      LOG_W(TAG, "SET_STATUS(0x40) request failed...");
+      this->m_sendControl = false;
+    }
   );
 }
 
@@ -124,16 +125,19 @@ void AirConditioner::setPowerState(bool state) {
 void AirConditioner::m_getPowerUsage() {
   QueryPowerData data{};
   LOG_D(TAG, "Enqueuing a GET_POWERUSAGE(0x41) request...");
-  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data), [this](FrameData data) -> ResponseStatus {
-    const auto status = data.to<StatusData>();
-    if (!status.hasPowerInfo())
-      return ResponseStatus::RESPONSE_WRONG;
-    if (this->m_powerUsage != status.getPowerUsage()) {
-      this->m_powerUsage = status.getPowerUsage();
-      this->sendUpdate();
+  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+    // onData
+    [this](FrameData data) -> ResponseStatus {
+      const auto status = data.to<StatusData>();
+      if (!status.hasPowerInfo())
+        return ResponseStatus::RESPONSE_WRONG;
+      if (this->m_powerUsage != status.getPowerUsage()) {
+        this->m_powerUsage = status.getPowerUsage();
+        this->sendUpdate();
+      }
+      return ResponseStatus::RESPONSE_OK;
     }
-    return ResponseStatus::RESPONSE_OK;
-  });
+  );
 }
 
 void AirConditioner::m_getCapabilities() {
@@ -168,14 +172,18 @@ void AirConditioner::m_getStatus() {
   QueryStateData data{};
   LOG_D(TAG, "Enqueuing a GET_STATUS(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
-                    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
+    // onData
+    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1)
+  );
 }
 
 void AirConditioner::m_displayToggle() {
   DisplayToggleData data{};
   LOG_D(TAG, "Enqueuing a priority TOGGLE_LIGHT(0x41) request...");
-  this->m_queueRequestPriority(FrameType::DEVICE_QUERY, std::move(data),
-                    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
+  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+    // onData
+    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1)
+  );
 }
 
 template<typename T>

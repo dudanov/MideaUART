@@ -115,12 +115,12 @@ void AirConditioner::m_setStatus(StatusData status) {
 
 void AirConditioner::setPowerState(bool state) {
   const bool isOn = this->m_mode != Mode::MODE_OFF;
-  if ((state && isOn) || (!state && !isOn))
-    return;
-  Control control;
-  control.mode = state ? this->m_status.getRawMode() : Mode::MODE_OFF;
-  control.preset = this->m_lastPreset;
-  this->control(control);
+  if (state ^ isOn) {
+    Control control;
+    control.mode = state ? this->m_status.getRawMode() : Mode::MODE_OFF;
+    control.preset = this->m_lastPreset;
+    this->control(control);
+  }
 }
 
 void AirConditioner::m_getPowerUsage() {

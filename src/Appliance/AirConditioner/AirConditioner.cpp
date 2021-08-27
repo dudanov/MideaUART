@@ -45,12 +45,14 @@ void AirConditioner::control(const Control &control) {
   Mode mode = this->m_mode;
   Preset preset = this->m_preset;
   bool hasUpdate = false;
-  bool changeModeWithPreset = false;
+  bool isModeChanged = false;
   if (control.mode.hasUpdate(mode)) {
     hasUpdate = true;
+    isModeChanged = true;
     mode = control.mode.value();
-    changeModeWithPreset = control.preset.hasValue();
-    if (!checkConstraints(mode, preset))
+    if (this->m_mode == Mode::MODE_OFF)
+      preset = this->m_lastPreset;
+    else if (!checkConstraints(mode, preset))
       preset = Preset::PRESET_NONE;
   }
   if (control.preset.hasUpdate(preset) && checkConstraints(mode, control.preset.value())) {
@@ -82,7 +84,7 @@ void AirConditioner::control(const Control &control) {
     status.setPreset(preset);
     status.setBeeper(this->m_beeper);
     status.appendCRC();
-    if (changeModeWithPreset && preset != Preset::PRESET_NONE && preset != Preset::PRESET_SLEEP) {
+    if (isModeChanged && preset != Preset::PRESET_NONE && preset != Preset::PRESET_SLEEP) {
       // Last command with preset
       this->m_setStatus(status);
       status.setPreset(Preset::PRESET_NONE);
@@ -118,7 +120,6 @@ void AirConditioner::setPowerState(bool state) {
   if (state ^ isOn) {
     Control control;
     control.mode = state ? this->m_status.getRawMode() : Mode::MODE_OFF;
-    control.preset = this->m_lastPreset;
     this->control(control);
   }
 }

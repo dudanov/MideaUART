@@ -44,7 +44,7 @@ void ApplianceBase::setup() {
     this->m_sendNetworkNotify();
     timer->reset();
   });
-  this->m_networkTimer.start(10 * 60 * 1000);
+  this->m_networkTimer.start(2 * 60 * 1000);
   this->m_networkTimer.call();
   this->m_setup();
 }

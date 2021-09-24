@@ -91,7 +91,10 @@ void AirConditioner::control(const Control &control) {
       status.setBeeper(false);
       status.updateCRC();
       // First command without preset
-      this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status));
+      this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
+        // onData
+        std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1)
+      );
     } else {
       this->m_setStatus(std::move(status));
     }

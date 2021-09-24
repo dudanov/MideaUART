@@ -44,7 +44,7 @@ void ApplianceBase::setup() {
     this->m_sendNetworkNotify();
     timer->reset();
   });
-  this->m_networkTimer.start(2 * 60 * 1000);
+  this->m_networkTimer.start(10 * 60 * 1000);
   this->m_networkTimer.call();
   this->m_setup();
 }
@@ -71,8 +71,12 @@ void ApplianceBase::loop() {
   this->m_queue.pop_front();
   LOG_D(TAG, "Getting and sending a request from the queue...");
   this->m_sendRequest(this->m_request);
-  this->m_resetAttempts();
-  this->m_resetTimeout();
+  if (this->m_request->onData != nullptr) {
+    this->m_resetAttempts();
+    this->m_resetTimeout();
+  } else {    
+    this->m_destroyRequest();
+  }
 }
 
 void ApplianceBase::m_handler(const Frame &frame) {
@@ -90,6 +94,9 @@ void ApplianceBase::m_handler(const Frame &frame) {
       return;
     }
   }
+  // ignoring responses on network notifies
+  if (frame.hasType(NETWORK_NOTIFY))
+    return;
   /* HANDLE REQUESTS */
   if (frame.hasType(QUERY_NETWORK)) {
     this->m_sendNetworkNotify(QUERY_NETWORK);
@@ -116,7 +123,7 @@ void ApplianceBase::m_sendNetworkNotify(FrameType msgType) {
   notify.setIP(WiFi.localIP());
   if (msgType == NETWORK_NOTIFY) {
     LOG_D(TAG, "Enqueuing a DEVICE_NETWORK(0x0D) notification...");
-    this->m_queueRequest(msgType, std::move(notify));
+    this->m_queueNotify(msgType, std::move(notify));
   } else {
     LOG_D(TAG, "Answer to QUERY_NETWORK(0x63) request...");
     this->m_sendFrame(msgType, std::move(notify));

@@ -121,6 +121,7 @@ void ApplianceBase::m_sendNetworkNotify(FrameType msgType) {
   notify.setConnected(WiFi.isConnected());
   notify.setSignalStrength(getSignalStrength());
   notify.setIP(WiFi.localIP());
+  notify.appendCRC();
   if (msgType == NETWORK_NOTIFY) {
     LOG_D(TAG, "Enqueuing a DEVICE_NETWORK(0x0D) notification...");
     this->m_queueNotify(msgType, std::move(notify));

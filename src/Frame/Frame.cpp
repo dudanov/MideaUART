@@ -13,7 +13,7 @@ void Frame::setData(const FrameData &data) {
 
 uint8_t Frame::m_calcCS() const {
   if (this->m_data.size() <= OFFSET_DATA)
-    return 0;
+    return -1;
   uint8_t cs = 0;
   for (auto it = this->m_data.begin() + OFFSET_LENGTH; it != this->m_data.end(); ++it)
     cs -= *it;

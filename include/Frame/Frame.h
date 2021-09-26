@@ -16,6 +16,7 @@ class Frame {
   }
   FrameData getData() const { return FrameData(this->m_data.data() + OFFSET_DATA, this->m_len() - OFFSET_DATA); }
   void setData(const FrameData &data);
+  bool isValid() const { return !this->m_calcCS(); }
 
   const uint8_t *data() const { return this->m_data.data(); }
   uint8_t size() const { return this->m_data.size(); }

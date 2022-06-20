@@ -4,7 +4,7 @@
 namespace dudanov {
 namespace midea {
 
-uint8_t FrameData::m_id;
+uint8_t FrameData::m_id = 4;
 
 uint8_t FrameData::m_calcCRC() const {
   static const uint8_t PROGMEM CRC8_854_TABLE[] = {

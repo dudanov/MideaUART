@@ -30,7 +30,7 @@ class FrameData {
   std::vector<uint8_t> m_data;
   static uint8_t m_id;
   static uint8_t m_getID() { return FrameData::m_id++; }
-  static uint8_t m_getRandom() { return random(256); }
+  static uint8_t m_getRandom() { return random(255) + 1; }
   uint8_t m_calcCRC() const;
   uint8_t m_getValue(uint8_t idx, uint8_t mask = 255, uint8_t shift = 0) const {
     return (this->m_data[idx] >> shift) & mask;

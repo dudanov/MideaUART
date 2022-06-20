@@ -8,266 +8,266 @@ namespace ac {
 
 static const char *TAG = "Capabilities";
 
-enum CapabilityID : uint16_t {
-  CAPABILITY_INDOOR_HUMIDITY = 0x0015,
-  CAPABILITY_SILKY_COOL = 0x0018,
-  CAPABILITY_SMART_EYE = 0x0030,
-  CAPABILITY_WIND_ON_ME = 0x0032,
-  CAPABILITY_WIND_OF_ME = 0x0033,
-  CAPABILITY_ACTIVE_CLEAN = 0x0039,
-  CAPABILITY_ONE_KEY_NO_WIND_ON_ME = 0x0042,
-  CAPABILITY_BREEZE_CONTROL = 0x0043,
-  CAPABILITY_FAN_SPEED_CONTROL = 0x0210,
-  CAPABILITY_PRESET_ECO = 0x0212,
-  CAPABILITY_PRESET_FREEZE_PROTECTION = 0x0213,
-  CAPABILITY_MODES = 0x0214,
-  CAPABILITY_SWING_MODES = 0x0215,
-  CAPABILITY_POWER = 0x0216,
-  CAPABILITY_NEST = 0x0217,
-  CAPABILITY_AUX_ELECTRIC_HEATING = 0x0219,
-  CAPABILITY_PRESET_TURBO = 0x021A,
-  CAPABILITY_HUMIDITY = 0x021F,
-  CAPABILITY_UNIT_CHANGEABLE = 0x0222,
-  CAPABILITY_LIGHT_CONTROL = 0x0224,
-  CAPABILITY_TEMPERATURES = 0x0225,
-  CAPABILITY_BUZZER = 0x022C,
+enum CapabilityID : unsigned {
+  VERTICAL_WIND = 0x0009,
+  HORIZONTAL_WIND = 0x000A,
+  INDOOR_HUMIDITY = 0x0015,
+  NO_WIND_FEEL = 0x0018,
+  SMART_EYE = 0x0030,
+  BLOWING_PEOPLE = 0x0032,
+  AVOID_PEOPLE = 0x0033,
+  SELF_CLEAN = 0x0039,
+  ONE_KEY_NO_WIND_ON_ME = 0x0042,
+  BREEZE = 0x0043,
+  FRESH_AIR = 0x004B,
+  JET_COOL = 0x0067,
+  NO_WIND_SPEED = 0x0210,
+  ECO_MODES = 0x0212,
+  EIGHT_HOT = 0x0213,
+  MODES = 0x0214,
+  SWING_MODES = 0x0215,
+  POWER_FUNC = 0x0216,
+  NEST = 0x0217,
+  DIANFURE = 0x0219,
+  TURBO_MODES = 0x021A,
+  HUMIDITY = 0x021F,
+  UNIT_CHANGEABLE = 0x0222,
+  LIGHT_TYPE = 0x0224,
+  TEMPERATURES = 0x0225,
+  HAS_BUZZER = 0x022C,
+  IS_TWINS = 0x0232,
+  IS_FOUR_DIRECTION = 0x0233,
 };
-
-static uint16_t read_u16(const uint8_t *data) { return (data[1] << 8) | data[0]; }
 
 class CapabilityData {
  public:
-  CapabilityData(const FrameData &data) :
-    m_it(data.data() + 2),
-    m_end(data.data() + data.size() - 1),
-    m_num(*(data.data() + 1)) {}
-  // Get capability ID
-  CapabilityID id() const { return static_cast<CapabilityID>(read_u16(this->m_it)); }
-  // Read-only indexed access to capability data
-  const uint8_t &operator[](uint8_t idx) const { return *(this->m_it + idx + 3); }
-  // Get size of capability data
+  CapabilityData(const FrameData &data) : m_it(data.data() + 1), m_end(data.data() + data.size() - 1) {}
+  CapabilityID id() const { return static_cast<CapabilityID>(this->m_it[1] * 256 + this->m_it[0]); }
   uint8_t size() const { return this->m_it[2]; }
-  // 
-  bool isValid() const { return m_num && this->m_available() >= 3; }
-  // One more request needed
-  bool isNeedMore() const { return this->m_available() == 2 && *this->m_it != 0; }
-  // Advance to next capability
-  void advance() {
-    this->m_it += this->size() + 3;
-    --this->m_num;
-  }
+  uint8_t operator[](size_t idx) const { return this->m_it[idx + 3]; }
+  size_t available() const { return std::distance(this->m_it, this->m_end); }
+  void advance() { this->m_it += this->size() + 3; }
+
  private:
-  uint8_t m_available() const { return std::distance(this->m_it, this->m_end); }
-  // Iterator
   const uint8_t *m_it;
-  // End of data
   const uint8_t *const m_end;
-  // Number of capabilities in answer
-  uint8_t m_num;
 };
 
+static void setFuncEnable(Capabilities &dst, const CapabilityData &data) {
+  const uint8_t b = data[0];
+  switch (data.id()) {
+    case CapabilityID::VERTICAL_WIND:
+      dst.hasVerticalWind = b == 1;
+      break;
+    case CapabilityID::HORIZONTAL_WIND:
+      dst.hasHorizontalWind = b == 1;
+      break;
+    case CapabilityID::INDOOR_HUMIDITY:
+      dst.hasIndoorHumidity = b != 0;
+      break;
+    case CapabilityID::NO_WIND_FEEL:
+      dst.hasNoWindFeel = b != 0;
+      break;
+    case CapabilityID::SMART_EYE:
+      dst.hasSmartEye = b == 1;
+      break;
+    case CapabilityID::SELF_CLEAN:
+      dst.hasSelfClean = b == 1;
+      break;
+    case CapabilityID::FRESH_AIR:
+      dst.hasFreshAir = true;
+      dst.isFreshAirEnable = b == 1;
+      break;
+    case CapabilityID::JET_COOL:
+      dst.hasJetCool = true;
+      dst.isJetCoolEnable = b == 1;
+      break;
+    case CapabilityID::BLOWING_PEOPLE:
+      dst.hasBlowingPeople = b == 1;
+      break;
+    case CapabilityID::AVOID_PEOPLE:
+      dst.hasAvoidPeople = b == 1;
+      break;
+    case CapabilityID::ONE_KEY_NO_WIND_ON_ME:
+      dst.hasOneKeyNoWindOnMe = b == 1;
+      break;
+    case CapabilityID::BREEZE:
+      dst.hasBreeze = b == 1;
+      break;
+    case CapabilityID::NO_WIND_SPEED:
+      dst.hasNoWindSpeed = b == 1;
+      break;
+    case CapabilityID::HUMIDITY:
+      if (b == 0) {
+        dst.hasAutoClearHumidity = false;
+        dst.hasHandClearHumidity = false;
+      } else if (b == 1) {
+        dst.hasAutoClearHumidity = true;
+        dst.hasHandClearHumidity = false;
+      } else if (b == 2) {
+        dst.hasAutoClearHumidity = true;
+        dst.hasHandClearHumidity = true;
+      } else if (b == 3) {
+        dst.hasAutoClearHumidity = false;
+        dst.hasHandClearHumidity = true;
+      }
+      break;
+    case CapabilityID::UNIT_CHANGEABLE:
+      dst.unitChangeable = b == 0;
+      break;
+    case CapabilityID::HAS_BUZZER:
+      dst.hasBuzzer = b != 0;
+      break;
+    case CapabilityID::DIANFURE:
+      dst.dianfure = b == 1;
+      break;
+    case CapabilityID::TURBO_MODES:
+      if (b == 0) {
+        dst.strongHot = false;
+        dst.strongCool = true;
+      } else if (b == 1) {
+        dst.strongHot = true;
+        dst.strongCool = true;
+      } else if (b == 2) {
+        dst.strongHot = false;
+        dst.strongCool = false;
+      } else if (b == 3) {
+        dst.strongHot = true;
+        dst.strongCool = false;
+      }
+      break;
+    case CapabilityID::LIGHT_TYPE:
+      dst.lightType = b;
+      break;
+    case CapabilityID::TEMPERATURES:
+      dst.cool_adjust_down_temp = b / 2;
+      dst.cool_adjust_up_temp = data[1] / 2;
+      dst.auto_adjust_down_temp = data[2] / 2;
+      dst.auto_adjust_up_temp = data[3] / 2;
+      dst.hot_adjust_down_temp = data[4] / 2;
+      dst.hot_adjust_up_temp = data[5] / 2;
+      if (data.size() > 6)
+        dst.isHavePoint = data[6] != 0;
+      else
+        dst.isHavePoint = data[2] != 0;
+      break;
+    case CapabilityID::IS_TWINS:
+      dst.isTwins = b == 1;
+      break;
+    case CapabilityID::ECO_MODES:
+      dst.eco = b == 1;
+      dst.special_eco = b == 2;
+      break;
+    case CapabilityID::EIGHT_HOT:
+      dst.eightHot = b == 1;
+      break;
+    case CapabilityID::MODES:
+      dst.hotcold = b;
+      if (b == 1) {
+        dst.cool = true;
+        dst.hot = true;
+        dst.dry = true;
+        dst.auto1 = true;
+      } else if (b == 2) {
+        dst.cool = false;
+        dst.dry = false;
+        dst.hot = true;
+        dst.auto1 = true;
+      } else if (b == 3) {
+        dst.cool = true;
+        dst.dry = false;
+        dst.hot = false;
+        dst.auto1 = false;
+      } else if (b == 4) {
+        dst.cool = true;
+        dst.dry = false;
+        dst.hot = true;
+        dst.auto1 = false;
+        dst.wind = true;
+      } else if (b == 5) {
+        dst.cool = true;
+        dst.dry = true;
+        dst.hot = false;
+        dst.auto1 = false;
+        dst.wind = true;
+      } else {
+        dst.hot = false;
+        dst.cool = true;
+        dst.dry = true;
+        dst.auto1 = true;
+      }
+      break;
+    case CapabilityID::SWING_MODES:
+      if (b == 0) {
+        dst.leftrightFan = false;
+        dst.updownFan = true;
+      } else if (b == 1) {
+        dst.leftrightFan = true;
+        dst.updownFan = true;
+      } else if (b == 2) {
+        dst.leftrightFan = false;
+        dst.updownFan = false;
+      } else if (b == 3) {
+        dst.leftrightFan = true;
+        dst.updownFan = false;
+      }
+      break;
+    case CapabilityID::POWER_FUNC:
+      if (b == 0 || b == 1) {
+        dst.powerCal = false;
+        dst.powerCalSetting = false;
+        dst.powerCalBCD = true;
+      } else if (b == 2) {
+        dst.powerCal = true;
+        dst.powerCalSetting = false;
+        dst.powerCalBCD = true;
+      } else if (b == 3) {
+        dst.powerCal = true;
+        dst.powerCalSetting = true;
+        dst.powerCalBCD = true;
+      } else if (b == 4) {
+        dst.powerCal = true;
+        dst.powerCalSetting = false;
+        dst.powerCalBCD = false;
+      } else if (b == 5) {
+        dst.powerCal = true;
+        dst.powerCalSetting = true;
+        dst.powerCalBCD = false;
+      }
+      break;
+    case CapabilityID::NEST:
+      if (b == 0) {
+        dst.nestCheck = false;
+        dst.nestNeedChange = false;
+      } else if (b == 1 || b == 2) {
+        dst.nestCheck = true;
+        dst.nestNeedChange = false;
+      } else if (b == 3) {
+        dst.nestCheck = false;
+        dst.nestNeedChange = true;
+      } else if (b == 4) {
+        dst.nestCheck = true;
+        dst.nestNeedChange = true;
+      }
+      break;
+    case CapabilityID::IS_FOUR_DIRECTION:
+      dst.isFourDirection = b == 1;
+      break;
+  }
+}
+
 bool Capabilities::read(const FrameData &frame) {
-  if (frame.size() < 14)
-    return false;
+  CapabilityData caps(frame);
 
-  CapabilityData cap(frame);
+  for (; caps.available() > 3; caps.advance())
+    setFuncEnable(*this, caps);
 
-  for (; cap.isValid(); cap.advance()) {
-    if (!cap.size())
-      continue;
-    const uint8_t uval = cap[0];
-    const bool bval = uval;
-    switch (cap.id()) {
-      case CAPABILITY_INDOOR_HUMIDITY:
-        this->m_indoorHumidity = bval;
-        break;
-      case CAPABILITY_SILKY_COOL:
-        this->m_silkyCool = bval;
-        break;
-      case CAPABILITY_SMART_EYE:
-        this->m_smartEye = uval == 1;
-        break;
-      case CAPABILITY_WIND_ON_ME:
-        this->m_windOnMe = uval == 1;
-        break;
-      case CAPABILITY_WIND_OF_ME:
-        this->m_windOfMe = uval == 1;
-        break;
-      case CAPABILITY_ACTIVE_CLEAN:
-        this->m_activeClean = uval == 1;
-        break;
-      case CAPABILITY_ONE_KEY_NO_WIND_ON_ME:
-        this->m_oneKeyNoWindOnMe = uval == 1;
-        break;
-      case CAPABILITY_BREEZE_CONTROL:
-        this->m_breezeControl = uval == 1;
-        break;
-      case CAPABILITY_FAN_SPEED_CONTROL:
-        this->m_fanSpeedControl = uval != 1;
-        break;
-      case CAPABILITY_PRESET_ECO:
-        this->m_ecoMode = uval == 1;
-        this->m_specialEco = uval == 2;
-        break;
-      case CAPABILITY_PRESET_FREEZE_PROTECTION:
-        this->m_frostProtectionMode = uval == 1;
-        break;
-      case CAPABILITY_MODES:
-        switch (uval) {
-          case 0:
-            this->m_heatMode = false;
-            this->m_coolMode = true;
-            this->m_dryMode = true;
-            this->m_autoMode = true;
-            break;
-          case 1:
-            this->m_coolMode = true;
-            this->m_heatMode= true;
-            this->m_dryMode = true;
-            this->m_autoMode = true;
-            break;
-          case 2:
-            this->m_coolMode = false;
-            this->m_dryMode = false;
-            this->m_heatMode = true;
-            this->m_autoMode = true;
-            break;
-          case 3:
-            this->m_coolMode = true;
-            this->m_dryMode = false;
-            this->m_heatMode = false;
-            this->m_autoMode = false;
-            break;
-        }
-        break;
-      case CAPABILITY_SWING_MODES:
-        switch (uval) {
-          case 0:
-            this->m_leftrightFan = false;
-            this->m_updownFan = true;
-            break;
-          case 1:
-            this->m_leftrightFan = true;
-            this->m_updownFan = true;
-            break;
-          case 2:
-            this->m_leftrightFan = false;
-            this->m_updownFan = false;
-            break;
-          case 3:
-            this->m_leftrightFan = true;
-            this->m_updownFan = false;
-            break;
-        }
-        break;
-      case CAPABILITY_POWER:
-        switch (uval) {
-          case 0:
-          case 1:
-            this->m_powerCal = false;
-            this->m_powerCalSetting = false;
-            break;
-          case 2:
-            this->m_powerCal = true;
-            this->m_powerCalSetting = false;
-            break;
-          case 3:
-            this->m_powerCal = true;
-            this->m_powerCalSetting = true;
-            break;
-        }
-        break;
-      case CAPABILITY_NEST:
-        switch (uval) {
-          case 0:
-            this->m_nestCheck = false;
-            this->m_nestNeedChange = false;
-            break;
-          case 1:
-          case 2:
-            this->m_nestCheck = true;
-            this->m_nestNeedChange = false;
-            break;
-          case 3:
-            this->m_nestCheck = false;
-            this->m_nestNeedChange = true;
-            break;
-          case 4:
-            this->m_nestCheck = true;
-            this->m_nestNeedChange = true;
-            break;
-        }
-        break;
-      case CAPABILITY_AUX_ELECTRIC_HEATING:
-        this->m_electricAuxHeating = bval;
-        break;
-      case CAPABILITY_PRESET_TURBO:
-        switch (uval) {
-          case 0:
-            this->m_turboHeat = false;
-            this->m_turboCool = true;
-            break;
-          case 1:
-            this->m_turboHeat = true;
-            this->m_turboCool = true;
-            break;
-          case 2:
-            this->m_turboHeat = false;
-            this->m_turboCool = false;
-            break;
-           case 3:
-            this->m_turboHeat = true;
-            this->m_turboCool = false;
-            break;
-        }
-        break;
-      case CAPABILITY_HUMIDITY:
-        switch (uval) {
-          case 0:
-            this->m_autoSetHumidity = false;
-            this->m_manualSetHumidity = false;
-            break;
-          case 1:
-            this->m_autoSetHumidity = true;
-            this->m_manualSetHumidity = false;
-            break;
-          case 2:
-            this->m_autoSetHumidity = true;
-            this->m_manualSetHumidity = true;
-            break;
-          case 3:
-            this->m_autoSetHumidity = false;
-            this->m_manualSetHumidity = true;
-            break;
-        }
-        break;
-      case CAPABILITY_UNIT_CHANGEABLE:
-        this->m_unitChangeable = !bval;
-        break;
-      case CAPABILITY_LIGHT_CONTROL:
-        this->m_lightControl = bval;
-        break;
-      case CAPABILITY_TEMPERATURES:
-        if (cap.size() >= 6) {
-          this->m_minTempCool = static_cast<float>(uval) * 0.5f;
-          this->m_maxTempCool = static_cast<float>(cap[1]) * 0.5f;
-          this->m_minTempAuto = static_cast<float>(cap[2]) * 0.5f;
-          this->m_maxTempAuto = static_cast<float>(cap[3]) * 0.5f;
-          this->m_minTempHeat = static_cast<float>(cap[4]) * 0.5f;
-          this->m_maxTempHeat = static_cast<float>(cap[5]) * 0.5f;
-          this->m_decimals = (cap.size() > 6) ? cap[6] : cap[2];
-        }
-        break;
-      case CAPABILITY_BUZZER:
-        this->m_buzzer = bval;
-        break;
-    }
+  if (caps.available() == 3) {
+    this->zNum = caps[-2];
+    return true;
   }
 
-  // Как минимум указывает на предпоследний элемент (минимум 2 непрочитанных байта)
-  if (cap.isNeedMore())
-    return true; // если предпоследний байт != 0, то нужно опрашивать дальше
-
+  this->zNum = 0;
   return false;
 }
 

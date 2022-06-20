@@ -162,7 +162,7 @@ class GetCapabilitiesData : public FrameData {
 
 class GetCapabilitiesSecondData : public FrameData {
  public:
-  GetCapabilitiesSecondData() : FrameData({0xB5, 0x01, 0x01, 0x00}) { this->appendCRC(); }
+  GetCapabilitiesSecondData(uint8_t idx) : FrameData({0xB5, 0x01, 0x01, idx}) { this->appendCRC(); }
 };
 
 }  // namespace ac

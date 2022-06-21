@@ -136,8 +136,7 @@ class StatusData : public FrameData {
 class QueryStateData : public FrameData {
  public:
   QueryStateData()
-      : FrameData({0x41, 0x81, 0x00, 0xFF, 0x03, 0xFF, 0x00, 0x02, 0x00, 0x00, 0x00,
-                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, FrameData::m_getID()}) {
+      : FrameData({65, -127, 0, -1, 3, -1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, FrameData::m_getID()}) {
     this->appendCRC();
   }
 };
@@ -145,29 +144,7 @@ class QueryStateData : public FrameData {
 class QueryPowerData : public FrameData {
  public:
   QueryPowerData()
-      : FrameData({0x41,
-                   0x21,
-                   0x01,
-                   0x44,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x00,
-                   0x04,
-                   FrameData::m_getID()}) {
+      : FrameData({65, 33, 1, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, FrameData::m_getID()}) {
     this->appendCRC();
   }
 };
@@ -175,20 +152,24 @@ class QueryPowerData : public FrameData {
 class DisplayToggleData : public FrameData {
  public:
   DisplayToggleData()
-      : FrameData({0x41, 0x61, 0x00, 0xFF, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00,
-                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, FrameData::m_getRandom()}) {
+      : FrameData({65, 97, 0, -1, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, FrameData::m_getRandom()}) {
     this->appendCRC();
   }
 };
 
-class GetCapabilitiesData : public FrameData {
+class B5QueryData : public FrameData {
  public:
-  GetCapabilitiesData() : FrameData({0xB5, 0x01, 0x11}) { this->appendCRC(); }
+  B5QueryData() : FrameData({-75, 1, 17}) { this->appendCRC(); }
 };
 
-class GetCapabilitiesSecondData : public FrameData {
+class B5QuerySecondData : public FrameData {
  public:
-  GetCapabilitiesSecondData(uint8_t idx) : FrameData({0xB5, 0x01, 0x01, idx}) { this->appendCRC(); }
+  B5QuerySecondData(uint8_t idx) : FrameData({-75, 1, 1, idx}) { this->appendCRC(); }
+};
+
+class B1QueryData : public FrameData {
+ public:
+  B1QueryData() : FrameData({-79, 8, 24, 0, 26, 0, 57, 0, 67, 0, 66, 0, 48, 0, 21, 0, 44, 2}) { this->appendCRC(); }
 };
 
 }  // namespace ac

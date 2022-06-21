@@ -4,8 +4,10 @@
 namespace dudanov {
 namespace midea {
 
-uint8_t FrameData::m_getRandom() { return random(255) + 1; }
+uint8_t FrameData::m_getRandom() { return random(100) + 1; }
 
+// com.midea.api.command.DataBodyDevOld class
+// Message ID generator
 uint8_t FrameData::m_getID() {
   static uint8_t id = 4;
   if (++id == 255)

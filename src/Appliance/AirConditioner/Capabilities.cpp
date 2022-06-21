@@ -8,6 +8,88 @@ namespace ac {
 
 static const char *TAG = "Capabilities";
 
+Capabilities &Capabilities::setBaseFunc() {
+  this.power = true;
+  this.mode = true;
+  this.temperature = true;
+  this.windSpeed = true;
+  this.airCheck = false;
+  this.unitChangeable = true;
+  this.eco = false;
+  this.indoor_temperature = false;
+  this.turbo = true;
+  this.outdoor_temperature = false;
+  this.updownFan = false;
+  this.leftrightFan = false;
+  this.eightHot = false;
+  this.cool = true;
+  this.hot = true;
+  this.dry = true;
+  this.auto = true;
+  this.wind = true;
+  this.mutilTemp = true;
+  this.powerCal = false;
+  this.strongCool = true;
+  this.strongHot = false;
+  return *this;
+}
+
+Capabilities &Capabilities::toSubCool() {
+  this.auto = false;
+  this.hot = false;
+  this.eightHot = false;
+  this.cool = true;
+  this.dry = false;
+  this.eco = true;
+  this.leftrightFan = true;
+  this.unitChangeable = true;
+  this.turbo = true;
+  this.strongCool = true;
+  return *this;
+}
+
+Capabilities &Capabilities::toOnlyCool() {
+  this.auto = true;
+  this.hot = false;
+  this.eightHot = false;
+  this.cool = true;
+  this.dry = true;
+  this.eco = true;
+  this.leftrightFan = true;
+  this.unitChangeable = true;
+  this.turbo = true;
+  this.strongCool = true;
+  return *this;
+}
+
+Capabilities &Capabilities::toOnlyHot() {
+  this.auto = true;
+  this.cool = false;
+  this.dry = false;
+  this.hot = true;
+  this.eightHot = true;
+  this.eco = true;
+  this.leftrightFan = true;
+  this.unitChangeable = true;
+  this.turbo = true;
+  this.strongCool = true;
+  return *this;
+}
+
+Capabilities &Capabilities::toAllEnable() {
+  this.auto = true;
+  this.hot = true;
+  this.eightHot = true;
+  this.cool = true;
+  this.dry = true;
+  this.eco = true;
+  this.leftrightFan = true;
+  this.unitChangeable = true;
+  this.turbo = true;
+  this.strongCool = true;
+  return *this;
+}
+
 enum CapabilityID : unsigned {
   VERTICAL_WIND = 0x0009,
   HORIZONTAL_WIND = 0x000A,

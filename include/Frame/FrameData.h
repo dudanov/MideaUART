@@ -10,7 +10,8 @@ namespace midea {
 class FrameData {
  public:
   FrameData() = delete;
-  FrameData(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end) : m_data(begin, end) {}
+  FrameData(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end)
+      : m_data(begin, end) {}
   FrameData(const uint8_t *data, uint8_t size) : m_data(data, data + size) {}
   FrameData(std::initializer_list<uint8_t> list) : m_data(list) {}
   FrameData(uint8_t size) : m_data(size, 0) {}
@@ -26,11 +27,11 @@ class FrameData {
     this->appendCRC();
   }
   bool hasValidCRC() const { return !this->m_calcCRC(); }
+
  protected:
   std::vector<uint8_t> m_data;
-  static uint8_t m_id;
-  static uint8_t m_getID() { return FrameData::m_id++; }
-  static uint8_t m_getRandom() { return random(255) + 1; }
+  static uint8_t m_getID();
+  static uint8_t m_getRandom();
   uint8_t m_calcCRC() const;
   uint8_t m_getValue(uint8_t idx, uint8_t mask = 255, uint8_t shift = 0) const {
     return (this->m_data[idx] >> shift) & mask;
@@ -44,8 +45,9 @@ class FrameData {
 
 class NetworkNotifyData : public FrameData {
  public:
-  NetworkNotifyData() : FrameData({0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x01, 0x00,
-                                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) {}
+  NetworkNotifyData()
+      : FrameData({0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x01, 0x00,
+                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) {}
   void setConnected(bool state) { this->m_setMask(8, !state, 1); }
   void setSignalStrength(uint8_t value) { this->m_setValue(2, value); }
   void setIP(const IPAddress &ip);

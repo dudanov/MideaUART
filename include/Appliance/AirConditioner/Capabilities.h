@@ -18,6 +18,12 @@ class Capabilities {
   // Dump capabilities
   void dump() const;
 
+  Capabilities &setBaseFunc();
+  Capabilities &toSubCool();
+  Capabilities &toOnlyCool();
+  Capabilities &toOnlyHot();
+  Capabilities &toAllEnable();
+
   bool hasNoWindSpeed;
   // uint8_t hasWindSpeed;
   uint8_t hotcold;
@@ -86,6 +92,119 @@ class Capabilities {
   bool turbo{false};
   bool outdoor_temperature{false};
   bool dishui{false};
+};
+
+class DeviceStatus {
+ public:
+  /// 8 degree heating
+  uint8_t Eight_Hot;
+  int atwDhwSetTemperature;
+  uint8_t avoidPeople;
+  uint8_t blowingPeople;
+  /// Clear Dust Full
+  uint8_t cleanFanTime;
+  /// Dust Full
+  uint8_t dusFull;
+  /// ECO
+  uint8_t eco;
+  uint8_t errInfo;
+  /// windspeed
+  uint8_t fanSpeed;
+  /// No Wind sense
+  uint8_t hasNoWindFeel;
+  /// Humidity
+  uint8_t humidity;
+  /// indoor
+  double indoor_temp;
+  /// left and right wind
+  uint8_t leftRightFan;
+  uint8_t light;
+  /// mode
+  uint8_t mode;
+  uint8_t noWindOnMe;
+  /// outdoor
+  double outdoor_temp;
+  /// Equipment status: Power on/off
+  uint8_t powerStatus;
+  uint8_t protocol;
+  uint8_t ptcAssis;
+  /// 39 Self-Clean
+  uint8_t selfClean;
+  /// 18-Temperature
+  int setNewTemperature;
+  /// Set temperature
+  float setTemperature;
+  /// Whether the temperature includes decimal point
+  uint8_t setTemperature_dot;
+  /// SleepFunc
+  uint8_t sleepFunc;
+  /// TempUnit
+  uint8_t tempUnit;
+  uint8_t timer_off;
+  /// Timer off/hour
+  uint8_t timer_off_hour;
+  /// Timer off/minute
+  uint8_t timer_off_min;
+  uint8_t timer_on;
+  /// Timer On/Hour
+  uint8_t timer_on_hour;
+  /// Timer on/minute
+  uint8_t timer_on_min;
+  /// Strong
+  uint8_t tubro;
+  /// Upwind
+  uint8_t updownFan;
+
+ protected:
+  uint8_t T1_dot;
+  uint8_t T4_dot;
+  uint8_t addupCmd;
+  uint8_t alarmSleep;
+  uint8_t catchCold;
+  uint8_t changeCosySleep;
+  uint8_t childSleepMode;
+  uint8_t cleanUp;
+  uint8_t clearCmd;
+  uint8_t controlSrc;
+  uint8_t coolFan;
+  uint8_t cosySleep;
+  uint8_t double_temp;
+  uint8_t dryClean;
+  uint8_t errMark;
+  uint8_t exchangeAir;
+  int expand_temp;
+  uint8_t feelOwn;
+  uint8_t imodeResume;
+  uint8_t keyBtn;
+  uint8_t keyStatus;
+  uint8_t lowFerqFan;
+  uint8_t naturalFan;
+  uint8_t nightLight;
+  uint8_t peakElec;
+  uint8_t pmvFunc_H;
+  uint8_t pmvFunc_L;
+  uint8_t powerSaver;
+  uint8_t powerValue1;
+  uint8_t powerValue2;
+  uint8_t powerValue3;
+  uint8_t ptcButton;
+  uint8_t pwmMode;
+  uint8_t resetCmd;
+  uint8_t runmodeCmd;
+  uint8_t save;
+  uint8_t selfFeelOwn;
+  uint8_t setCmd;
+  uint8_t setExpand;
+  uint8_t setExpand_dot;
+  uint8_t setallusageCmd;
+  uint8_t superFan;
+  uint8_t test2;
+  uint8_t time1;
+  uint8_t time3;
+  uint8_t timeLimit;
+  uint8_t timerEffe;
+  uint8_t timerMode;
+  uint8_t wiseEye;
 };
 
 }  // namespace ac

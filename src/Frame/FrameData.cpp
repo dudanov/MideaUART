@@ -7,9 +7,9 @@ namespace midea {
 uint8_t FrameData::m_getRandom() { return random(255) + 1; }
 
 uint8_t FrameData::m_getID() {
-  static uint8_t id;
-  if (++id < 5)
-    id = 5;
+  static uint8_t id = 4;
+  if (++id == 255)
+    id = 4;
   return id;
 }
 

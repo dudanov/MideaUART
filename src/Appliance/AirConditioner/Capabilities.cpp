@@ -6,128 +6,130 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
-static const char *TAG = "Capabilities";
+static const char *TAG = "CmdB5";
 
-Capabilities &Capabilities::setBaseFunc() {
-  this.power = true;
-  this.mode = true;
-  this.temperature = true;
-  this.windSpeed = true;
-  this.airCheck = false;
-  this.unitChangeable = true;
-  this.eco = false;
-  this.indoor_temperature = false;
-  this.turbo = true;
-  this.outdoor_temperature = false;
-  this.updownFan = false;
-  this.leftrightFan = false;
-  this.eightHot = false;
-  this.cool = true;
-  this.hot = true;
-  this.dry = true;
-  this.auto = true;
-  this.wind = true;
-  this.mutilTemp = true;
-  this.powerCal = false;
-  this.strongCool = true;
-  this.strongHot = false;
+CmdB5 &CmdB5::setBaseFunc() {
+  this->power = true;
+  this->mode = true;
+  this->temperature = true;
+  this->windSpeed = true;
+  this->airCheck = false;
+  this->unitChangeable = true;
+  this->eco = false;
+  this->indoor_temperature = false;
+  this->turbo = true;
+  this->outdoor_temperature = false;
+  this->updownFan = false;
+  this->leftrightFan = false;
+  this->eightHot = false;
+  this->cool = true;
+  this->hot = true;
+  this->dry = true;
+  this->auto1 = true;
+  this->wind = true;
+  this->mutilTemp = true;
+  this->powerCal = false;
+  this->strongCool = true;
+  this->strongHot = false;
   return *this;
 }
 
-Capabilities &Capabilities::toSubCool() {
-  this.auto = false;
-  this.hot = false;
-  this.eightHot = false;
-  this.cool = true;
-  this.dry = false;
-  this.eco = true;
-  this.leftrightFan = true;
-  this.unitChangeable = true;
-  this.turbo = true;
-  this.strongCool = true;
+CmdB5 &CmdB5::toSubCool() {
+  this->auto1 = false;
+  this->hot = false;
+  this->eightHot = false;
+  this->cool = true;
+  this->dry = false;
+  this->eco = true;
+  this->leftrightFan = true;
+  this->unitChangeable = true;
+  this->turbo = true;
+  this->strongCool = true;
   return *this;
 }
 
-Capabilities &Capabilities::toOnlyCool() {
-  this.auto = true;
-  this.hot = false;
-  this.eightHot = false;
-  this.cool = true;
-  this.dry = true;
-  this.eco = true;
-  this.leftrightFan = true;
-  this.unitChangeable = true;
-  this.turbo = true;
-  this.strongCool = true;
+CmdB5 &CmdB5::toOnlyCool() {
+  this->auto1 = true;
+  this->hot = false;
+  this->eightHot = false;
+  this->cool = true;
+  this->dry = true;
+  this->eco = true;
+  this->leftrightFan = true;
+  this->unitChangeable = true;
+  this->turbo = true;
+  this->strongCool = true;
   return *this;
 }
 
-Capabilities &Capabilities::toOnlyHot() {
-  this.auto = true;
-  this.cool = false;
-  this.dry = false;
-  this.hot = true;
-  this.eightHot = true;
-  this.eco = true;
-  this.leftrightFan = true;
-  this.unitChangeable = true;
-  this.turbo = true;
-  this.strongCool = true;
+CmdB5 &CmdB5::toOnlyHot() {
+  this->auto1 = true;
+  this->cool = false;
+  this->dry = false;
+  this->hot = true;
+  this->eightHot = true;
+  this->eco = true;
+  this->leftrightFan = true;
+  this->unitChangeable = true;
+  this->turbo = true;
+  this->strongCool = true;
   return *this;
 }
 
-Capabilities &Capabilities::toAllEnable() {
-  this.auto = true;
-  this.hot = true;
-  this.eightHot = true;
-  this.cool = true;
-  this.dry = true;
-  this.eco = true;
-  this.leftrightFan = true;
-  this.unitChangeable = true;
-  this.turbo = true;
-  this.strongCool = true;
+CmdB5 &CmdB5::toAllEnable() {
+  this->auto1 = true;
+  this->hot = true;
+  this->eightHot = true;
+  this->cool = true;
+  this->dry = true;
+  this->eco = true;
+  this->leftrightFan = true;
+  this->unitChangeable = true;
+  this->turbo = true;
+  this->strongCool = true;
   return *this;
 }
 
-enum CapabilityID : unsigned {
-  VERTICAL_WIND = 0x0009,
-  HORIZONTAL_WIND = 0x000A,
-  INDOOR_HUMIDITY = 0x0015,
-  NO_WIND_FEEL = 0x0018,
-  SMART_EYE = 0x0030,
-  BLOWING_PEOPLE = 0x0032,
-  AVOID_PEOPLE = 0x0033,
-  SELF_CLEAN = 0x0039,
-  ONE_KEY_NO_WIND_ON_ME = 0x0042,
-  BREEZE = 0x0043,
-  FRESH_AIR = 0x004B,
-  JET_COOL = 0x0067,
-  NO_WIND_SPEED = 0x0210,
-  ECO_MODES = 0x0212,
-  EIGHT_HOT = 0x0213,
-  MODES = 0x0214,
-  SWING_MODES = 0x0215,
-  POWER_FUNC = 0x0216,
-  NEST = 0x0217,
-  DIANFURE = 0x0219,
-  TURBO_MODES = 0x021A,
-  HUMIDITY = 0x021F,
-  UNIT_CHANGEABLE = 0x0222,
-  LIGHT_TYPE = 0x0224,
-  TEMPERATURES = 0x0225,
-  HAS_BUZZER = 0x022C,
-  IS_TWINS = 0x0232,
-  IS_FOUR_DIRECTION = 0x0233,
+constexpr unsigned makeU16(uint8_t hi, uint8_t lo) { return 256 * hi + lo; }
+
+enum B5Func : unsigned {
+  VERTICAL_WIND = makeU16(0, 9),
+  HORIZONTAL_WIND = makeU16(0, 10),
+  INDOOR_HUMIDITY = makeU16(0, 21),
+  NO_WIND_FEEL = makeU16(0, 24),
+  SMART_EYE = makeU16(0, 48),
+  BLOWING_PEOPLE = makeU16(0, 50),
+  AVOID_PEOPLE = makeU16(0, 51),
+  SELF_CLEAN = makeU16(0, 57),
+  ONE_KEY_NO_WIND_ON_ME = makeU16(0, 66),
+  BREEZE = makeU16(0, 67),
+  FRESH_AIR = makeU16(0, 75),
+  JET_COOL = makeU16(0, 103),
+  NO_WIND_SPEED = makeU16(2, 16),
+  ECO_MODES = makeU16(2, 18),
+  EIGHT_HOT = makeU16(2, 19),
+  MODES = makeU16(2, 20),
+  SWING_MODES = makeU16(2, 21),
+  POWER_FUNC = makeU16(2, 22),
+  NEST = makeU16(2, 23),
+  DIANFURE = makeU16(2, 25),
+  TURBO_MODES = makeU16(2, 26),
+  HUMIDITY = makeU16(2, 31),
+  UNIT_CHANGEABLE = makeU16(2, 34),
+  LIGHT_TYPE = makeU16(2, 36),
+  TEMPERATURES = makeU16(2, 37),
+  HAS_BUZZER = makeU16(2, 44),
+  IS_TWINS = makeU16(2, 50),
+  IS_FOUR_DIRECTION = makeU16(2, 51),
 };
 
-class CapabilityData {
+class B5Data {
  public:
-  CapabilityData(const FrameData &data) : m_it(data.data() + 1), m_end(data.data() + data.size() - 1) {}
-  CapabilityID id() const { return static_cast<CapabilityID>(this->m_it[1] * 256 + this->m_it[0]); }
-  uint8_t size() const { return this->m_it[2]; }
-  uint8_t operator[](size_t idx) const { return this->m_it[idx + 3]; }
+  B5Data(const FrameData &data) : m_it(data.data() + 1), m_end(data.data() + data.size() - 1) {}
+  B5Func id() const { return static_cast<B5Func>(this->m_it[1] * 256 + this->m_it[0]); }
   size_t available() const { return std::distance(this->m_it, this->m_end); }
+  size_t size() const { return this->m_it[2]; }
+  uint8_t operator[](size_t idx) const { return this->m_it[idx + 3]; }
   void advance() { this->m_it += this->size() + 3; }
 
  private:
@@ -135,51 +137,52 @@ class CapabilityData {
   const uint8_t *const m_end;
 };
 
-static void setFuncEnable(Capabilities &dst, const CapabilityData &data) {
+static void setFuncEnable(CmdB5 &dst, const B5Data &data) {
   const uint8_t b = data[0];
   switch (data.id()) {
-    case CapabilityID::VERTICAL_WIND:
+    case B5Func::VERTICAL_WIND:
       dst.hasVerticalWind = b == 1;
       break;
-    case CapabilityID::HORIZONTAL_WIND:
+    case B5Func::HORIZONTAL_WIND:
       dst.hasHorizontalWind = b == 1;
       break;
-    case CapabilityID::INDOOR_HUMIDITY:
+    case B5Func::INDOOR_HUMIDITY:
       dst.hasIndoorHumidity = b != 0;
       break;
-    case CapabilityID::NO_WIND_FEEL:
+    case B5Func::NO_WIND_FEEL:
       dst.hasNoWindFeel = b != 0;
       break;
-    case CapabilityID::SMART_EYE:
+    case B5Func::SMART_EYE:
       dst.hasSmartEye = b == 1;
       break;
-    case CapabilityID::SELF_CLEAN:
+    case B5Func::SELF_CLEAN:
       dst.hasSelfClean = b == 1;
       break;
-    case CapabilityID::FRESH_AIR:
+    case B5Func::FRESH_AIR:
       dst.hasFreshAir = true;
       dst.isFreshAirEnable = b == 1;
       break;
-    case CapabilityID::JET_COOL:
+    case B5Func::JET_COOL:
       dst.hasJetCool = true;
       dst.isJetCoolEnable = b == 1;
       break;
-    case CapabilityID::BLOWING_PEOPLE:
+    case B5Func::BLOWING_PEOPLE:
       dst.hasBlowingPeople = b == 1;
       break;
-    case CapabilityID::AVOID_PEOPLE:
+    case B5Func::AVOID_PEOPLE:
       dst.hasAvoidPeople = b == 1;
       break;
-    case CapabilityID::ONE_KEY_NO_WIND_ON_ME:
+    case B5Func::ONE_KEY_NO_WIND_ON_ME:
       dst.hasOneKeyNoWindOnMe = b == 1;
       break;
-    case CapabilityID::BREEZE:
+    case B5Func::BREEZE:
       dst.hasBreeze = b == 1;
       break;
-    case CapabilityID::NO_WIND_SPEED:
+    case B5Func::NO_WIND_SPEED:
       dst.hasNoWindSpeed = b == 1;
+      dst.hasWindSpeed = b;
       break;
-    case CapabilityID::HUMIDITY:
+    case B5Func::HUMIDITY:
       if (b == 0) {
         dst.hasAutoClearHumidity = false;
         dst.hasHandClearHumidity = false;
@@ -194,16 +197,16 @@ static void setFuncEnable(Capabilities &dst, const CapabilityData &data) {
         dst.hasHandClearHumidity = true;
       }
       break;
-    case CapabilityID::UNIT_CHANGEABLE:
+    case B5Func::UNIT_CHANGEABLE:
       dst.unitChangeable = b == 0;
       break;
-    case CapabilityID::HAS_BUZZER:
+    case B5Func::HAS_BUZZER:
       dst.hasBuzzer = b != 0;
       break;
-    case CapabilityID::DIANFURE:
+    case B5Func::DIANFURE:
       dst.dianfure = b == 1;
       break;
-    case CapabilityID::TURBO_MODES:
+    case B5Func::TURBO_MODES:
       if (b == 0) {
         dst.strongHot = false;
         dst.strongCool = true;
@@ -218,10 +221,10 @@ static void setFuncEnable(Capabilities &dst, const CapabilityData &data) {
         dst.strongCool = false;
       }
       break;
-    case CapabilityID::LIGHT_TYPE:
+    case B5Func::LIGHT_TYPE:
       dst.lightType = b;
       break;
-    case CapabilityID::TEMPERATURES:
+    case B5Func::TEMPERATURES:
       dst.cool_adjust_down_temp = b / 2;
       dst.cool_adjust_up_temp = data[1] / 2;
       dst.auto_adjust_down_temp = data[2] / 2;
@@ -233,17 +236,17 @@ static void setFuncEnable(Capabilities &dst, const CapabilityData &data) {
       else
         dst.isHavePoint = data[2] != 0;
       break;
-    case CapabilityID::IS_TWINS:
+    case B5Func::IS_TWINS:
       dst.isTwins = b == 1;
       break;
-    case CapabilityID::ECO_MODES:
+    case B5Func::ECO_MODES:
       dst.eco = b == 1;
       dst.special_eco = b == 2;
       break;
-    case CapabilityID::EIGHT_HOT:
+    case B5Func::EIGHT_HOT:
       dst.eightHot = b == 1;
       break;
-    case CapabilityID::MODES:
+    case B5Func::MODES:
       dst.hotcold = b;
       if (b == 1) {
         dst.cool = true;
@@ -279,7 +282,7 @@ static void setFuncEnable(Capabilities &dst, const CapabilityData &data) {
         dst.auto1 = true;
       }
       break;
-    case CapabilityID::SWING_MODES:
+    case B5Func::SWING_MODES:
       if (b == 0) {
         dst.leftrightFan = false;
         dst.updownFan = true;
@@ -294,7 +297,7 @@ static void setFuncEnable(Capabilities &dst, const CapabilityData &data) {
         dst.updownFan = false;
       }
       break;
-    case CapabilityID::POWER_FUNC:
+    case B5Func::POWER_FUNC:
       if (b == 0 || b == 1) {
         dst.powerCal = false;
         dst.powerCalSetting = false;
@@ -317,7 +320,7 @@ static void setFuncEnable(Capabilities &dst, const CapabilityData &data) {
         dst.powerCalBCD = false;
       }
       break;
-    case CapabilityID::NEST:
+    case B5Func::NEST:
       if (b == 0) {
         dst.nestCheck = false;
         dst.nestNeedChange = false;
@@ -332,14 +335,14 @@ static void setFuncEnable(Capabilities &dst, const CapabilityData &data) {
         dst.nestNeedChange = true;
       }
       break;
-    case CapabilityID::IS_FOUR_DIRECTION:
+    case B5Func::IS_FOUR_DIRECTION:
       dst.isFourDirection = b == 1;
       break;
   }
 }
 
-bool Capabilities::read(const FrameData &frame) {
-  CapabilityData caps(frame);
+bool CmdB5::read(const FrameData &frame) {
+  B5Data caps(frame);
 
   for (; caps.available() > 3; caps.advance())
     setFuncEnable(*this, caps);
@@ -357,7 +360,7 @@ bool Capabilities::read(const FrameData &frame) {
   if (condition) \
     LOG_CONFIG(TAG, str);
 
-void Capabilities::dump() const {
+void CmdB5::dump() const {
   LOG_CONFIG(TAG, "CAPABILITIES REPORT:");
   if (this->m_autoMode) {
     LOG_CONFIG(TAG, "  [x] AUTO MODE");

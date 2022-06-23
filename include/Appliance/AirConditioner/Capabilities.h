@@ -11,55 +11,55 @@ namespace ac {
 
 typedef unsigned char uint8_t;
 
-class Capabilities {
+class CmdB5 {
  public:
   // Read from frames
   bool read(const FrameData &data);
   // Dump capabilities
   void dump() const;
 
-  Capabilities &setBaseFunc();
-  Capabilities &toSubCool();
-  Capabilities &toOnlyCool();
-  Capabilities &toOnlyHot();
-  Capabilities &toAllEnable();
+  CmdB5 &setBaseFunc();
+  CmdB5 &toSubCool();
+  CmdB5 &toOnlyCool();
+  CmdB5 &toOnlyHot();
+  CmdB5 &toAllEnable();
 
-  bool hasNoWindSpeed;
-  // uint8_t hasWindSpeed;
-  uint8_t hotcold;
-  bool updownFan{false};
+  enum ACType : uint8_t {
+    COLD,
+    COLD_HOT,
+    HOT,
+    COLD_SUB,
+    COLD_SUB_COLD_HOT,
+    COLD_SUB_COLD,
+  };
+
+  ACType getDeviceType() const { return static_cast<ACType>(this->hotcold); }
+
   bool unitChangeable{true};
-  bool eco{false};
-  bool special_eco{false};
-  bool leftrightFan{true};
-  bool eightHot{false};
   bool cool{true};
   bool hot{true};
   bool dry{true};
   bool auto1{true};
   bool wind{true};
   bool mutilTemp{true};
+  bool selfcheck{true};
+  bool strongCool{true};
+  bool leftrightFan{true};
+  bool updownFan{false};
+  bool eco{false};
+  bool special_eco{false};
+  bool eightHot{false};
   bool powerCal{false};
   bool powerCalSetting{false};
   bool powerCalBCD{false};
-  bool selfcheck{true};
   bool nestCheck{false};
   bool nestNeedChange{false};
   bool dianfure{false};
-  bool strongCool{true};
   bool strongHot{false};
   bool hasNoWindFeel{false};
   bool hasAutoClearHumidity{false};
   bool hasHandClearHumidity{false};
-  uint8_t cool_adjust_up_temp{30};
-  uint8_t cool_adjust_down_temp{17};
-  uint8_t auto_adjust_up_temp{30};
-  uint8_t auto_adjust_down_temp{17};
-  uint8_t hot_adjust_up_temp{30};
-  uint8_t hot_adjust_down_temp{17};
   bool isHavePoint{false};
-  uint8_t zNum{0};
-  uint8_t leftNum{0};
   bool hasBlowingPeople{false};
   bool hasAvoidPeople{false};
   bool hasSelfClean{false};
@@ -67,7 +67,6 @@ class Capabilities {
   bool hasBreeze{false};
   bool hasSmartEye{false};
   bool hasIndoorHumidity{false};
-  uint8_t lightType{0};
   bool hasBuzzer{false};
   bool hasHorizontalWind{false};
   bool hasVerticalWind{false};
@@ -77,10 +76,22 @@ class Capabilities {
   bool hasFreshAir{false};
   bool isJetCoolEnable{false};
   bool isFreshAirEnable{false};
+  bool hasNoWindSpeed;
+  uint8_t hasWindSpeed;
+  uint8_t hotcold;
+  uint8_t cool_adjust_up_temp{30};
+  uint8_t cool_adjust_down_temp{17};
+  uint8_t auto_adjust_up_temp{30};
+  uint8_t auto_adjust_down_temp{17};
+  uint8_t hot_adjust_up_temp{30};
+  uint8_t hot_adjust_down_temp{17};
+  uint8_t lightType{0};
   uint8_t fresh_air_switch{0};
   uint8_t fresh_air_speed{0};
   uint8_t fresh_air_temp{0};
   uint8_t fresh_air_mode{0};
+  uint8_t leftNum{0};
+  uint8_t zNum{0};
 
  private:
   bool power{true};

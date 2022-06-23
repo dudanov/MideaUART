@@ -143,16 +143,14 @@ class QueryStateData : public FrameData {
 
 class QueryPowerData : public FrameData {
  public:
-  QueryPowerData()
-      : FrameData({65, 33, 1, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, FrameData::m_getID()}) {
+  QueryPowerData() : FrameData({65, 33, 1, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4}) {
     this->appendCRC();
   }
 };
 
 class DisplayToggleData : public FrameData {
  public:
-  DisplayToggleData()
-      : FrameData({65, 97, 0, -1, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, FrameData::m_getRandom()}) {
+  DisplayToggleData() : FrameData({65, 97, 0, -1, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, random(100) + 1}) {
     this->appendCRC();
   }
 };

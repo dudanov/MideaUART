@@ -126,7 +126,7 @@ enum B5Func : unsigned {
 class B5Data {
  public:
   B5Data(const FrameData &data) : m_it(data.data() + 1), m_end(data.data() + data.size() - 1) {}
-  B5Func id() const { return static_cast<B5Func>(this->m_it[1] * 256 + this->m_it[0]); }
+  B5Func getFunc() const { return static_cast<B5Func>(this->m_it[1] * 256 + this->m_it[0]); }
   size_t available() const { return std::distance(this->m_it, this->m_end); }
   size_t size() const { return this->m_it[2]; }
   uint8_t operator[](size_t idx) const { return this->m_it[idx + 3]; }
@@ -138,94 +138,94 @@ class B5Data {
 };
 
 static void setFuncEnable(CmdB5 &dst, const B5Data &data) {
-  const uint8_t b = data[0];
-  switch (data.id()) {
+  const uint8_t b0 = data[0];
+  switch (data.getFunc()) {
     case B5Func::VERTICAL_WIND:
-      dst.hasVerticalWind = b == 1;
+      dst.hasVerticalWind = b0 == 1;
       break;
     case B5Func::HORIZONTAL_WIND:
-      dst.hasHorizontalWind = b == 1;
+      dst.hasHorizontalWind = b0 == 1;
       break;
     case B5Func::INDOOR_HUMIDITY:
-      dst.hasIndoorHumidity = b != 0;
+      dst.hasIndoorHumidity = b0 != 0;
       break;
     case B5Func::NO_WIND_FEEL:
-      dst.hasNoWindFeel = b != 0;
+      dst.hasNoWindFeel = b0 != 0;
       break;
     case B5Func::SMART_EYE:
-      dst.hasSmartEye = b == 1;
+      dst.hasSmartEye = b0 == 1;
       break;
     case B5Func::SELF_CLEAN:
-      dst.hasSelfClean = b == 1;
+      dst.hasSelfClean = b0 == 1;
       break;
     case B5Func::FRESH_AIR:
       dst.hasFreshAir = true;
-      dst.isFreshAirEnable = b == 1;
+      dst.isFreshAirEnable = b0 == 1;
       break;
     case B5Func::JET_COOL:
       dst.hasJetCool = true;
-      dst.isJetCoolEnable = b == 1;
+      dst.isJetCoolEnable = b0 == 1;
       break;
     case B5Func::BLOWING_PEOPLE:
-      dst.hasBlowingPeople = b == 1;
+      dst.hasBlowingPeople = b0 == 1;
       break;
     case B5Func::AVOID_PEOPLE:
-      dst.hasAvoidPeople = b == 1;
+      dst.hasAvoidPeople = b0 == 1;
       break;
     case B5Func::ONE_KEY_NO_WIND_ON_ME:
-      dst.hasOneKeyNoWindOnMe = b == 1;
+      dst.hasOneKeyNoWindOnMe = b0 == 1;
       break;
     case B5Func::BREEZE:
-      dst.hasBreeze = b == 1;
+      dst.hasBreeze = b0 == 1;
       break;
     case B5Func::NO_WIND_SPEED:
-      dst.hasNoWindSpeed = b == 1;
-      dst.hasWindSpeed = b;
+      dst.hasNoWindSpeed = b0 == 1;
+      dst.hasWindSpeed = b0;
       break;
     case B5Func::HUMIDITY:
-      if (b == 0) {
+      if (b0 == 0) {
         dst.hasAutoClearHumidity = false;
         dst.hasHandClearHumidity = false;
-      } else if (b == 1) {
+      } else if (b0 == 1) {
         dst.hasAutoClearHumidity = true;
         dst.hasHandClearHumidity = false;
-      } else if (b == 2) {
+      } else if (b0 == 2) {
         dst.hasAutoClearHumidity = true;
         dst.hasHandClearHumidity = true;
-      } else if (b == 3) {
+      } else if (b0 == 3) {
         dst.hasAutoClearHumidity = false;
         dst.hasHandClearHumidity = true;
       }
       break;
     case B5Func::UNIT_CHANGEABLE:
-      dst.unitChangeable = b == 0;
+      dst.unitChangeable = b0 == 0;
       break;
     case B5Func::HAS_BUZZER:
-      dst.hasBuzzer = b != 0;
+      dst.hasBuzzer = b0 != 0;
       break;
     case B5Func::DIANFURE:
-      dst.dianfure = b == 1;
+      dst.dianfure = b0 == 1;
       break;
     case B5Func::TURBO_MODES:
-      if (b == 0) {
+      if (b0 == 0) {
         dst.strongHot = false;
         dst.strongCool = true;
-      } else if (b == 1) {
+      } else if (b0 == 1) {
         dst.strongHot = true;
         dst.strongCool = true;
-      } else if (b == 2) {
+      } else if (b0 == 2) {
         dst.strongHot = false;
         dst.strongCool = false;
-      } else if (b == 3) {
+      } else if (b0 == 3) {
         dst.strongHot = true;
         dst.strongCool = false;
       }
       break;
     case B5Func::LIGHT_TYPE:
-      dst.lightType = b;
+      dst.lightType = b0;
       break;
     case B5Func::TEMPERATURES:
-      dst.cool_adjust_down_temp = b / 2;
+      dst.cool_adjust_down_temp = b0 / 2;
       dst.cool_adjust_up_temp = data[1] / 2;
       dst.auto_adjust_down_temp = data[2] / 2;
       dst.auto_adjust_up_temp = data[3] / 2;
@@ -237,39 +237,39 @@ static void setFuncEnable(CmdB5 &dst, const B5Data &data) {
         dst.isHavePoint = data[2] != 0;
       break;
     case B5Func::IS_TWINS:
-      dst.isTwins = b == 1;
+      dst.isTwins = b0 == 1;
       break;
     case B5Func::ECO_MODES:
-      dst.eco = b == 1;
-      dst.special_eco = b == 2;
+      dst.eco = b0 == 1;
+      dst.special_eco = b0 == 2;
       break;
     case B5Func::EIGHT_HOT:
-      dst.eightHot = b == 1;
+      dst.eightHot = b0 == 1;
       break;
     case B5Func::MODES:
-      dst.hotcold = b;
-      if (b == 1) {
+      dst.hotcold = b0;
+      if (b0 == 1) {
         dst.cool = true;
         dst.hot = true;
         dst.dry = true;
         dst.auto1 = true;
-      } else if (b == 2) {
+      } else if (b0 == 2) {
         dst.cool = false;
         dst.dry = false;
         dst.hot = true;
         dst.auto1 = true;
-      } else if (b == 3) {
+      } else if (b0 == 3) {
         dst.cool = true;
         dst.dry = false;
         dst.hot = false;
         dst.auto1 = false;
-      } else if (b == 4) {
+      } else if (b0 == 4) {
         dst.cool = true;
         dst.dry = false;
         dst.hot = true;
         dst.auto1 = false;
         dst.wind = true;
-      } else if (b == 5) {
+      } else if (b0 == 5) {
         dst.cool = true;
         dst.dry = true;
         dst.hot = false;
@@ -283,72 +283,72 @@ static void setFuncEnable(CmdB5 &dst, const B5Data &data) {
       }
       break;
     case B5Func::SWING_MODES:
-      if (b == 0) {
+      if (b0 == 0) {
         dst.leftrightFan = false;
         dst.updownFan = true;
-      } else if (b == 1) {
+      } else if (b0 == 1) {
         dst.leftrightFan = true;
         dst.updownFan = true;
-      } else if (b == 2) {
+      } else if (b0 == 2) {
         dst.leftrightFan = false;
         dst.updownFan = false;
-      } else if (b == 3) {
+      } else if (b0 == 3) {
         dst.leftrightFan = true;
         dst.updownFan = false;
       }
       break;
     case B5Func::POWER_FUNC:
-      if (b == 0 || b == 1) {
+      if (b0 == 0 || b0 == 1) {
         dst.powerCal = false;
         dst.powerCalSetting = false;
         dst.powerCalBCD = true;
-      } else if (b == 2) {
+      } else if (b0 == 2) {
         dst.powerCal = true;
         dst.powerCalSetting = false;
         dst.powerCalBCD = true;
-      } else if (b == 3) {
+      } else if (b0 == 3) {
         dst.powerCal = true;
         dst.powerCalSetting = true;
         dst.powerCalBCD = true;
-      } else if (b == 4) {
+      } else if (b0 == 4) {
         dst.powerCal = true;
         dst.powerCalSetting = false;
         dst.powerCalBCD = false;
-      } else if (b == 5) {
+      } else if (b0 == 5) {
         dst.powerCal = true;
         dst.powerCalSetting = true;
         dst.powerCalBCD = false;
       }
       break;
     case B5Func::NEST:
-      if (b == 0) {
+      if (b0 == 0) {
         dst.nestCheck = false;
         dst.nestNeedChange = false;
-      } else if (b == 1 || b == 2) {
+      } else if (b0 == 1 || b0 == 2) {
         dst.nestCheck = true;
         dst.nestNeedChange = false;
-      } else if (b == 3) {
+      } else if (b0 == 3) {
         dst.nestCheck = false;
         dst.nestNeedChange = true;
-      } else if (b == 4) {
+      } else if (b0 == 4) {
         dst.nestCheck = true;
         dst.nestNeedChange = true;
       }
       break;
     case B5Func::IS_FOUR_DIRECTION:
-      dst.isFourDirection = b == 1;
+      dst.isFourDirection = b0 == 1;
       break;
   }
 }
 
 bool CmdB5::read(const FrameData &frame) {
-  B5Data caps(frame);
+  B5Data data(frame);
 
-  for (; caps.available() > 3; caps.advance())
-    setFuncEnable(*this, caps);
+  for (; data.available() > 3; data.advance())
+    setFuncEnable(*this, data);
 
-  if (caps.available() == 3) {
-    this->zNum = caps[-2];
+  if (data.available() == 3) {
+    this->zNum = data[-2];
     return true;
   }
 

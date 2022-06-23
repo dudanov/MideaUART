@@ -41,7 +41,7 @@ enum FrameType : uint8_t {
 };
 
 using Handler = std::function<void()>;
-using ResponseHandler = std::function<ResponseStatus(FrameData)>;
+using ResponseHandler = std::function<ResponseStatus(DataBody)>;
 using OnStateCallback = std::function<void()>;
 
 class ApplianceBase {
@@ -87,10 +87,10 @@ class ApplianceBase {
   // Beeper feedback flag
   bool m_beeper{};
 
-  void m_queueNotify(FrameType type, FrameData data) { this->m_queueRequest(type, std::move(data), nullptr); }
-  void m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess = nullptr, Handler onError = nullptr);
-  void m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData = nullptr, Handler onSucess = nullptr, Handler onError = nullptr);
-  void m_sendFrame(FrameType type, const FrameData &data);
+  void m_queueNotify(FrameType type, DataBody data) { this->m_queueRequest(type, std::move(data), nullptr); }
+  void m_queueRequest(FrameType type, DataBody data, ResponseHandler onData, Handler onSucess = nullptr, Handler onError = nullptr);
+  void m_queueRequestPriority(FrameType type, DataBody data, ResponseHandler onData = nullptr, Handler onSucess = nullptr, Handler onError = nullptr);
+  void m_sendFrame(FrameType type, const DataBody &data);
   // Setup for appliances
   virtual void m_setup() {}
   // Loop for appliances
@@ -101,7 +101,7 @@ class ApplianceBase {
   virtual void m_onRequest(const Frame &frame) {}
  private:
   struct Request {
-    FrameData request;
+    DataBody request;
     ResponseHandler onData;
     Handler onSuccess;
     Handler onError;

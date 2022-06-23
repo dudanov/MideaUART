@@ -8,6 +8,14 @@ namespace ac {
 
 static const char *TAG = "CmdB5";
 
+bool CmdB5::isNeedB1Query() {
+  return this->hasNoWindFeel || this->hasSelfClean || this->hasOneKeyNoWindOnMe || this->hasBreeze || this->hasBuzzer ||
+         this->hasSmartEye || this->hasIndoorHumidity || this->hasVerticalWind || this->hasHorizontalWind ||
+         this->isTwins || this->isFourDirection;
+}
+
+
+
 CmdB5 &CmdB5::setBaseFunc() {
   this->power = true;
   this->mode = true;
@@ -125,7 +133,7 @@ enum B5Func : unsigned {
 
 class B5Data {
  public:
-  B5Data(const FrameData &data) : m_it(data.data() + 1), m_end(data.data() + data.size() - 1) {}
+  B5Data(const DataBody &data) : m_it(data.data() + 1), m_end(data.data() + data.size() - 1) {}
   B5Func getFunc() const { return static_cast<B5Func>(this->m_it[1] * 256 + this->m_it[0]); }
   size_t available() const { return std::distance(this->m_it, this->m_end); }
   size_t size() const { return this->m_it[2]; }
@@ -341,7 +349,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Data &data) {
   }
 }
 
-bool CmdB5::read(const FrameData &frame) {
+bool CmdB5::read(const DataBody &frame) {
   B5Data data(frame);
 
   for (; data.available() > 3; data.advance())

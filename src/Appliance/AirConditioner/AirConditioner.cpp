@@ -131,7 +131,7 @@ void AirConditioner::m_getPowerUsage() {
   LOG_D(TAG, "Enqueuing a GET_POWERUSAGE(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
-    [this](FrameData data) -> ResponseStatus {
+    [this](DataBody data) -> ResponseStatus {
       const auto status = data.to<StatusData>();
       if (!status.hasPowerInfo())
         return ResponseStatus::RESPONSE_WRONG;
@@ -151,7 +151,7 @@ void AirConditioner::m_getCapabilities() {
   LOG_D(TAG, "Enqueuing a priority GET_CAPABILITIES(0xB5) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
-    [this](FrameData data) -> ResponseStatus {
+    [this](DataBody data) -> ResponseStatus {
       if (!data.hasID(0xB5))
         return ResponseStatus::RESPONSE_WRONG;
       if (this->m_capabilities.read(data)) {
@@ -174,7 +174,7 @@ void AirConditioner::m_getCapabilities() {
 }
 
 void AirConditioner::m_getStatus() {
-  QueryStateData data{};
+  DataBodyDevQuery data{};
   LOG_D(TAG, "Enqueuing a GET_STATUS(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
@@ -199,7 +199,7 @@ void setProperty(T &property, const T &value, bool &update) {
   }
 }
 
-ResponseStatus AirConditioner::m_readStatus(FrameData data) {
+ResponseStatus AirConditioner::m_readStatus(DataBody data) {
   if (!data.hasStatus())
     return ResponseStatus::RESPONSE_WRONG;
   LOG_D(TAG, "New status data received. Parsing...");

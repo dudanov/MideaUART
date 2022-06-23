@@ -6,6 +6,8 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
+class CmdB5;
+
 /// Enum for all modes a Midea device can be in.
 enum Mode : uint8_t {
   ///
@@ -64,12 +66,12 @@ enum Preset : uint8_t {
   PRESET_FREEZE_PROTECTION,
 };
 
-class StatusData : public FrameData {
+class StatusData : public DataBody {
  public:
   StatusData()
-      : FrameData({0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) {}
-  StatusData(const FrameData &data) : FrameData(data) {}
+      : DataBody({0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) {}
+  StatusData(const DataBody &data) : DataBody(data) {}
 
   /// Copy status from another StatusData
   void copyStatus(const StatusData &p) { memcpy(this->m_data.data() + 1, p.data() + 1, 10); }
@@ -133,41 +135,41 @@ class StatusData : public FrameData {
   void m_setSleep(bool state) { this->m_setMask(10, state, 1); }
 };
 
-class QueryStateData : public FrameData {
+class DataBodyDevQuery : public DataBody {
  public:
-  QueryStateData()
-      : FrameData({65, -127, 0, -1, 3, -1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, FrameData::m_getID()}) {
+  DataBodyDevQuery() : DataBody({65, -127, 0, -1, 3, -1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4}) {
     this->appendCRC();
   }
 };
 
-class QueryPowerData : public FrameData {
+class QueryPowerData : public DataBody {
  public:
-  QueryPowerData() : FrameData({65, 33, 1, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4}) {
+  QueryPowerData() : DataBody({65, 33, 1, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4}) {
     this->appendCRC();
   }
 };
 
-class DisplayToggleData : public FrameData {
+class DisplayToggleData : public DataBody {
  public:
-  DisplayToggleData() : FrameData({65, 97, 0, -1, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, random(100) + 1}) {
+  DisplayToggleData() : DataBody({65, 97, 0, -1, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, random(100) + 1}) {
     this->appendCRC();
   }
 };
 
-class B5QueryData : public FrameData {
+class B5QueryData : public DataBody {
  public:
-  B5QueryData() : FrameData({-75, 1, 17}) { this->appendCRC(); }
+  B5QueryData() : DataBody({-75, 1, 17}) { this->appendCRC(); }
 };
 
-class B5QuerySecondData : public FrameData {
+class B5QuerySecondData : public DataBody {
  public:
-  B5QuerySecondData(uint8_t idx) : FrameData({-75, 1, 1, idx}) { this->appendCRC(); }
+  B5QuerySecondData(uint8_t idx) : DataBody({-75, 1, 1, idx}) { this->appendCRC(); }
 };
 
-class B1QueryData : public FrameData {
+class B1QueryData : public DataBody {
  public:
-  B1QueryData() : FrameData({-79, 8, 24, 0, 26, 0, 57, 0, 67, 0, 66, 0, 48, 0, 21, 0, 44, 2}) { this->appendCRC(); }
+  B1QueryData() : DataBody({-79, 8, 24, 0, 26, 0, 57, 0, 67, 0, 66, 0, 48, 0, 21, 0, 44, 2}) { this->appendCRC(); }
+  explicit B1QueryData(const CmdB5 &b5);
 };
 
 }  // namespace ac

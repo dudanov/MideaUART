@@ -10,12 +10,12 @@ namespace midea {
 class Frame {
  public:
   Frame() = default;
-  Frame(uint8_t appliance, uint8_t protocol, uint8_t type, const FrameData &data)
+  Frame(uint8_t appliance, uint8_t protocol, uint8_t type, const DataBody &data)
       : m_data({START_BYTE, 0x00, appliance, 0x00, 0x00, 0x00, 0x00, 0x00, protocol, type}) {
     this->setData(data);
   }
-  FrameData getData() const { return FrameData(this->m_data.data() + OFFSET_DATA, this->m_len() - OFFSET_DATA); }
-  void setData(const FrameData &data);
+  DataBody getData() const { return DataBody(this->m_data.data() + OFFSET_DATA, this->m_len() - OFFSET_DATA); }
+  void setData(const DataBody &data);
   bool isValid() const { return !this->m_calcCS(); }
 
   const uint8_t *data() const { return this->m_data.data(); }
@@ -29,7 +29,7 @@ class Frame {
  protected:
   std::vector<uint8_t> m_data;
   void m_trimData() { this->m_data.erase(this->m_data.begin() + OFFSET_DATA, this->m_data.end()); }
-  void m_appendData(const FrameData &data) {
+  void m_appendData(const DataBody &data) {
     std::copy(data.data(), data.data() + data.size(), std::back_inserter(this->m_data));
   }
   uint8_t m_len() const { return this->m_data[OFFSET_LENGTH]; }

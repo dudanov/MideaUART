@@ -1,4 +1,5 @@
 #include "Appliance/AirConditioner/StatusData.h"
+#include "Appliance/AirConditioner/Capabilities.h"
 
 namespace dudanov {
 namespace midea {
@@ -79,6 +80,67 @@ float StatusData::getPowerUsage() const {
     if (weight == 10000)
       return static_cast<float>(power) * 0.1f;
   }
+}
+
+B1QueryData::B1QueryData(const CmdB5 &cmdB5) : DataBody({177, 0}) {
+  if (cmdB5.hasBlowingPeople) {
+    this->m_data.push_back(50);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.hasAvoidPeople) {
+    this->m_data.push_back(51);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.hasSelfClean) {
+    this->m_data.push_back(57);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.hasOneKeyNoWindOnMe) {
+    this->m_data.push_back(66);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.hasBreeze) {
+    this->m_data.push_back(67);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.hasSmartEye) {
+    this->m_data.push_back(48);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.hasBuzzer) {
+    this->m_data.push_back(44);
+    this->m_data.push_back(2);
+  }
+  if (cmdB5.hasAutoClearHumidity || cmdB5.hasHandClearHumidity) {
+    this->m_data.push_back(21);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.hasVerticalWind) {
+    this->m_data.push_back(9);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.hasHorizontalWind) {
+    this->m_data.push_back(10);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.isTwins) {
+    this->m_data.push_back(49);
+    this->m_data.push_back(2);
+  }
+  if (cmdB5.isFourDirection) {
+    this->m_data.push_back(48);
+    this->m_data.push_back(2);
+  }
+  if (cmdB5.hasJetCool) {
+    this->m_data.push_back(103);
+    this->m_data.push_back(0);
+  }
+  if (cmdB5.hasFreshAir) {
+    this->m_data.push_back(75);
+    this->m_data.push_back(0);
+  }
+  this->m_data[1] = this->m_data.size() / 2 - 1;
+  this->appendCRC();
 }
 
 }  // namespace ac

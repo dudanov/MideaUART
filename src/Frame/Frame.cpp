@@ -3,7 +3,7 @@
 namespace dudanov {
 namespace midea {
 
-void Frame::setData(const FrameData &data) {
+void Frame::setData(const DataBody &data) {
   this->m_trimData();
   this->m_appendData(data);
   this->m_data[OFFSET_LENGTH] = this->m_data.size();

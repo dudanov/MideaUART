@@ -163,7 +163,7 @@ class B5QueryData : public DataBody {
 
 class B5QuerySecondData : public DataBody {
  public:
-  B5QuerySecondData(uint8_t idx) : DataBody({-75, 1, 1, idx}) { this->appendCRC(); }
+  explicit B5QuerySecondData(uint8_t idx) : DataBody({-75, 1, 1, idx}) { this->appendCRC(); }
 };
 
 class B1QueryData : public DataBody {

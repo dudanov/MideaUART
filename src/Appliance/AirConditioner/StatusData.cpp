@@ -82,64 +82,36 @@ float StatusData::getPowerUsage() const {
   }
 }
 
-B1QueryData::B1QueryData(const CmdB5 &cmdB5) : DataBody({177, 0}) {
-  if (cmdB5.hasBlowingPeople) {
-    this->m_data.push_back(50);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.hasAvoidPeople) {
-    this->m_data.push_back(51);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.hasSelfClean) {
-    this->m_data.push_back(57);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.hasOneKeyNoWindOnMe) {
-    this->m_data.push_back(66);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.hasBreeze) {
-    this->m_data.push_back(67);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.hasSmartEye) {
-    this->m_data.push_back(48);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.hasBuzzer) {
-    this->m_data.push_back(44);
-    this->m_data.push_back(2);
-  }
-  if (cmdB5.hasAutoClearHumidity || cmdB5.hasHandClearHumidity) {
-    this->m_data.push_back(21);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.hasVerticalWind) {
-    this->m_data.push_back(9);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.hasHorizontalWind) {
-    this->m_data.push_back(10);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.isTwins) {
-    this->m_data.push_back(49);
-    this->m_data.push_back(2);
-  }
-  if (cmdB5.isFourDirection) {
-    this->m_data.push_back(48);
-    this->m_data.push_back(2);
-  }
-  if (cmdB5.hasJetCool) {
-    this->m_data.push_back(103);
-    this->m_data.push_back(0);
-  }
-  if (cmdB5.hasFreshAir) {
-    this->m_data.push_back(75);
-    this->m_data.push_back(0);
-  }
-  this->m_data[1] = this->m_data.size() / 2 - 1;
+FrameDataB1Query::FrameDataB1Query(const CmdB5 &b5) : FrameData({177, 0}) {
+  if (b5.hasBlowingPeople)
+    this->append<uint16_t>(50);
+  if (b5.hasAvoidPeople)
+    this->append<uint16_t>(51);
+  if (b5.hasSelfClean)
+    this->append<uint16_t>(57);
+  if (b5.hasOneKeyNoWindOnMe)
+    this->append<uint16_t>(66);
+  if (b5.hasBreeze)
+    this->append<uint16_t>(67);
+  if (b5.hasSmartEye)
+    this->append<uint16_t>(48);
+  if (b5.hasBuzzer)
+    this->append<uint16_t>(2 * 256 + 44);
+  if (b5.hasAutoClearHumidity || b5.hasHandClearHumidity)
+    this->append<uint16_t>(21);
+  if (b5.hasVerticalWind)
+    this->append<uint16_t>(9);
+  if (b5.hasHorizontalWind)
+    this->append<uint16_t>(10);
+  if (b5.isTwins)
+    this->append<uint16_t>(2 * 256 + 49);
+  if (b5.isFourDirection)
+    this->append<uint16_t>(2 * 256 + 48);
+  if (b5.hasJetCool)
+    this->append<uint16_t>(103);
+  if (b5.hasFreshAir)
+    this->append<uint16_t>(75);
+  this->m_setValue(1, this->m_data.size() / 2 - 1);  // set number of requested functions
   this->appendCRC();
 }
 

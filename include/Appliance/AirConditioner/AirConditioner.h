@@ -45,7 +45,7 @@ class AirConditioner : public ApplianceBase {
   void m_getStatus();
   void m_setStatus(StatusData status);
   void m_displayToggle();
-  ResponseStatus m_readStatus(DataBody data);
+  ResponseStatus m_readStatus(FrameData data);
   CmdB5 m_capabilities{};
   Timer m_powerUsageTimer;
   float m_indoorHumidity{};

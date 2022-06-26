@@ -7,14 +7,14 @@ class IPAddress;
 namespace dudanov {
 namespace midea {
 
-class DataBody {
+class FrameData {
  public:
-  DataBody() = delete;
-  DataBody(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end)
+  FrameData() = delete;
+  FrameData(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end)
       : m_data(begin, end) {}
-  DataBody(const uint8_t *data, uint8_t size) : m_data(data, data + size) {}
-  DataBody(std::initializer_list<uint8_t> list) : m_data(list) {}
-  DataBody(uint8_t size) : m_data(size, 0) {}
+  FrameData(const uint8_t *data, uint8_t size) : m_data(data, data + size) {}
+  FrameData(std::initializer_list<uint8_t> list) : m_data(list) {}
+  FrameData(uint8_t size) : m_data(size, 0) {}
   template<typename T> T to() { return std::move(*this); }
   const uint8_t *data() const { return this->m_data.data(); }
   uint8_t size() const { return this->m_data.size(); }
@@ -27,6 +27,10 @@ class DataBody {
     this->appendCRC();
   }
   bool hasValidCRC() const { return !this->m_calcCRC(); }
+  template<typename T> void append(const T &data) {
+    for (size_t i = 0; i < sizeof(T); ++i)
+      this->m_data.push_back(data >> (i * 8));
+  }
 
  protected:
   std::vector<uint8_t> m_data;
@@ -43,10 +47,10 @@ class DataBody {
   void m_setMask(uint8_t idx, bool state, uint8_t mask = 255) { this->m_setValue(idx, state ? mask : 0, mask); }
 };
 
-class NetworkNotifyData : public DataBody {
+class NetworkNotifyData : public FrameData {
  public:
   NetworkNotifyData()
-      : DataBody({0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x01, 0x00,
+      : FrameData({0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x01, 0x00,
                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) {}
   void setConnected(bool state) { this->m_setMask(8, !state, 1); }
   void setSignalStrength(uint8_t value) { this->m_setValue(2, value); }

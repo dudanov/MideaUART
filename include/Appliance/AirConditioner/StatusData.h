@@ -66,12 +66,12 @@ enum Preset : uint8_t {
   PRESET_FREEZE_PROTECTION,
 };
 
-class StatusData : public DataBody {
+class StatusData : public FrameData {
  public:
   StatusData()
-      : DataBody({0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) {}
-  StatusData(const DataBody &data) : DataBody(data) {}
+      : FrameData({0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) {}
+  StatusData(const FrameData &data) : FrameData(data) {}
 
   /// Copy status from another StatusData
   void copyStatus(const StatusData &p) { memcpy(this->m_data.data() + 1, p.data() + 1, 10); }
@@ -135,41 +135,44 @@ class StatusData : public DataBody {
   void m_setSleep(bool state) { this->m_setMask(10, state, 1); }
 };
 
-class DataBodyDevQuery : public DataBody {
+/// Specific DeviceStateQuery 0x41 frame
+class FrameDataDevQuery41 : public FrameData {
  public:
-  DataBodyDevQuery() : DataBody({65, -127, 0, -1, 3, -1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4}) {
+  FrameDataDevQuery41() : FrameData({65, -127, 0, -1, 3, -1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4}) {
     this->appendCRC();
   }
 };
 
-class QueryPowerData : public DataBody {
+/// Specific PowerQuery 0x41 frame
+class FrameDataQuery41 : public FrameData {
  public:
-  QueryPowerData() : DataBody({65, 33, 1, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4}) {
+  FrameDataQuery41() : FrameData({65, 33, 1, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4}) {
     this->appendCRC();
   }
 };
 
-class DisplayToggleData : public DataBody {
+/// Specific DisplayToggle 0x41 command frame
+class FrameDataLight41 : public FrameData {
  public:
-  DisplayToggleData() : DataBody({65, 97, 0, -1, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, random(100) + 1}) {
+  FrameDataLight41() : FrameData({65, 97, 0, -1, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, random(100) + 1}) {
     this->appendCRC();
   }
 };
 
-class B5QueryData : public DataBody {
+/// Starting B5Query frame
+class FrameDataB5Query : public FrameData {
  public:
-  B5QueryData() : DataBody({-75, 1, 17}) { this->appendCRC(); }
+  FrameDataB5Query() : FrameData({-75, 1, 17}) { this->appendCRC(); }
 };
 
-class B5QuerySecondData : public DataBody {
+class FrameDataSecondB5Query : public FrameData {
  public:
-  explicit B5QuerySecondData(uint8_t idx) : DataBody({-75, 1, 1, idx}) { this->appendCRC(); }
+  explicit FrameDataSecondB5Query(uint8_t idx) : FrameData({-75, 1, 1, idx}) { this->appendCRC(); }
 };
 
-class B1QueryData : public DataBody {
+class FrameDataB1Query : public FrameData {
  public:
-  B1QueryData() : DataBody({-79, 8, 24, 0, 26, 0, 57, 0, 67, 0, 66, 0, 48, 0, 21, 0, 44, 2}) { this->appendCRC(); }
-  explicit B1QueryData(const CmdB5 &b5);
+  explicit FrameDataB1Query(const CmdB5 &b5);
 };
 
 }  // namespace ac

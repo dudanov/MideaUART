@@ -127,11 +127,11 @@ void AirConditioner::setPowerState(bool state) {
 }
 
 void AirConditioner::m_getPowerUsage() {
-  QueryPowerData data{};
+  FrameDataQuery41 data{};
   LOG_D(TAG, "Enqueuing a GET_POWERUSAGE(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
-    [this](DataBody data) -> ResponseStatus {
+    [this](FrameData data) -> ResponseStatus {
       const auto status = data.to<StatusData>();
       if (!status.hasPowerInfo())
         return ResponseStatus::RESPONSE_WRONG;
@@ -145,17 +145,17 @@ void AirConditioner::m_getPowerUsage() {
 }
 
 void AirConditioner::m_getCapabilities() {
-  B5QueryData data{};
+  FrameDataB5Query data{};
   this->m_capabilities.zNum = 0;
   this->m_autoconfStatus = AUTOCONF_PROGRESS;
   LOG_D(TAG, "Enqueuing a priority GET_CAPABILITIES(0xB5) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
-    [this](DataBody data) -> ResponseStatus {
+    [this](FrameData data) -> ResponseStatus {
       if (!data.hasID(0xB5))
         return ResponseStatus::RESPONSE_WRONG;
       if (this->m_capabilities.read(data)) {
-        B5QuerySecondData data(this->m_capabilities.zNum);
+        FrameDataSecondB5Query data(this->m_capabilities.zNum);
         this->m_sendFrame(FrameType::DEVICE_QUERY, data);
         return ResponseStatus::RESPONSE_PARTIAL;
       }
@@ -174,7 +174,7 @@ void AirConditioner::m_getCapabilities() {
 }
 
 void AirConditioner::m_getStatus() {
-  DataBodyDevQuery data{};
+  FrameDataDevQuery41 data{};
   LOG_D(TAG, "Enqueuing a GET_STATUS(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
@@ -183,7 +183,7 @@ void AirConditioner::m_getStatus() {
 }
 
 void AirConditioner::m_displayToggle() {
-  DisplayToggleData data{};
+  FrameDataLight41 data{};
   LOG_D(TAG, "Enqueuing a priority TOGGLE_LIGHT(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
@@ -199,7 +199,7 @@ void setProperty(T &property, const T &value, bool &update) {
   }
 }
 
-ResponseStatus AirConditioner::m_readStatus(DataBody data) {
+ResponseStatus AirConditioner::m_readStatus(FrameData data) {
   if (!data.hasStatus())
     return ResponseStatus::RESPONSE_WRONG;
   LOG_D(TAG, "New status data received. Parsing...");

@@ -5,7 +5,7 @@
 namespace dudanov {
 namespace midea {
 
-class DataBody;
+class FrameData;
 
 namespace ac {
 
@@ -14,11 +14,14 @@ typedef unsigned char uint8_t;
 class CmdB5 {
  public:
   // Read from frames
-  bool read(const DataBody &data);
+  bool read(const FrameData &data);
   // Dump capabilities
   void dump() const;
-
+  // Checking for need sending B1 query
   bool isNeedB1Query() const;
+
+  
+
   CmdB5 &setBaseFunc();
   CmdB5 &toSubCool();
   CmdB5 &toOnlyCool();

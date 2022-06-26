@@ -157,7 +157,7 @@ void ApplianceBase::m_destroyRequest() {
   this->m_request = nullptr;
 }
 
-void ApplianceBase::m_sendFrame(FrameType type, const DataBody &data) {
+void ApplianceBase::m_sendFrame(FrameType type, const FrameData &data) {
   Frame frame(this->m_appType, this->m_protocol, type, data);
   LOG_D(TAG, "TX: %s", frame.toString().c_str());
   this->m_stream->write(frame.data(), frame.size());
@@ -169,12 +169,12 @@ void ApplianceBase::m_sendFrame(FrameType type, const DataBody &data) {
   this->m_periodTimer.start(this->m_period);
 }
 
-void ApplianceBase::m_queueRequest(FrameType type, DataBody data, ResponseHandler onData, Handler onSucess, Handler onError) {
+void ApplianceBase::m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess, Handler onError) {
   LOG_D(TAG, "Enqueuing the request...");
   this->m_queue.push_back(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
 }
 
-void ApplianceBase::m_queueRequestPriority(FrameType type, DataBody data, ResponseHandler onData, Handler onSucess, Handler onError) {
+void ApplianceBase::m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess, Handler onError) {
   LOG_D(TAG, "Priority request queuing...");
   this->m_queue.push_front(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
 }

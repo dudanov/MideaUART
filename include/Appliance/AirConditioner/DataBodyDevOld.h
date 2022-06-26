@@ -9,7 +9,7 @@ namespace ac {
 
 typedef unsigned char uint8_t;
 
-class DataBodyDevOld : public DataBody {
+class DataBodyDevOld : public FrameData {
  public:
   DataBodyDevOld() : commandType(64) {}
   explicit DataBodyDevOld(uint8_t cmdType) : commandType(cmdType) {}
@@ -75,23 +75,23 @@ class DataBodyDevOld : public DataBody {
       this->eco = 0;
       this->tubro = 0;
     }
-    uint8_t b15 = this->mode;
-    if (b15 == 5) {
+    uint8_t mode = this->mode;
+    if (mode == 5) {
       this->eco = 0;
       this->tubro = 0;
     }
-    if (b15 != 3 && this->fanSpeed == 101) {
+    if (mode != 3 && this->fanSpeed == 101) {
       this->fanSpeed = 102;
     }
-    uint8_t b16 = this->powerStatus;
-    if (b16 == 0) {
+    uint8_t power = this->powerStatus;
+    if (power == 0) {
       this->eco = 0;
       this->tubro = 0;
     }
     byte[] bArr2 = new byte[25];
 
     this->Zerobyte = 64;
-    this->FirstByte = b16 | 2 | (this->imodeResume & 4) | (this->childSleepMode & 8) | (this->timerMode & 16) |
+    this->FirstByte = power | 2 | (this->imodeResume & 4) | (this->childSleepMode & 8) | (this->timerMode & 16) |
                        (this->test2 & 32) | 64;
     if (this->setTemperature >= 50.0f) {
       CmdB5 cmdB5 = this->mB5;

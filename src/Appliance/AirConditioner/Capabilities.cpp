@@ -354,13 +354,8 @@ bool CmdB5::read(const FrameData &frame) {
   for (; data.available() > 3; data.advance())
     setFuncEnable(*this, data);
 
-  if (data.available() == 3) {
-    this->zNum = data[-3];
-    return true;
-  }
-
-  this->zNum = 0;
-  return false;
+  this->zNum = (data.available() == 3) ? data[-3] : 0;
+  return this->zNum;
 }
 
 #define LOG_CAPABILITY(str, condition) \

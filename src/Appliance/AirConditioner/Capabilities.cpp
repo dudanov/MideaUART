@@ -103,7 +103,7 @@ enum B5Func : unsigned {
   VERTICAL_WIND = makeU16(0, 9),
   HORIZONTAL_WIND = makeU16(0, 10),
   INDOOR_HUMIDITY = makeU16(0, 21),
-  NO_WIND_FEEL = makeU16(0, 24),
+  SILKY_COOL = makeU16(0, 24),
   SMART_EYE = makeU16(0, 48),
   BLOWING_PEOPLE = makeU16(0, 50),
   AVOID_PEOPLE = makeU16(0, 51),
@@ -157,7 +157,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
     case B5Func::INDOOR_HUMIDITY:
       dst.hasIndoorHumidity = b0 != 0;
       break;
-    case B5Func::NO_WIND_FEEL:
+    case B5Func::SILKY_COOL:
       dst.hasNoWindFeel = b0 != 0;
       break;
     case B5Func::SMART_EYE:
@@ -364,46 +364,55 @@ void CmdB5::dump() const {
   LOG_CONFIG(TAG, "CAPABILITIES REPORT:");
   if (this->auto1) {
     LOG_CONFIG(TAG, "  [x] AUTO MODE");
-    LOG_CONFIG(TAG, "      - MIN TEMP: %d", this->auto_adjust_down_temp);
-    LOG_CONFIG(TAG, "      - MAX TEMP: %d", this->auto_adjust_up_temp);
+    LOG_CONFIG(TAG, "      - Min: %d", this->auto_adjust_down_temp);
+    LOG_CONFIG(TAG, "      - Max: %d", this->auto_adjust_up_temp);
   }
   if (this->cool) {
     LOG_CONFIG(TAG, "  [x] COOL MODE");
-    LOG_CONFIG(TAG, "      - MIN TEMP: %d", this->cool_adjust_down_temp);
-    LOG_CONFIG(TAG, "      - MAX TEMP: %d", this->cool_adjust_up_temp);
+    LOG_CAPABILITY("      - Boost", this->strongCool);
+    LOG_CONFIG(TAG, "      - Min: %d", this->cool_adjust_down_temp);
+    LOG_CONFIG(TAG, "      - Max: %d", this->cool_adjust_up_temp);
   }
   if (this->hot) {
     LOG_CONFIG(TAG, "  [x] HEAT MODE");
-    LOG_CONFIG(TAG, "      - MIN TEMP: %d", this->hot_adjust_down_temp);
-    LOG_CONFIG(TAG, "      - MAX TEMP: %d", this->hot_adjust_up_temp);
+    LOG_CAPABILITY("      - Boost", this->strongHot);
+    LOG_CONFIG(TAG, "      - Min: %d", this->hot_adjust_down_temp);
+    LOG_CONFIG(TAG, "      - Max: %d", this->hot_adjust_up_temp);
   }
-  LOG_CAPABILITY("  [x] DRY MODE", this->dry);
-  LOG_CAPABILITY("  [x] ECO MODE", this->eco);
-  LOG_CAPABILITY("  [x] SPECIAL ECO", this->special_eco);
-  LOG_CAPABILITY("  [x] FROST PROTECTION MODE", this->eightHot);
-  LOG_CAPABILITY("  [x] TURBO COOL", this->strongCool);
-  LOG_CAPABILITY("  [x] TURBO HEAT", this->strongHot);
+  LOG_CAPABILITY("  [x] Dry Mode", this->dry);
+  LOG_CAPABILITY("  [x] Auto Dry", this->hasAutoClearHumidity);
+  LOG_CAPABILITY("  [x] Custom Dry", this->hasHandClearHumidity);  // .humidity in command
+
   LOG_CAPABILITY("  [x] WIND SPEED", this->hasWindSpeed);
-  LOG_CAPABILITY("  [x] BREEZE", this->hasBreeze);
-  LOG_CAPABILITY("  [x] LIGHT", this->lightType);
-  LOG_CAPABILITY("  [x] UPDOWN FAN", this->updownFan);
-  LOG_CAPABILITY("  [x] LEFTRIGHT FAN", this->leftrightFan);
-  LOG_CAPABILITY("  [x] AUTO SET HUMIDITY", this->hasAutoClearHumidity);
-  LOG_CAPABILITY("  [x] MANUAL SET HUMIDITY", this->hasHandClearHumidity);
-  LOG_CAPABILITY("  [x] INDOOR HUMIDITY", this->hasIndoorHumidity);
-  LOG_CAPABILITY("  [x] POWER CAL", this->powerCal);
-  LOG_CAPABILITY("  [x] POWER CAL SETTING", this->powerCalSetting);
-  LOG_CAPABILITY("  [x] BUZZER", this->hasBuzzer);
-  LOG_CAPABILITY("  [x] SELF CLEAN", this->hasSelfClean);
-  LOG_CAPABILITY("  [x] DECIMALS", this->isHavePoint);
-  LOG_CAPABILITY("  [x] NEST CHECK", this->nestCheck);
-  LOG_CAPABILITY("  [x] NEST NEED CHANGE", this->nestNeedChange);
-  LOG_CAPABILITY("  [x] ONE KEY NO WIND ON ME", this->hasOneKeyNoWindOnMe);
-  LOG_CAPABILITY("  [x] JET COOL", this->hasJetCool);
-  LOG_CAPABILITY("  [x] SMART EYE", this->hasSmartEye);
+  LOG_CAPABILITY("  [x] Indoor Humidity", this->hasIndoorHumidity);  // Indoor humidity in B1 response
+  LOG_CAPABILITY("  [x] Decimal Point", this->isHavePoint);
   LOG_CAPABILITY("  [x] UNIT CHANGEABLE", this->unitChangeable);
-  LOG_CAPABILITY("  [x] AVOID PEOPLE", this->hasAvoidPeople);
-  LOG_CAPABILITY("  [x] BLOWING PEOPLE", this->hasBlowingPeople);
+
+  LOG_CAPABILITY("  [x] FreshAir", this->hasFreshAir);
+  LOG_CAPABILITY("  [x] CoolFlash", this->hasJetCool);
+  LOG_CAPABILITY("  [x] Breezeless", this->hasBreeze);
+  LOG_CAPABILITY("  [x] Vertical Direction", this->hasVerticalWind);
+  LOG_CAPABILITY("  [x] Horizontal Direction", this->hasHorizontalWind);
+  LOG_CAPABILITY("  [x] TWINS", this->isTwins);
+  LOG_CAPABILITY("  [x] FOUR DIRECTION", this->isFourDirection);
+  LOG_CAPABILITY("  [x] Vertical Swing", this->leftrightFan);
+  LOG_CAPABILITY("  [x] Horizontal Swing", this->updownFan);
+  LOG_CAPABILITY("  [x] Silky Cool", this->hasNoWindFeel);
+  LOG_CAPABILITY("  [x] ECO", this->eco);
+  LOG_CAPABILITY("  [x] Special ECO", this->special_eco);
+  LOG_CAPABILITY("  [x] Frost Protection", this->eightHot);
+  LOG_CAPABILITY("  [x] Wind ON me", this->hasBlowingPeople);
+  LOG_CAPABILITY("  [x] Wind OFF me", this->hasAvoidPeople);
+  LOG_CAPABILITY("  [x] LED", this->lightType);
+  LOG_CAPABILITY("  [x] Sound", this->hasBuzzer);
+  LOG_CAPABILITY("  [x] Active Clean", this->hasSelfClean);
+  LOG_CAPABILITY("  [x] Breeze Away", this->hasOneKeyNoWindOnMe);
+  LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);
+  LOG_CAPABILITY("  [x] Filter Clean Reminder",
+                 this->nestCheck);  // dusFull in status. cleanFanTime == 1 in command clear timer
+  LOG_CAPABILITY("  [x] NEST NEED CHANGE", this->nestNeedChange);
+  LOG_CAPABILITY("  [x] Power Report", this->powerCal);
+  LOG_CAPABILITY("  [x] Power Limit", this->powerCalSetting);
 }
 
 }  // namespace ac

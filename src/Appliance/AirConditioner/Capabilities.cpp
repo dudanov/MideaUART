@@ -364,49 +364,48 @@ bool CmdB5::read(const FrameData &frame) {
 
 void CmdB5::dump() const {
   LOG_CONFIG(TAG, "CAPABILITIES REPORT:");
-  if (this->m_autoMode) {
+  if (this->auto1) {
     LOG_CONFIG(TAG, "  [x] AUTO MODE");
-    LOG_CONFIG(TAG, "      - MIN TEMP: %.1f", this->m_minTempAuto);
-    LOG_CONFIG(TAG, "      - MAX TEMP: %.1f", this->m_maxTempAuto);
+    LOG_CONFIG(TAG, "      - MIN TEMP: %d", this->auto_adjust_down_temp);
+    LOG_CONFIG(TAG, "      - MAX TEMP: %d", this->auto_adjust_up_temp);
   }
-  if (this->m_coolMode) {
+  if (this->cool) {
     LOG_CONFIG(TAG, "  [x] COOL MODE");
-    LOG_CONFIG(TAG, "      - MIN TEMP: %.1f", this->m_minTempCool);
-    LOG_CONFIG(TAG, "      - MAX TEMP: %.1f", this->m_maxTempCool);
+    LOG_CONFIG(TAG, "      - MIN TEMP: %d", this->cool_adjust_down_temp);
+    LOG_CONFIG(TAG, "      - MAX TEMP: %d", this->cool_adjust_up_temp);
   }
-  if (this->m_heatMode) {
+  if (this->hot) {
     LOG_CONFIG(TAG, "  [x] HEAT MODE");
-    LOG_CONFIG(TAG, "      - MIN TEMP: %.1f", this->m_minTempHeat);
-    LOG_CONFIG(TAG, "      - MAX TEMP: %.1f", this->m_maxTempHeat);
+    LOG_CONFIG(TAG, "      - MIN TEMP: %d", this->hot_adjust_down_temp);
+    LOG_CONFIG(TAG, "      - MAX TEMP: %d", this->hot_adjust_up_temp);
   }
-  LOG_CAPABILITY("  [x] DRY MODE", this->m_dryMode);
-  LOG_CAPABILITY("  [x] ECO MODE", this->m_ecoMode);
-  LOG_CAPABILITY("  [x] SPECIAL ECO", this->m_specialEco);
-  LOG_CAPABILITY("  [x] FROST PROTECTION MODE", this->m_frostProtectionMode);
-  LOG_CAPABILITY("  [x] TURBO COOL", this->m_turboCool);
-  LOG_CAPABILITY("  [x] TURBO HEAT", this->m_turboHeat);
-  LOG_CAPABILITY("  [x] FANSPEED CONTROL", this->m_fanSpeedControl);
-  LOG_CAPABILITY("  [x] BREEZE CONTROL", this->m_breezeControl);
-  LOG_CAPABILITY("  [x] LIGHT CONTROL", this->m_lightControl);
-  LOG_CAPABILITY("  [x] UPDOWN FAN", this->m_updownFan);
-  LOG_CAPABILITY("  [x] LEFTRIGHT FAN", this->m_leftrightFan);
-  LOG_CAPABILITY("  [x] AUTO SET HUMIDITY", this->m_autoSetHumidity);
-  LOG_CAPABILITY("  [x] MANUAL SET HUMIDITY", this->m_manualSetHumidity);
-  LOG_CAPABILITY("  [x] INDOOR HUMIDITY", this->m_indoorHumidity);
-  LOG_CAPABILITY("  [x] POWER CAL", this->m_powerCal);
-  LOG_CAPABILITY("  [x] POWER CAL SETTING", this->m_powerCalSetting);
-  LOG_CAPABILITY("  [x] BUZZER", this->m_buzzer);
-  LOG_CAPABILITY("  [x] ACTIVE CLEAN", this->m_activeClean);
-  LOG_CAPABILITY("  [x] DECIMALS", this->m_decimals);
-  LOG_CAPABILITY("  [x] ELECTRIC AUX HEATING", this->m_electricAuxHeating);
-  LOG_CAPABILITY("  [x] NEST CHECK", this->m_nestCheck);
-  LOG_CAPABILITY("  [x] NEST NEED CHANGE", this->m_nestNeedChange);
-  LOG_CAPABILITY("  [x] ONE KEY NO WIND ON ME", this->m_oneKeyNoWindOnMe);
-  LOG_CAPABILITY("  [x] SILKY COOL", this->m_silkyCool);
-  LOG_CAPABILITY("  [x] SMART EYE", this->m_smartEye);
-  LOG_CAPABILITY("  [x] UNIT CHANGEABLE", this->m_unitChangeable);
-  LOG_CAPABILITY("  [x] WIND OF ME", this->m_windOfMe);
-  LOG_CAPABILITY("  [x] WIND ON ME", this->m_windOnMe);
+  LOG_CAPABILITY("  [x] DRY MODE", this->dry);
+  LOG_CAPABILITY("  [x] ECO MODE", this->eco);
+  LOG_CAPABILITY("  [x] SPECIAL ECO", this->special_eco);
+  LOG_CAPABILITY("  [x] FROST PROTECTION MODE", this->eightHot);
+  LOG_CAPABILITY("  [x] TURBO COOL", this->strongCool);
+  LOG_CAPABILITY("  [x] TURBO HEAT", this->strongHot);
+  LOG_CAPABILITY("  [x] WIND SPEED", this->hasWindSpeed);
+  LOG_CAPABILITY("  [x] BREEZE", this->hasBreeze);
+  LOG_CAPABILITY("  [x] LIGHT", this->lightType);
+  LOG_CAPABILITY("  [x] UPDOWN FAN", this->updownFan);
+  LOG_CAPABILITY("  [x] LEFTRIGHT FAN", this->leftrightFan);
+  LOG_CAPABILITY("  [x] AUTO SET HUMIDITY", this->hasAutoClearHumidity);
+  LOG_CAPABILITY("  [x] MANUAL SET HUMIDITY", this->hasHandClearHumidity);
+  LOG_CAPABILITY("  [x] INDOOR HUMIDITY", this->hasIndoorHumidity);
+  LOG_CAPABILITY("  [x] POWER CAL", this->powerCal);
+  LOG_CAPABILITY("  [x] POWER CAL SETTING", this->powerCalSetting);
+  LOG_CAPABILITY("  [x] BUZZER", this->hasBuzzer);
+  LOG_CAPABILITY("  [x] SELF CLEAN", this->hasSelfClean);
+  LOG_CAPABILITY("  [x] DECIMALS", this->isHavePoint);
+  LOG_CAPABILITY("  [x] NEST CHECK", this->nestCheck);
+  LOG_CAPABILITY("  [x] NEST NEED CHANGE", this->nestNeedChange);
+  LOG_CAPABILITY("  [x] ONE KEY NO WIND ON ME", this->hasOneKeyNoWindOnMe);
+  LOG_CAPABILITY("  [x] JET COOL", this->hasJetCool);
+  LOG_CAPABILITY("  [x] SMART EYE", this->hasSmartEye);
+  LOG_CAPABILITY("  [x] UNIT CHANGEABLE", this->unitChangeable);
+  LOG_CAPABILITY("  [x] AVOID PEOPLE", this->hasAvoidPeople);
+  LOG_CAPABILITY("  [x] BLOWING PEOPLE", this->hasBlowingPeople);
 }
 
 }  // namespace ac

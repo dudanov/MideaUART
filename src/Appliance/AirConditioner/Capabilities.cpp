@@ -1,5 +1,6 @@
 #include "Appliance/AirConditioner/Capabilities.h"
 #include "Frame/FrameData.h"
+#include "Helpers/Helpers.h"
 #include "Helpers/Log.h"
 
 namespace dudanov {
@@ -129,11 +130,11 @@ enum B5Func : unsigned {
   IS_FOUR_DIRECTION = makeU16(2, 51),
 };
 
-class B5Data {
+class B5Reader {
  public:
   // Constructor from FrameData. Skip ID, NUM and CRC bytes.
-  B5Data(const FrameData &data) : m_it(data.data() + 2), m_end(data.data() + data.size() - 1) {}
-  B5Func getFunc() const { return static_cast<B5Func>(this->m_it[1] * 256 + this->m_it[0]); }
+  B5Reader(const FrameData &data) : m_it(data.data() + 2), m_end(data.data() + data.size() - 1) {}
+  uint16_t getFunction() const { return ByteHelpers::getLE<uint16_t>(this->m_it); }
   size_t available() const { return std::distance(this->m_it, this->m_end); }
   size_t size() const { return this->m_it[2]; }
   uint8_t operator[](size_t idx) const { return this->m_it[idx + 3]; }
@@ -144,9 +145,9 @@ class B5Data {
   const uint8_t *const m_end;
 };
 
-static void setFuncEnable(CmdB5 &dst, const B5Data &data) {
+static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
   const uint8_t b0 = data[0];
-  switch (data.getFunc()) {
+  switch (data.getFunction()) {
     case B5Func::VERTICAL_WIND:
       dst.hasVerticalWind = b0 == 1;
       break;
@@ -346,7 +347,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Data &data) {
 }
 
 bool CmdB5::read(const FrameData &frame) {
-  B5Data data(frame);
+  B5Reader data(frame);
 
   for (; data.available() > 3; data.advance())
     setFuncEnable(*this, data);

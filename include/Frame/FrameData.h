@@ -16,6 +16,8 @@ class FrameData {
   FrameData(std::initializer_list<uint8_t> list) : m_data(list) {}
   FrameData(uint8_t size) : m_data(size, 0) {}
   template<typename T> T to() { return std::move(*this); }
+  const uint8_t &operator[](size_t idx) const { return this->m_data[idx]; }
+  uint8_t &operator[](size_t idx) { return this->m_data[idx]; }
   const uint8_t *data() const { return this->m_data.data(); }
   uint8_t size() const { return this->m_data.size(); }
   bool hasID(uint8_t value) const { return this->m_data[0] == value; }

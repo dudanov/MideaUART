@@ -369,15 +369,15 @@ void CmdB5::dump() const {
   }
   if (this->cool) {
     LOG_CONFIG(TAG, "  [x] COOL MODE");
-    LOG_CAPABILITY("      - Boost", this->strongCool);
     LOG_CONFIG(TAG, "      - Min: %d", this->cool_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->cool_adjust_up_temp);
+    LOG_CAPABILITY("      - Boost", this->strongCool);
   }
   if (this->hot) {
     LOG_CONFIG(TAG, "  [x] HEAT MODE");
-    LOG_CAPABILITY("      - Boost", this->strongHot);
     LOG_CONFIG(TAG, "      - Min: %d", this->hot_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->hot_adjust_up_temp);
+    LOG_CAPABILITY("      - Boost", this->strongHot);
   }
   LOG_CAPABILITY("  [x] Dry Mode", this->dry);
   LOG_CAPABILITY("  [x] Auto Dry", this->hasAutoClearHumidity);

@@ -361,33 +361,33 @@ bool CmdB5::read(const FrameData &frame) {
     LOG_CONFIG(TAG, str);
 
 void CmdB5::dump() const {
-  LOG_CONFIG(TAG, "CAPABILITIES REPORT:");
+  LOG_CONFIG(TAG, "Capabilities Report:");
   if (this->auto1) {
-    LOG_CONFIG(TAG, "  [x] AUTO MODE");
+    LOG_CONFIG(TAG, "  [x] Auto Mode");
     LOG_CONFIG(TAG, "      - Min: %d", this->auto_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->auto_adjust_up_temp);
   }
   if (this->cool) {
-    LOG_CONFIG(TAG, "  [x] COOL MODE");
+    LOG_CONFIG(TAG, "  [x] Cool Mode");
     LOG_CONFIG(TAG, "      - Min: %d", this->cool_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->cool_adjust_up_temp);
     LOG_CAPABILITY("      - Boost", this->strongCool);
   }
   if (this->hot) {
-    LOG_CONFIG(TAG, "  [x] HEAT MODE");
+    LOG_CONFIG(TAG, "  [x] Heat Mode");
     LOG_CONFIG(TAG, "      - Min: %d", this->hot_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->hot_adjust_up_temp);
     LOG_CAPABILITY("      - Boost", this->strongHot);
   }
-  LOG_CAPABILITY("  [x] Dry Mode", this->dry);
-  LOG_CAPABILITY("  [x] Auto Dry", this->hasAutoClearHumidity);
-  LOG_CAPABILITY("  [x] Custom Dry", this->hasHandClearHumidity);  // .humidity in command
-
+  if (this->dry) {
+    LOG_CONFIG(TAG, "  [x] Dry Mode");
+    LOG_CAPABILITY("      - Auto", this->hasAutoClearHumidity);
+    LOG_CAPABILITY("      - Custom", this->hasHandClearHumidity);  // .humidity in command
+  }
   LOG_CAPABILITY("  [x] WIND SPEED", this->hasWindSpeed);
   LOG_CAPABILITY("  [x] Indoor Humidity", this->hasIndoorHumidity);  // Indoor humidity in B1 response
   LOG_CAPABILITY("  [x] Decimal Point", this->isHavePoint);
   LOG_CAPABILITY("  [x] UNIT CHANGEABLE", this->unitChangeable);
-
   LOG_CAPABILITY("  [x] FreshAir", this->hasFreshAir);
   LOG_CAPABILITY("  [x] CoolFlash", this->hasJetCool);
   LOG_CAPABILITY("  [x] Breezeless", this->hasBreeze);

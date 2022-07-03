@@ -238,10 +238,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Data &data) {
       dst.auto_adjust_up_temp = data[3] / 2;
       dst.hot_adjust_down_temp = data[4] / 2;
       dst.hot_adjust_up_temp = data[5] / 2;
-      if (data.size() > 6)
-        dst.isHavePoint = data[6] != 0;
-      else
-        dst.isHavePoint = data[2] != 0;
+      dst.isHavePoint = (data.size() > 6) ? data[6] : data[2];
       break;
     case B5Func::IS_TWINS:
       dst.isTwins = b0 == 1;

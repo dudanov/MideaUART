@@ -355,7 +355,7 @@ bool CmdB5::read(const FrameData &frame) {
     setFuncEnable(*this, data);
 
   if (data.available() == 3) {
-    this->zNum = data[-2];
+    this->zNum = data[-3];
     return true;
   }
 

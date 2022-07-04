@@ -408,9 +408,9 @@ void CmdB5::dump() const {
   LOG_CAPABILITY("  [x] Active Clean", this->hasSelfClean);
   LOG_CAPABILITY("  [x] Breeze Away", this->hasOneKeyNoWindOnMe);
   LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);
-  LOG_CAPABILITY("  [x] Filter Clean Reminder",
-                 this->nestCheck);  // dusFull in status. cleanFanTime == 1 in command clear timer
-  LOG_CAPABILITY("  [x] NEST NEED CHANGE", this->nestNeedChange);
+  // dusFull in status. cleanFanTime == 1 in command clear timer
+  LOG_CAPABILITY("  [x] Air Filter Cleaning Reminder", this->nestCheck);
+  LOG_CAPABILITY("  [x] Air Filter Replacement Reminder", this->nestNeedChange);
   LOG_CAPABILITY("  [x] Power Report", this->powerCal);
   LOG_CAPABILITY("  [x] Power Limit", this->powerCalSetting);
 }

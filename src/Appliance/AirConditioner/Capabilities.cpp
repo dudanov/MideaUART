@@ -384,7 +384,9 @@ void CmdB5::dump() const {
     LOG_CAPABILITY("      - Auto", this->hasAutoClearHumidity);
     LOG_CAPABILITY("      - Custom", this->hasHandClearHumidity);  // .humidity in command
   }
-  LOG_CAPABILITY("  [x] WIND SPEED", this->hasWindSpeed);
+  LOG_CAPABILITY("  [x] Fan Mode", this->wind);
+
+  LOG_CONFIG(TAG, "  [x] Wind Speed: %d", this->hasWindSpeed);
   LOG_CAPABILITY("  [x] Indoor Humidity", this->hasIndoorHumidity);  // Indoor humidity in B1 response
   LOG_CAPABILITY("  [x] Decimal Point", this->isHavePoint);
   LOG_CAPABILITY("  [x] UNIT CHANGEABLE", this->unitChangeable);

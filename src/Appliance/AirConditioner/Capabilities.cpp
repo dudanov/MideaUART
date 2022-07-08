@@ -346,13 +346,13 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
   }
 }
 
-bool CmdB5::read(const FrameData &frame) {
-  B5Reader data(frame);
+bool CmdB5::read(const FrameData &data) {
+  B5Reader b5(data);
 
-  for (; data.available() > 3; data.advance())
-    setFuncEnable(*this, data);
+  for (; b5.available() > 3; b5.advance())
+    setFuncEnable(*this, b5);
 
-  this->zNum = (data.available() == 3) ? data[-3] : 0;
+  this->zNum = (b5.available() == 3) ? b5[-3] : 0;
   return this->zNum;
 }
 

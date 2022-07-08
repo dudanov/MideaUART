@@ -22,7 +22,7 @@ class DataBodyControlB0 : public FrameData {
       this->m_data.insert(this->m_data.end(), {26, 0, 1, 1});
     } else if (cmdType == 0 && (cmd == 50 || cmd == 51 || cmd == 57 || cmd == 66 || cmd == 67 || cmd == 48 ||
                                 cmd == 9 || cmd == 10 || cmd == 103)) {
-      // 50: blowingPeople, 51: avoidPeople,
+      // 50: blowingPeople, 51: avoidPeople, 57: selfClean, 66: breezeAway
       // Device: 0xAC, FrameType: 0x02
       this->m_data = {-80, 2, cmd, 0, 1, value, 26, 0, 1, 1};
     } else if (cmdType == 2 && cmd == 44) {

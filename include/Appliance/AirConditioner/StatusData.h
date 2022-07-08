@@ -122,7 +122,7 @@ class StatusData : public FrameData {
   bool m_getEco() const { return this->m_getValue(9, 16); }
   void m_setEco(bool state) { this->m_setMask(9, state, 128); }
   /* TURBO MODE */
-  bool m_getTurbo() const { return this->m_getValue(8, 32) || this->m_getValue(10, 2); }
+  bool m_getTurbo() const { return !this->m_getValue(8, 32) && this->m_getValue(10, 2); }
   void m_setTurbo(bool state) {
     this->m_setMask(8, state, 32);
     this->m_setMask(10, state, 2);

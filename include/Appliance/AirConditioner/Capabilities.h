@@ -11,37 +11,35 @@ namespace ac {
 
 typedef unsigned char uint8_t;
 
-constexpr unsigned makeU16(uint8_t hi, uint8_t lo) { return 256 * hi + lo; }
-
 enum B5Func : uint16_t {
-  VERTICAL_WIND = makeU16(0, 9),
-  HORIZONTAL_WIND = makeU16(0, 10),
-  INDOOR_HUMIDITY = makeU16(0, 21),
-  SILKY_COOL = makeU16(0, 24),
-  SMART_EYE = makeU16(0, 48),
-  BLOWING_PEOPLE = makeU16(0, 50),
-  AVOID_PEOPLE = makeU16(0, 51),
-  SELF_CLEAN = makeU16(0, 57),
-  ONE_KEY_NO_WIND_ON_ME = makeU16(0, 66),
-  BREEZE = makeU16(0, 67),
-  FRESH_AIR = makeU16(0, 75),
-  JET_COOL = makeU16(0, 103),
-  NO_WIND_SPEED = makeU16(2, 16),
-  ECO_MODES = makeU16(2, 18),
-  EIGHT_HOT = makeU16(2, 19),
-  MODES = makeU16(2, 20),
-  SWING_MODES = makeU16(2, 21),
-  POWER_FUNC = makeU16(2, 22),
-  NEST = makeU16(2, 23),
-  DIANFURE = makeU16(2, 25),
-  TURBO_MODES = makeU16(2, 26),
-  HUMIDITY = makeU16(2, 31),
-  UNIT_CHANGEABLE = makeU16(2, 34),
-  LIGHT_TYPE = makeU16(2, 36),
-  TEMPERATURES = makeU16(2, 37),
-  HAS_BUZZER = makeU16(2, 44),
-  IS_TWINS = makeU16(2, 50),
-  IS_FOUR_DIRECTION = makeU16(2, 51),
+  VERTICAL_WIND = 0x0009,
+  HORIZONTAL_WIND = 0x000A,
+  INDOOR_HUMIDITY = 0x0015,
+  SILKY_COOL = 0x0018,
+  SMART_EYE = 0x0030,
+  BLOWING_PEOPLE = 0x0032,
+  AVOID_PEOPLE = 0x0033,
+  SELF_CLEAN = 0x0039,
+  ONE_KEY_NO_WIND_ON_ME = 0x0042,
+  BREEZE = 0x0043,
+  FRESH_AIR = 0x004B,
+  JET_COOL = 0x0067,
+  NO_WIND_SPEED = 0x0210,
+  ECO_MODES = 0x0212,
+  EIGHT_HOT = 0x0213,
+  MODES = 0x0214,
+  SWING_MODES = 0x0215,
+  POWER_FUNC = 0x0216,
+  NEST = 0x0217,
+  DIANFURE = 0x0219,
+  TURBO_MODES = 0x021A,
+  HUMIDITY = 0x021F,
+  UNIT_CHANGEABLE = 0x0222,
+  LIGHT_TYPE = 0x0224,
+  TEMPERATURES = 0x0225,
+  HAS_BUZZER = 0x022C,
+  IS_TWINS = 0x0232,
+  IS_FOUR_DIRECTION = 0x0233,
 };
 
 class CmdB5 {
@@ -99,7 +97,7 @@ class CmdB5 {
   bool powerCal{false};
   bool powerCalSetting{false};
   bool powerCalBCD{false};
-  // Air Filter 
+  // Air Filter
   bool nestCheck{false};
   bool nestNeedChange{false};
   bool dianfure{false};

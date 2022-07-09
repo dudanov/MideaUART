@@ -133,7 +133,7 @@ enum B5Func : unsigned {
 class B5Reader {
  public:
   // Constructor from FrameData. Skip ID, NUM and CRC bytes.
-  B5Reader(const FrameData &data) : m_it(data.data() + 2), m_end(data.data() + data.size() - 1) {}
+  explicit B5Reader(const FrameData &data) : m_it(data.data() + 2), m_end(data.data() + data.size() - 1) {}
   uint16_t getFunction() const { return ByteHelpers::getLE<uint16_t>(this->m_it); }
   size_t available() const { return std::distance(this->m_it, this->m_end); }
   size_t size() const { return this->m_it[2]; }
@@ -346,14 +346,11 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
   }
 }
 
-bool CmdB5::read(const FrameData &data) {
+uint8_t CmdB5::read(const FrameData &data) {
   B5Reader b5(data);
-
   for (; b5.available() > 3; b5.advance())
     setFuncEnable(*this, b5);
-
-  this->zNum = (b5.available() == 3) ? b5[-3] : 0;
-  return this->zNum;
+  return (b5.available() == 3) ? b5[-3] : 0;
 }
 
 #define LOG_CAPABILITY(str, condition) \

@@ -145,21 +145,22 @@ void AirConditioner::m_getPowerUsage() {
 }
 
 void AirConditioner::m_getCapabilities() {
-  FrameDataB5Query data{};
-  this->m_capabilities.zNum = 0;
+  if (this->m_autoconfStatus == AUTOCONF_PROGRESS)
+    return;
   this->m_autoconfStatus = AUTOCONF_PROGRESS;
+  FrameDataB5Query b5data;
   LOG_D(TAG, "Enqueuing a priority GET_CAPABILITIES(0xB5) request...");
-  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(b5data),
     // onData
     [this](FrameData data) -> ResponseStatus {
       if (!data.hasID(0xB5))
-        return ResponseStatus::RESPONSE_WRONG;
-      if (this->m_capabilities.read(data)) {
-        FrameDataSecondB5Query data(this->m_capabilities.zNum);
-        this->m_sendFrame(FrameType::DEVICE_QUERY, data);
-        return ResponseStatus::RESPONSE_PARTIAL;
-      }
-      return ResponseStatus::RESPONSE_OK;
+        return RESPONSE_WRONG;
+      const uint8_t next = this->m_capabilities.read(data);
+      if (next == 0)
+        return RESPONSE_OK;
+      FrameDataSecondB5Query b5next(next);
+      this->m_sendFrame(FrameType::DEVICE_QUERY, b5next);
+      return RESPONSE_PARTIAL;
     },
     // onSuccess
     [this]() {
@@ -174,7 +175,7 @@ void AirConditioner::m_getCapabilities() {
 }
 
 void AirConditioner::m_getStatus() {
-  FrameDataDevQuery41 data{};
+  FrameDataDevQuery41 data;
   LOG_D(TAG, "Enqueuing a GET_STATUS(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
@@ -183,7 +184,7 @@ void AirConditioner::m_getStatus() {
 }
 
 void AirConditioner::m_displayToggle() {
-  FrameDataLight41 data{};
+  FrameDataLight41 data;
   LOG_D(TAG, "Enqueuing a priority TOGGLE_LIGHT(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData

@@ -14,13 +14,11 @@ typedef unsigned char uint8_t;
 class CmdB5 {
  public:
   // Read from frames
-  bool read(const FrameData &data);
+  uint8_t read(const FrameData &data);
   // Dump capabilities
   void dump() const;
   // Checking for need sending B1 query
   bool isNeedB1Query() const;
-
-  
 
   CmdB5 &setBaseFunc();
   CmdB5 &toSubCool();

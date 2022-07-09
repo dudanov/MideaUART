@@ -147,8 +147,8 @@ void AirConditioner::m_getPowerUsage() {
 void AirConditioner::m_getCapabilities() {
   if (this->m_autoconfStatus == AUTOCONF_PROGRESS)
     return;
-  this->m_autoconfStatus = AUTOCONF_PROGRESS;
   FrameDataB5Query b5data;
+  this->m_autoconfStatus = AUTOCONF_PROGRESS;
   LOG_D(TAG, "Enqueuing a priority GET_CAPABILITIES(0xB5) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(b5data),
     // onData

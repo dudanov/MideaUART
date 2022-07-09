@@ -84,33 +84,33 @@ float StatusData::getPowerUsage() const {
 
 FrameDataB1Query::FrameDataB1Query(const CmdB5 &b5) : FrameData({-79, 0}) {
   if (b5.hasBlowingPeople)
-    this->append<uint16_t>(50);
+    this->append(B5Func::BLOWING_PEOPLE);
   if (b5.hasAvoidPeople)
-    this->append<uint16_t>(51);
+    this->append(B5Func::AVOID_PEOPLE);
   if (b5.hasSelfClean)
-    this->append<uint16_t>(57);
+    this->append(B5Func::SELF_CLEAN);
   if (b5.hasOneKeyNoWindOnMe)
-    this->append<uint16_t>(66);
+    this->append(B5Func::ONE_KEY_NO_WIND_ON_ME);
   if (b5.hasBreeze)
-    this->append<uint16_t>(67);
+    this->append(B5Func::BREEZE);
   if (b5.hasSmartEye)
-    this->append<uint16_t>(48);
+    this->append(B5Func::SMART_EYE);
   if (b5.hasBuzzer)
-    this->append<uint16_t>(2 * 256 + 44);
+    this->append(B5Func::HAS_BUZZER);
   if (b5.hasAutoClearHumidity || b5.hasHandClearHumidity)
-    this->append<uint16_t>(21);
+    this->append(B5Func::INDOOR_HUMIDITY);
   if (b5.hasVerticalWind)
-    this->append<uint16_t>(9);
+    this->append(B5Func::VERTICAL_WIND);
   if (b5.hasHorizontalWind)
-    this->append<uint16_t>(10);
+    this->append(B5Func::HORIZONTAL_WIND);
   if (b5.isTwins)
     this->append<uint16_t>(2 * 256 + 49);
   if (b5.isFourDirection)
     this->append<uint16_t>(2 * 256 + 48);
   if (b5.hasJetCool)
-    this->append<uint16_t>(103);
+    this->append(B5Func::JET_COOL);
   if (b5.hasFreshAir)
-    this->append<uint16_t>(75);
+    this->append(B5Func::FRESH_AIR);
   this->m_setValue(1, this->m_data.size() / sizeof(uint16_t) - 1);  // set number of requested functions
   this->appendCRC();
 }

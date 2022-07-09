@@ -11,6 +11,39 @@ namespace ac {
 
 typedef unsigned char uint8_t;
 
+constexpr unsigned makeU16(uint8_t hi, uint8_t lo) { return 256 * hi + lo; }
+
+enum B5Func : uint16_t {
+  VERTICAL_WIND = makeU16(0, 9),
+  HORIZONTAL_WIND = makeU16(0, 10),
+  INDOOR_HUMIDITY = makeU16(0, 21),
+  SILKY_COOL = makeU16(0, 24),
+  SMART_EYE = makeU16(0, 48),
+  BLOWING_PEOPLE = makeU16(0, 50),
+  AVOID_PEOPLE = makeU16(0, 51),
+  SELF_CLEAN = makeU16(0, 57),
+  ONE_KEY_NO_WIND_ON_ME = makeU16(0, 66),
+  BREEZE = makeU16(0, 67),
+  FRESH_AIR = makeU16(0, 75),
+  JET_COOL = makeU16(0, 103),
+  NO_WIND_SPEED = makeU16(2, 16),
+  ECO_MODES = makeU16(2, 18),
+  EIGHT_HOT = makeU16(2, 19),
+  MODES = makeU16(2, 20),
+  SWING_MODES = makeU16(2, 21),
+  POWER_FUNC = makeU16(2, 22),
+  NEST = makeU16(2, 23),
+  DIANFURE = makeU16(2, 25),
+  TURBO_MODES = makeU16(2, 26),
+  HUMIDITY = makeU16(2, 31),
+  UNIT_CHANGEABLE = makeU16(2, 34),
+  LIGHT_TYPE = makeU16(2, 36),
+  TEMPERATURES = makeU16(2, 37),
+  HAS_BUZZER = makeU16(2, 44),
+  IS_TWINS = makeU16(2, 50),
+  IS_FOUR_DIRECTION = makeU16(2, 51),
+};
+
 class CmdB5 {
  public:
   // Read AC capabilities from frame data

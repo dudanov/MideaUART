@@ -172,6 +172,11 @@ class FrameDataSecondB5Query : public FrameData {
 
 class FrameDataB1Query : public FrameData {
  public:
+  // DataBodyQueryB1
+  FrameDataB1Query() : FrameData({-79, 8, 24, 0, 26, 0, 57, 0, 67, 0, 66, 0, 48, 0, 21, 0, 44, 2}) {
+    this->appendCRC();
+  }
+  // DataBodyDevB1
   explicit FrameDataB1Query(const CmdB5 &b5);
 };
 

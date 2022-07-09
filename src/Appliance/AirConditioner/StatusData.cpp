@@ -7,18 +7,25 @@ namespace ac {
 float StatusData::getTargetTemp() const {
   float temp = static_cast<float>(this->m_getValue(2, 15) + 16);
   if (this->m_getValue(2, 16))
-    temp += 0.5f;
+    temp += 0.5F;
   return temp;
 }
 
 void StatusData::setTargetTemp(float temp) {
-  uint8_t tmp = static_cast<uint8_t>(temp * 16.0f) + 4;
+  uint8_t tmp = static_cast<uint8_t>(temp * 16.0F) + 4;
   this->m_setValue(2, ((tmp & 8) << 1) | (tmp >> 4), 31);
 }
 
-static float i16tof(int16_t in) { return static_cast<float>(in - 50) * 0.5f; }
-float StatusData::getIndoorTemp() const { return i16tof(this->m_getValue(11)); }
-float StatusData::getOutdoorTemp() const { return i16tof(this->m_getValue(12)); }
+static float getTemp(int integer, int decimal, bool fahrenheits) {
+  integer -= 50;
+  if (!fahrenheits && decimal > 0)
+    return static_cast<float>(integer / 2) + static_cast<float>(decimal) * ((integer >= 0) ? 0.1F : -0.1F);
+  if (decimal >= 5)
+    return static_cast<float>(integer / 2) + ((integer >= 0) ? 0.5F : -0.5F);
+  return static_cast<float>(integer) * 0.5F;
+}
+float StatusData::getIndoorTemp() const { return getTemp(this->m_getValue(11), this->m_getValue(15, 15), this->isFahrenheits()); }
+float StatusData::getOutdoorTemp() const { return getTemp(this->m_getValue(12), this->m_getValue(15, 15, 4), this->isFahrenheits()); }
 float StatusData::getHumiditySetpoint() const { return static_cast<float>(this->m_getValue(19, 127)); }
 
 Mode StatusData::getMode() const { return this->m_getPower() ? this->getRawMode() : Mode::MODE_OFF; }
@@ -77,7 +84,7 @@ float StatusData::getPowerUsage() const {
   for (uint32_t weight = 1;; weight *= 100, --ptr) {
     power += weight * bcd2u8(*ptr);
     if (weight == 10000)
-      return static_cast<float>(power) * 0.1f;
+      return static_cast<float>(power) * 0.1F;
   }
 }
 

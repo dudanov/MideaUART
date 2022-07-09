@@ -13,7 +13,7 @@ typedef unsigned char uint8_t;
 
 class CmdB5 {
  public:
-  // Read from frames
+  // Read AC capabilities from frame data
   uint8_t read(const FrameData &data);
   // Dump capabilities
   void dump() const;
@@ -37,26 +37,40 @@ class CmdB5 {
 
   ACType getDeviceType() const { return static_cast<ACType>(this->hotcold); }
 
+  // Fahrenheits
   bool unitChangeable{true};
+  // Cool mode
   bool cool{true};
+  // Heat mode
   bool hot{true};
+  // Dry mode
   bool dry{true};
+  // Auto mode
   bool auto1{true};
+  // FanOnly mode
   bool wind{true};
   bool mutilTemp{true};
   bool selfcheck{true};
+  // Cool Turbo preset
   bool strongCool{true};
+  // Vertical swing
   bool leftrightFan{true};
+  // Horizontal swing
   bool updownFan{false};
+  // ECO preset
   bool eco{false};
+  // Special ECO preset
   bool special_eco{false};
+  // Frost Protection
   bool eightHot{false};
   bool powerCal{false};
   bool powerCalSetting{false};
   bool powerCalBCD{false};
+  // Air Filter 
   bool nestCheck{false};
   bool nestNeedChange{false};
   bool dianfure{false};
+  // Heat Turbo preset
   bool strongHot{false};
   bool hasNoWindFeel{false};
   bool hasAutoClearHumidity{false};
@@ -64,11 +78,13 @@ class CmdB5 {
   bool isHavePoint{false};
   bool hasBlowingPeople{false};
   bool hasAvoidPeople{false};
+  // Active clean
   bool hasSelfClean{false};
   bool hasOneKeyNoWindOnMe{false};
   bool hasBreeze{false};
   bool hasSmartEye{false};
   bool hasIndoorHumidity{false};
+  // Sound
   bool hasBuzzer{false};
   bool hasHorizontalWind{false};
   bool hasVerticalWind{false};
@@ -92,19 +108,6 @@ class CmdB5 {
   uint8_t fresh_air_speed{0};
   uint8_t fresh_air_temp{0};
   uint8_t fresh_air_mode{0};
-  uint8_t leftNum{0};
-  uint8_t zNum{0};
-
- private:
-  bool power{true};
-  bool mode{true};
-  bool temperature{true};
-  bool windSpeed{true};
-  bool airCheck{false};
-  bool indoor_temperature{false};
-  bool turbo{false};
-  bool outdoor_temperature{false};
-  bool dishui{false};
 };
 
 class DeviceStatus {

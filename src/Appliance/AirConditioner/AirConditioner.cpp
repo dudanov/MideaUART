@@ -144,6 +144,7 @@ void AirConditioner::m_getPowerUsage() {
   );
 }
 
+// 
 void AirConditioner::m_getCapabilities() {
   if (this->m_autoconfStatus == AUTOCONF_PROGRESS)
     return;

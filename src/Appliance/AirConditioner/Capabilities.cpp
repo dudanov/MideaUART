@@ -386,19 +386,20 @@ void CmdB5::dump() const {
   LOG_CONFIG(TAG, "  [x] Wind Speed: %d", this->hasWindSpeed);
   LOG_CAPABILITY("  [x] Indoor Humidity", this->hasIndoorHumidity);  // Indoor humidity in B1 response
   LOG_CAPABILITY("  [x] Decimal Point", this->isHavePoint);
-  LOG_CAPABILITY("  [x] UNIT CHANGEABLE", this->unitChangeable);
-  LOG_CAPABILITY("  [x] FreshAir", this->hasFreshAir);
-  LOG_CAPABILITY("  [x] CoolFlash", this->hasJetCool);
+  LOG_CAPABILITY("  [x] Unit Changeable", this->unitChangeable);
+  LOG_CAPABILITY("  [x] Fresh Air", this->hasFreshAir);
+  LOG_CAPABILITY("  [x] Cool Flash", this->hasJetCool);
   LOG_CAPABILITY("  [x] Breezeless", this->hasBreeze);
   LOG_CAPABILITY("  [x] Vertical Direction", this->hasVerticalWind);
   LOG_CAPABILITY("  [x] Horizontal Direction", this->hasHorizontalWind);
-  LOG_CAPABILITY("  [x] TWINS", this->isTwins);
-  LOG_CAPABILITY("  [x] FOUR DIRECTION", this->isFourDirection);
+  LOG_CAPABILITY("  [x] Twins", this->isTwins);
+  LOG_CAPABILITY("  [x] Four Direction", this->isFourDirection);
   LOG_CAPABILITY("  [x] Vertical Swing", this->leftrightFan);
   LOG_CAPABILITY("  [x] Horizontal Swing", this->updownFan);
   LOG_CAPABILITY("  [x] Silky Cool", this->hasNoWindFeel);
   LOG_CAPABILITY("  [x] ECO", this->eco);
   LOG_CAPABILITY("  [x] Special ECO", this->special_eco);
+  LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);
   LOG_CAPABILITY("  [x] Frost Protection", this->eightHot);
   LOG_CAPABILITY("  [x] Wind ON me", this->hasBlowingPeople);
   LOG_CAPABILITY("  [x] Wind OFF me", this->hasAvoidPeople);
@@ -406,11 +407,11 @@ void CmdB5::dump() const {
   LOG_CAPABILITY("  [x] Sound", this->hasBuzzer);
   LOG_CAPABILITY("  [x] Active Clean", this->hasSelfClean);
   LOG_CAPABILITY("  [x] Breeze Away", this->hasOneKeyNoWindOnMe);
-  LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);
   // dusFull in status. cleanFanTime == 1 in command clear timer
   LOG_CAPABILITY("  [x] Air Filter Cleaning Reminder", this->nestCheck);
   LOG_CAPABILITY("  [x] Air Filter Replacement Reminder", this->nestNeedChange);
   LOG_CAPABILITY("  [x] Power Report", this->powerCal);
+  LOG_CAPABILITY("  [x] Power Report in BCD", this->powerCalBCD);
   LOG_CAPABILITY("  [x] Power Limit", this->powerCalSetting);
 }
 

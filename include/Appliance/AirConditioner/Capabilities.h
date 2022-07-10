@@ -9,8 +9,6 @@ class FrameData;
 
 namespace ac {
 
-typedef unsigned char uint8_t;
-
 enum B5Func : uint16_t {
   VERTICAL_WIND = 0x0009,
   HORIZONTAL_WIND = 0x000A,

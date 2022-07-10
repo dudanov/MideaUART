@@ -6,7 +6,7 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
-static float s_getTemp(int integer, int decimal, bool fahrenheits) {
+static float getTemp(int integer, int decimal, bool fahrenheits) {
   integer -= 50;
   if (!fahrenheits && decimal > 0)
     return static_cast<float>(integer / 2) + static_cast<float>(decimal) * ((integer >= 0) ? 0.1F : -0.1F);
@@ -76,8 +76,8 @@ class DeviceStatus {
     this->T1_dot = data[15] & 15;
     this->T4_dot = (data[15] & 240) >> 4;
 
-    this->indoor_temp = s_getTemp(data[11], data[15] % 16, data[10] & 4);
-    this->outdoor_temp = s_getTemp(data[12], data[15] / 16, data[10] & 4);
+    this->indoor_temp = getTemp(data[11], data[15] % 16, data[10] & 4);
+    this->outdoor_temp = getTemp(data[12], data[15] / 16, data[10] & 4);
 
     if (this->T1_dot) {
       int i = static_cast<int>(this->indoor_temp);

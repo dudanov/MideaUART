@@ -1,6 +1,5 @@
 #pragma once
 #include <Arduino.h>
-#include <initializer_list>
 
 namespace dudanov {
 

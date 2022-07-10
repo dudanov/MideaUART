@@ -82,7 +82,7 @@ float StatusData::getPowerUsage() const {
   }
 }
 
-FrameDataB1Query::FrameDataB1Query(const CmdB5 &b5) : FrameData({-79, 0}) {
+FrameDataB1Query::FrameDataB1Query(const CmdB5 &b5) : FrameData({0xB1, 0x00}) {
   if (b5.hasBlowingPeople)
     this->append(B5Func::BLOWING_PEOPLE);
   if (b5.hasAvoidPeople)
@@ -111,7 +111,7 @@ FrameDataB1Query::FrameDataB1Query(const CmdB5 &b5) : FrameData({-79, 0}) {
     this->append(B5Func::JET_COOL);
   if (b5.hasFreshAir)
     this->append(B5Func::FRESH_AIR);
-  this->m_setValue(1, this->m_data.size() / sizeof(uint16_t) - 1);  // set number of requested functions
+  this->m_setValue(1, (this->m_data.size() - 2) / sizeof(B5Func));  // set number of requested functions
   this->appendCRC();
 }
 

@@ -5,6 +5,7 @@
 namespace dudanov {
 
 class ByteHelpers {
+ public:
   template<typename T> static T getLE(const uint8_t *src) {
     T dst = 0;
     for (size_t idx = 0; idx < sizeof(T); ++idx, ++src)

@@ -9,23 +9,15 @@ namespace ac {
 
 static const char *TAG = "CmdB5";
 
-bool CmdB5::isNeedB1Query() {
+bool CmdB5::isNeedB1Query() const {
   return this->hasNoWindFeel || this->hasSelfClean || this->hasOneKeyNoWindOnMe || this->hasBreeze || this->hasBuzzer ||
          this->hasSmartEye || this->hasIndoorHumidity || this->hasVerticalWind || this->hasHorizontalWind ||
          this->isTwins || this->isFourDirection;
 }
 
 CmdB5 &CmdB5::setBaseFunc() {
-  this->power = true;
-  this->mode = true;
-  this->temperature = true;
-  this->windSpeed = true;
-  this->airCheck = false;
   this->unitChangeable = true;
   this->eco = false;
-  this->indoor_temperature = false;
-  this->turbo = true;
-  this->outdoor_temperature = false;
   this->updownFan = false;
   this->leftrightFan = false;
   this->eightHot = false;
@@ -50,7 +42,6 @@ CmdB5 &CmdB5::toSubCool() {
   this->eco = true;
   this->leftrightFan = true;
   this->unitChangeable = true;
-  this->turbo = true;
   this->strongCool = true;
   return *this;
 }
@@ -64,7 +55,6 @@ CmdB5 &CmdB5::toOnlyCool() {
   this->eco = true;
   this->leftrightFan = true;
   this->unitChangeable = true;
-  this->turbo = true;
   this->strongCool = true;
   return *this;
 }
@@ -78,7 +68,6 @@ CmdB5 &CmdB5::toOnlyHot() {
   this->eco = true;
   this->leftrightFan = true;
   this->unitChangeable = true;
-  this->turbo = true;
   this->strongCool = true;
   return *this;
 }
@@ -92,7 +81,6 @@ CmdB5 &CmdB5::toAllEnable() {
   this->eco = true;
   this->leftrightFan = true;
   this->unitChangeable = true;
-  this->turbo = true;
   this->strongCool = true;
   return *this;
 }
@@ -101,7 +89,7 @@ class B5Reader {
  public:
   // Constructor from FrameData. Skip ID, NUM and CRC bytes.
   explicit B5Reader(const FrameData &data) : m_it(data.data() + 2), m_end(data.data() + data.size() - 1) {}
-  uint16_t getFunction() const { return ByteHelpers::getLE<uint16_t>(this->m_it); }
+  B5Func getFunction() const { return ByteHelpers::getLE<B5Func>(this->m_it); }
   size_t available() const { return std::distance(this->m_it, this->m_end); }
   size_t size() const { return this->m_it[2]; }
   uint8_t operator[](size_t idx) const { return this->m_it[idx + 3]; }

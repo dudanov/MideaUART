@@ -98,6 +98,7 @@ class CmdB5 {
   // Air Filter
   bool nestCheck{false};
   bool nestNeedChange{false};
+  // Electric auxiliary heat
   bool dianfure{false};
   // Heat Turbo preset
   bool strongHot{false};
@@ -126,11 +127,17 @@ class CmdB5 {
   bool hasNoWindSpeed;
   uint8_t hasWindSpeed;
   uint8_t hotcold;
+  // Maximum temperature in COOL mode
   uint8_t cool_adjust_up_temp{30};
+  // Minimal temperature in COOL mode
   uint8_t cool_adjust_down_temp{17};
+  // Maximum temperature in AUTO mode
   uint8_t auto_adjust_up_temp{30};
+  // Minimal temperature in AUTO mode
   uint8_t auto_adjust_down_temp{17};
+  // Maximum temperature in HEAT mode
   uint8_t hot_adjust_up_temp{30};
+  // Minimal temperature in HEAT mode
   uint8_t hot_adjust_down_temp{17};
   uint8_t lightType{0};
   uint8_t fresh_air_switch{0};

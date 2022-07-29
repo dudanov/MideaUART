@@ -356,13 +356,15 @@ void CmdB5::dump() const {
   LOG_CAPABILITY("  [x] Special ECO", this->special_eco);
   LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);
   LOG_CAPABILITY("  [x] Frost Protection", this->eightHot);
+  // in HEAT mode DeviceStatus.ptcAssis must be 1
+  LOG_CAPABILITY("  [x] Electric Auxiliary Heat", this->dianfure);
   LOG_CAPABILITY("  [x] Wind ON me", this->hasBlowingPeople);
   LOG_CAPABILITY("  [x] Wind OFF me", this->hasAvoidPeople);
   LOG_CAPABILITY("  [x] LED", this->lightType);
   LOG_CAPABILITY("  [x] Sound", this->hasBuzzer);
   LOG_CAPABILITY("  [x] Active Clean", this->hasSelfClean);
   LOG_CAPABILITY("  [x] Breeze Away", this->hasOneKeyNoWindOnMe);
-  // dusFull in status. cleanFanTime == 1 in command clear timer
+  // DeviceStatus.dusFull. cleanFanTime == 1 in command clear timer
   LOG_CAPABILITY("  [x] Air Filter Cleaning Reminder", this->nestCheck);
   LOG_CAPABILITY("  [x] Air Filter Replacement Reminder", this->nestNeedChange);
   LOG_CAPABILITY("  [x] Power Report", this->powerCal);

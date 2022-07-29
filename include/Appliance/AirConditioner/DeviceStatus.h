@@ -6,9 +6,7 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
-static bool inRange(float value) {
-  return value > 16.0F && value < 30.0F;
-}
+static bool inRange(float value) { return value > 16.0F && value < 30.0F; }
 
 static float getTemp(int integer, int decimal, bool fahrenheits) {
   integer -= 50;
@@ -22,6 +20,38 @@ typedef unsigned char uint8_t;
 
 class DeviceStatus {
  public:
+  DeviceStatus(const DeviceStatus &deviceStatus) {
+    this->powerStatus = deviceStatus.powerStatus;
+    this->setTemperature = deviceStatus.setTemperature;
+    this->setTemperature_dot = deviceStatus.setTemperature_dot;
+    this->mode = deviceStatus.mode;
+    this->fanSpeed = deviceStatus.fanSpeed;
+    this->timer_on_hour = deviceStatus.timer_on_hour;
+    this->timer_on = deviceStatus.timer_on;
+    this->timer_off_hour = deviceStatus.timer_off_hour;
+    this->timer_off = deviceStatus.timer_off;
+    this->timer_off_min = deviceStatus.timer_off_min;
+    this->timer_on_min = deviceStatus.timer_on_min;
+    this->updownFan = deviceStatus.updownFan;
+    this->leftRightFan = deviceStatus.leftRightFan;
+    this->eco = deviceStatus.eco;
+    this->tempUnit = deviceStatus.tempUnit;
+    this->tubro = deviceStatus.tubro;
+    this->cleanFanTime = deviceStatus.cleanFanTime;
+    this->dusFull = deviceStatus.dusFull;
+    this->Eight_Hot = deviceStatus.Eight_Hot;
+    this->indoor_temp = deviceStatus.indoor_temp;
+    this->outdoor_temp = deviceStatus.outdoor_temp;
+    this->sleepFunc = deviceStatus.sleepFunc;
+    this->catchCold = deviceStatus.catchCold;
+    this->humidity = deviceStatus.humidity;
+    this->setNewTemperature = deviceStatus.setNewTemperature;
+    this->hasNoWindFeel = deviceStatus.hasNoWindFeel;
+    this->selfClean = deviceStatus.selfClean;
+    this->noWindOnMe = deviceStatus.noWindOnMe;
+    this->blowingPeople = deviceStatus.blowingPeople;
+    this->avoidPeople = deviceStatus.avoidPeople;
+  }
   static DeviceStatus fromA0Response(const FrameData &data) {
     DeviceStatus s;
     s.powerStatus = data.m_getValue(1, 1);
@@ -73,7 +103,6 @@ class DeviceStatus {
     s.humidity = data[13] & 127;
     s.hasNoWindFeel = (data[14] & 8) >> 3;
     if (s.tempUnit) {
-
     }
   }
   DeviceStatus(const FrameData &data) {

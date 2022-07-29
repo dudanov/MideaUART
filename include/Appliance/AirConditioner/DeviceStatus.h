@@ -164,7 +164,7 @@ class DeviceStatus {
     deviceStatus.catchCold = data[10] & 32;
     deviceStatus.peakElec = data[10] & 64;
     deviceStatus.coolFan = data[10] & 128;
-    deviceStatus.Eight_Hot = (data[12] & 128) ? 1 : 0;
+    deviceStatus.Eight_Hot = data[12] & 128;
     deviceStatus.dusFull = data[13] & 32;
     deviceStatus.pwmMode = data[14] & 15;
     deviceStatus.light = (data[14] >> 4) & 7;

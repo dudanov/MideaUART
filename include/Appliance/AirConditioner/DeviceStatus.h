@@ -8,6 +8,7 @@ namespace ac {
 
 class DeviceStatus {
  public:
+  DeviceStatus() = default;
   DeviceStatus(const DeviceStatus &deviceStatus);
   void updateFromA0(const FrameData &data);
   void updateFromA1(const FrameData &data);

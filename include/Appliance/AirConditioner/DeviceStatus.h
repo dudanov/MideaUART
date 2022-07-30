@@ -9,9 +9,9 @@ namespace ac {
 class DeviceStatus {
  public:
   DeviceStatus(const DeviceStatus &deviceStatus);
-  static void fromA0Response(DeviceStatus &deviceStatus, const FrameData &data);
-  static void fromA1Response(DeviceStatus &deviceStatus, const FrameData &data);
-  static void fromC0Response(DeviceStatus &deviceStatus, const FrameData &data);
+  void updateFromA0(const FrameData &data);
+  void updateFromA1(const FrameData &data);
+  void updateFromC0(const FrameData &data);
 
   /// 8 degrees heating
   bool Eight_Hot;
@@ -75,6 +75,7 @@ class DeviceStatus {
   bool updownFan;
 
  protected:
+  void convertUnits();
   uint8_t T1_dot;
   uint8_t T4_dot;
   uint8_t addupCmd;

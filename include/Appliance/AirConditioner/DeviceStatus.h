@@ -13,7 +13,7 @@ class DeviceStatus {
   void updateFromA0(const FrameData &data);
   void updateFromA1(const FrameData &data);
   void updateFromC0(const FrameData &data);
-
+  FrameData to40Command() const;
   /// 8 degrees heating
   bool Eight_Hot;
   // int atwDhwSetTemperature;
@@ -80,9 +80,9 @@ class DeviceStatus {
   uint8_t T1_dot;
   uint8_t T4_dot;
   uint8_t addupCmd;
-  uint8_t alarmSleep;
+  bool alarmSleep;
   bool catchCold;
-  uint8_t changeCosySleep;
+  bool changeCosySleep;
   bool childSleepMode;
   bool cleanUp;
   uint8_t clearCmd;
@@ -104,11 +104,11 @@ class DeviceStatus {
   bool peakElec;
   uint8_t pmvFunc_H;
   uint8_t pmvFunc_L;
-  uint8_t powerSaver;
+  bool powerSaver;
   uint8_t powerValue1;
   uint8_t powerValue2;
   uint8_t powerValue3;
-  uint8_t ptcButton;
+  bool ptcButton;
   uint8_t pwmMode;
   uint8_t resetCmd;
   uint8_t runmodeCmd;
@@ -124,8 +124,8 @@ class DeviceStatus {
   uint8_t time3;
   uint8_t timeLimit;
   uint8_t timerEffe;
-  uint8_t timerMode;
-  uint8_t wiseEye;
+  bool timerMode;
+  bool wiseEye;
 };
 
 }  // namespace ac

@@ -5,6 +5,7 @@ namespace midea {
 namespace ac {
 
 static int celsius_to_fahrenheits(float value) { return static_cast<int>(value * 1.8F) + 32; }
+static float fahrenheits_to_celsius(int value) { return static_cast<float>(value - 32) / 1.8F; }
 
 static float get_temperature(int integer, int decimal, bool fahrenheits) {
   integer -= 50;
@@ -110,7 +111,7 @@ void DeviceStatus::updateFromA1(const FrameData &data) {
 void DeviceStatus::updateFromC0(const FrameData &data) {
   this->powerStatus = data[1] & 1;
   this->imodeResume = data[1] & 4;
-  this->timerMode = (data[1] & 16) >> 1;
+  this->timerMode = data[1] & 16;
   this->test2 = data[1] & 32;
   this->errMark = data[1] & 128;
   this->setTemperature = static_cast<float>(data[2] & 15 + 16);
@@ -182,6 +183,80 @@ void DeviceStatus::updateFromC0(const FrameData &data) {
   }
   if (this->tempUnit)
     this->convertUnits();
+}
+
+FrameData DeviceStatus::to40Command() const {
+  FrameData data{{0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+
+  static uint8_t id = 4;
+
+  bool e = this->eco;
+  bool t = this->tubro;
+  uint8_t f = this->fanSpeed;
+
+  if (!this->powerStatus) {
+    e = false;
+    t = false;
+  }
+
+  if (this->mode == 5) {
+    e = false;
+    t = false;
+  }
+
+  if (this->mode != 3 && f == 101)
+    f = 102;
+
+  data[1] = this->powerStatus * 1 + 2 + this->imodeResume * 4 + this->childSleepMode * 8 + this->timerMode * 16 +
+            this->test2 * 32 + 64;
+
+  int temp = static_cast<int>(this->setTemperature);
+  bool temp_dot = this->setTemperature_dot;
+
+  if (temp >= 50) {
+    int tmp = static_cast<int>(fahrenheits_to_celsius(temp) * 2.0F + 0.5F);
+    temp = tmp / 2;
+    temp_dot = tmp % 2;
+  }
+
+  int temp_new = temp;
+  temp -= 16;
+  if (temp < 1 || temp > 14)
+    temp = 1;
+
+  data[2] = temp * 1 + temp_dot * 16 + this->mode * 32;
+  data[3] = f * 1 + this->timerEffe * 128;
+  data[4] = this->timer_on * 128 + this->timer_on_hour * 4 + this->timer_on_min / 15;
+  data[5] = this->timer_off * 128 + this->timer_off_hour * 4 + this->timer_off_min / 15;
+  data[6] = this->timer_off_min % 15 + this->timer_on_min % 15 * 16;
+
+  if (!this->timer_on) {
+    data[4] = 0x7F;
+    data[6] &= 0x0F;
+  }
+
+  if (!this->timer_off) {
+    data[5] = 0x7F;
+    data[6] &= 0xF0;
+  }
+
+  data[7] = this->leftRightFan * 3 + 48 + this->updownFan * 12;
+  data[8] = this->cosySleep % 4 + this->alarmSleep * 4 + this->save * 8 + this->lowFerqFan * 16 + t * 32 +
+            this->powerSaver * 64 + this->feelOwn * 128;
+  data[9] = this->wiseEye * 1 + this->exchangeAir * 2 + this->dryClean * 4 + this->ptcAssis * 8 + this->ptcButton * 16 +
+            this->cleanUp * 32 + this->changeCosySleep * 64 + e * 128;
+  data[10] = this->sleepFunc * 1 + t * 2 + this->tempUnit * 4 + this->catchCold * 8 + this->nightLight * 16 +
+             this->peakElec * 32 + this->dusFull * 64 + this->cleanFanTime * 128;
+  data[15] = this->naturalFan * 64;
+  data[18] = (temp_new - 12) & 31;
+  data[19] = this->humidity;
+  data[21] = this->setExpand_dot * 1 + this->setExpand * 2 + this->double_temp * 64 + this->Eight_Hot * 128;
+  if (++id < 4 || id >= 255)
+    id = 4;
+  data[23] = id;
+  data.appendCRC();
+  return data;
 }
 
 void DeviceStatus::convertUnits() {

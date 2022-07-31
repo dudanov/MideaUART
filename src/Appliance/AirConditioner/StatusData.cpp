@@ -5,15 +5,24 @@ namespace midea {
 namespace ac {
 
 float StatusData::getTargetTemp() const {
-  float temp = static_cast<float>(this->m_getValue(2, 15) + 16);
+  uint8_t tmp = this->m_getValue(2, 15) + 16;
+  uint8_t tmpNew = this->m_getValue(13, 31);
+  if (tmpNew)
+    tmp = tmpNew + 12;
+  float temp = static_cast<float>(tmp);
   if (this->m_getValue(2, 16))
     temp += 0.5F;
   return temp;
 }
 
 void StatusData::setTargetTemp(float temp) {
-  uint8_t tmp = static_cast<uint8_t>(temp * 16.0F) + 4;
-  this->m_setValue(2, ((tmp & 8) << 1) | (tmp >> 4), 31);
+  uint8_t tmp = static_cast<uint8_t>(temp * 4.0F) + 1;
+  uint8_t integer = tmp / 4;
+  this->m_setValue(18, integer - 12, 31);
+  integer -= 16;
+  if (integer < 1 || integer > 14)
+    integer = 1;
+  this->m_setValue(2, ((tmp & 2) << 3) | integer, 31);
 }
 
 static float getTemp(int integer, int decimal, bool fahrenheits) {

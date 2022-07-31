@@ -189,72 +189,72 @@ FrameData DeviceStatus::to40Command() const {
   FrameData data{{0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
-  static uint8_t id = 4;
-
-  bool e = this->eco;
-  bool t = this->tubro;
-  uint8_t f = this->fanSpeed;
+  uint8_t lfanSpeed = this->fanSpeed;
+  bool lturbo = this->tubro;
+  bool leco = this->eco;
 
   if (!this->powerStatus) {
-    e = false;
-    t = false;
+    leco = false;
+    lturbo = false;
   }
 
   if (this->mode == 5) {
-    e = false;
-    t = false;
+    leco = false;
+    lturbo = false;
   }
 
-  if (this->mode != 3 && f == 101)
-    f = 102;
+  if (this->mode != 3 && lfanSpeed == 101)
+    lfanSpeed = 102;
 
-  data[1] = this->powerStatus * 1 + 2 + this->imodeResume * 4 + this->childSleepMode * 8 + this->timerMode * 16 +
-            this->test2 * 32 + 64;
+  data[1] = 64 | this->test2 * 32 | this->timerMode * 16 | this->childSleepMode * 8 | this->imodeResume * 4 | 2 |
+            this->powerStatus * 1;
 
-  int temp = static_cast<int>(this->setTemperature);
-  bool temp_dot = this->setTemperature_dot;
+  int lsetTemp = static_cast<int>(this->setTemperature);
+  bool lsetTemp_dot = this->setTemperature_dot;
 
-  if (temp >= 50) {
-    int tmp = static_cast<int>(fahrenheits_to_celsius(temp) * 2.0F + 0.5F);
-    temp = tmp / 2;
-    temp_dot = tmp % 2;
+  if (lsetTemp >= 50) {
+    int tmp = static_cast<int>(fahrenheits_to_celsius(lsetTemp) * 2.0F + 0.5F);
+    lsetTemp = tmp / 2;
+    lsetTemp_dot = tmp % 2;
   }
 
-  int temp_new = temp;
-  temp -= 16;
-  if (temp < 1 || temp > 14)
-    temp = 1;
+  int lsetTempNew = (lsetTemp - 12) % 32;
+  lsetTemp -= 16;
+  if (lsetTemp < 1 || lsetTemp > 14)
+    lsetTemp = 1;
 
-  data[2] = temp * 1 + temp_dot * 16 + this->mode * 32;
-  data[3] = f * 1 + this->timerEffe * 128;
-  data[4] = this->timer_on * 128 + this->timer_on_hour * 4 + this->timer_on_min / 15;
-  data[5] = this->timer_off * 128 + this->timer_off_hour * 4 + this->timer_off_min / 15;
-  data[6] = this->timer_off_min % 15 + this->timer_on_min % 15 * 16;
+  data[2] = this->mode * 32 | lsetTemp_dot * 16 | lsetTemp * 1;
+  data[3] = this->timerEffe * 128 | lfanSpeed % 128 * 1;
 
-  if (!this->timer_on) {
-    data[4] = 0x7F;
-    data[6] &= 0x0F;
+  /* Setting timers. Initialized off. Therefore, we process only if enabled. */
+
+  if (this->timer_on) {
+    data[4] = 128 | this->timer_on_hour * 4 | this->timer_on_min / 15;
+    data[6] = this->timer_on_min % 15 * 16;
   }
 
-  if (!this->timer_off) {
-    data[5] = 0x7F;
-    data[6] &= 0xF0;
+  if (this->timer_off) {
+    data[5] = 128 | this->timer_off_hour * 4 | this->timer_off_min / 15;
+    data[6] |= this->timer_off_min % 15;
   }
 
-  data[7] = this->leftRightFan * 3 + 48 + this->updownFan * 12;
-  data[8] = this->cosySleep % 4 + this->alarmSleep * 4 + this->save * 8 + this->lowFerqFan * 16 + t * 32 +
-            this->powerSaver * 64 + this->feelOwn * 128;
-  data[9] = this->wiseEye * 1 + this->exchangeAir * 2 + this->dryClean * 4 + this->ptcAssis * 8 + this->ptcButton * 16 +
-            this->cleanUp * 32 + this->changeCosySleep * 64 + e * 128;
-  data[10] = this->sleepFunc * 1 + t * 2 + this->tempUnit * 4 + this->catchCold * 8 + this->nightLight * 16 +
-             this->peakElec * 32 + this->dusFull * 64 + this->cleanFanTime * 128;
+  data[7] = 48 | this->updownFan * 12 | this->leftRightFan * 3;
+  data[8] = this->feelOwn * 128 | this->powerSaver * 64 | lturbo * 32 | this->lowFerqFan * 16 | this->save * 8 |
+            this->alarmSleep * 4 | this->cosySleep % 4 * 1;
+  data[9] = leco * 128 | this->changeCosySleep * 64 | this->cleanUp * 32 | this->ptcButton * 16 | this->ptcAssis * 8 |
+            this->dryClean * 4 | this->exchangeAir * 2 | this->wiseEye * 1;
+  data[10] = this->cleanFanTime * 128 | this->dusFull * 64 | this->peakElec * 32 | this->nightLight * 16 |
+             this->catchCold * 8 | this->tempUnit * 4 | lturbo * 2 | this->sleepFunc * 1;
   data[15] = this->naturalFan * 64;
-  data[18] = (temp_new - 12) & 31;
+  data[18] = lsetTempNew;
   data[19] = this->humidity;
-  data[21] = this->setExpand_dot * 1 + this->setExpand * 2 + this->double_temp * 64 + this->Eight_Hot * 128;
+  data[21] = this->Eight_Hot * 128 | this->double_temp * 64 | this->setExpand % 32 * 2 | this->setExpand_dot * 1;
+
+  static uint8_t id = 4;
   if (++id < 4 || id >= 255)
     id = 4;
   data[23] = id;
+
   data.appendCRC();
   return data;
 }

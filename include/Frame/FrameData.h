@@ -9,7 +9,7 @@ namespace midea {
 
 class FrameData {
  public:
-  FrameData() = delete;
+  FrameData() = default;
   FrameData(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end)
       : m_data(begin, end) {}
   FrameData(const uint8_t *data, uint8_t size) : m_data(data, data + size) {}

@@ -14,14 +14,16 @@ enum Mode : uint8_t {
   MODE_OFF,
   /// The Midea device is set to automatically change the heating/cooling cycle
   MODE_AUTO,
-  /// The Midea device is manually set to cool mode (not in auto mode!)
+  /// The Midea device is manually set to cool mode
   MODE_COOL,
   /// The Midea device is manually set to dry mode
   MODE_DRY,
-  /// The Midea device is manually set to heat mode (not in auto mode!)
+  /// The Midea device is manually set to heat mode
   MODE_HEAT,
   /// The Midea device is manually set to fan only mode
   MODE_FAN_ONLY,
+  /// The Midea device is manually set to custom dry mode
+  MODE_DRY_CUSTOM,
 };
 
 /// Enum for all modes a Midea fan can be in

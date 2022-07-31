@@ -10,48 +10,64 @@ typedef unsigned char uint8_t;
 
 class DataBodyControlB0 : public FrameData {
  public:
-  DataBodyControlB0(uint8_t cmd, uint8_t value, uint8_t sound) : DataBodyControlB0(cmd, value, {}, sound, 0) {}
-  DataBodyControlB0(uint8_t cmd, uint8_t value, std::vector<uint8_t> values, uint8_t sound, uint8_t cmdType) {
-    if (cmd == 99 || cmd == 100) {
+  DataBodyControlB0(uint8_t funcLo, uint8_t value, uint8_t sound) : DataBodyControlB0(funcLo, value, {}, sound, 0x00) {}
+  DataBodyControlB0(uint8_t funcLo, uint8_t value, std::vector<uint8_t> values, uint8_t sound, uint8_t funcHi) {
+    if (funcLo == 0x63 || funcLo == 0x64) {
+      // Control function: 0x0018: SILKY_COOL (NoWindFeel)
       // Device: 0xAC, FrameType: 0x02
-      this->m_data = {-80, 2, 24, 0, 1, cmd == 99, 26, 0, 1, sound};
-    } else if (cmdType == 2 && (cmd == 48 || cmd == 49)) {
+      this->m_data = {0xB0, 0x02, 0x18, 0x00, 0x01, static_cast<uint8_t>(funcLo == 0x63), 0x1A, 0x00, 0x01, sound};
+    } else if (funcHi == 0x02 && (funcLo == 0x30 || funcLo == 0x31)) {
+      // Control functions: 0x0230, 0x0231
       // Device: 0xAC, FrameType: 0x02
-      this->m_data = {-80, 2, cmd, 2, values.size()};
+      this->m_data = {0xB0, 0x02, funcLo, 0x02, static_cast<uint8_t>(values.size())};
       this->m_data.insert(this->m_data.end(), values.begin(), values.end());
-      this->m_data.insert(this->m_data.end(), {26, 0, 1, 1});
-    } else if (cmdType == 0 && (cmd == 50 || cmd == 51 || cmd == 57 || cmd == 66 || cmd == 67 || cmd == 48 ||
-                                cmd == 9 || cmd == 10 || cmd == 103)) {
-      // 50: blowingPeople, 51: avoidPeople, 57: selfClean, 66: breezeAway
+      this->m_data.insert(this->m_data.end(), {0x1A, 0x00, 0x01, 0x01});
+    } else if (funcHi == 0x00 &&
+               (funcLo == 0x09 || funcLo == 0x0A || funcLo == 0x30 || funcLo == 0x32 || funcLo == 0x33 ||
+                funcLo == 0x39 || funcLo == 0x42 || funcLo == 0x43 || funcLo == 0x67)) {
+      // Control functions:
+      // 0x0009: VERTICAL_WIND, 0x000A: HORIZONTAL_WIND, 0x0030: SMART_EYE, 0x0032: BLOWING_PEOPLE
+      // 0x0033: AVOID_PEOPLE, 0x0039: SELF_CLEAN, 0x0042: ONE_KEY_NO_WIND_ON_ME
+      // 0x0043: BREEZE, 0x0067: JET_COOL
       // Device: 0xAC, FrameType: 0x02
-      this->m_data = {-80, 2, cmd, 0, 1, value, 26, 0, 1, 1};
-    } else if (cmdType == 2 && cmd == 44) {
+      this->m_data = {0xB0, 0x02, funcLo, 0x00, 0x01, value, 0x1A, 0x00, 0x01, 0x01};
+    } else if (funcHi == 0x02 && funcLo == 0x2C) {
+      // Control: Buzzer
       // Device: 0xAC, FrameType: 0x02
-      this->m_data = {-80, 1, 44, 2, 1, value, sound};
-    } else if (cmdType == 0 && cmd == 91) {
+      this->m_data = {0xB0, 0x01, 0x2C, 0x02, 0x01, value, sound};
+    } else if (funcHi == 0x00 && funcLo == 0x5B) {
       // Device: 0xA1, FrameType: 0x02
-      this->m_data = {-80, 1, 91, 0, 1, value, sound};
-    } else if (cmdType == 0 && cmd == 21) {
+      this->m_data = {0xB0, 0x01, 0x5B, 0x00, 0x01, value, sound};
+    } else if (funcHi == 0x00 && funcLo == 0x15) {
+      // Query: Indoor humidity
       // Device: 0xAC, FrameType: 0x03
-      this->m_data = {-79, 1, 21, 0};
-    } else if (cmdType == 17 && cmd == 91) {
+      this->m_data = {0xB1, 0x01, 0x15, 0x00};
+    } else if (funcHi == 17 && funcLo == 0x5B) {
+      //
       // Device: 0xA1, FrameType: 0x03
-      this->m_data = {-79, 1, 91, 0};
-    } else if (cmdType == 18 && cmd == 50) {
+      this->m_data = {0xB1, 0x01, 0x5B, 0x00};
+    } else if (funcHi == 18 && funcLo == 50) {
+      // Query: "Wind ON me", "Wind OFF me"
       // Device: 0xAC, FrameType: 0x03
-      this->m_data = {-79, 2, 50, 0, 51, 0};
-    } else if (cmd == 101) {
+      this->m_data = {0xB1, 0x02, 0x32, 0x00, 0x33, 0x00};
+    } else if (funcLo == 101) {
+      // Control function:
+      // 0x004B: FRESH_AIR
       // Device: 0xAC, FrameType: 0x02
-      this->m_data = {-80, 1, 75, 0, 4, values[0], values[1], -1, -1};
-    } else if (cmd == 102 || cmd == 103) {
+      this->m_data = {0xB0, 0x01, 0x4B, 0x00, 0x04, values[0], values[1], 0xFF, 0xFF};
+    } else if (funcLo == 102 || funcLo == 103) {
+      // Control functions 102, 103:
+      // 0x004B: FRESH_AIR [0x01, 0x03, 0xFF, 0xFF], 0x0043: BREEZE [0x04]
       // Device: 0xAC, FrameType: 0x02
-      this->m_data = {-80, 2, 75, 0, 4, 1, 3, -1, -1, 67, 0, 1, 4};
-    } else if (cmd == 105) {
+      this->m_data = {0xB0, 0x02, 0x4B, 0x00, 0x04, 0x01, 0x03, 0xFF, 0xFF, 0x43, 0x00, 0x01, 0x04};
+    } else if (funcLo == 105) {
+      // Control function 105:
+      // 0x0043: BREEZE [0x04]
       // Device: 0xAC, FrameType: 0x02
-      this->m_data = {-80, 2, 67, 0, 1, 4};
-    } else if (cmd == 106) {
+      this->m_data = {0xB0, 0x02 /* or 0x01 ? */, 0x43, 0x00, 0x01, 0x04};
+    } else if (funcLo == 106) {
       // Device: 0xAC, FrameType: 0x02
-      this->m_data = {-80, 2, 75, 0, 4, 1, 3, -1, -1, 67, 0, 1, 3};
+      this->m_data = {0xB0, 0x02, 0x4B, 0x00, 0x04, 0x01, 0x03, 0xFF, 0xFF, 0x43, 0x00, 0x01, 0x03};
     }
     this->appendCRC();
   }

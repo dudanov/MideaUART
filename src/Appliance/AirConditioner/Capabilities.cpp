@@ -351,6 +351,7 @@ void CmdB5::dump() const {
   LOG_CAPABILITY("  [x] Four Direction", this->isFourDirection);
   LOG_CAPABILITY("  [x] Vertical Swing", this->leftrightFan);
   LOG_CAPABILITY("  [x] Horizontal Swing", this->updownFan);
+  // Works only in COOL mode
   LOG_CAPABILITY("  [x] Silky Cool", this->hasNoWindFeel);
   LOG_CAPABILITY("  [x] ECO", this->eco);
   LOG_CAPABILITY("  [x] Special ECO", this->special_eco);

@@ -28,7 +28,7 @@ class DeviceStatus {
   uint8_t errInfo;
   /// wind speed
   uint8_t fanSpeed{102};
-  /// no wind
+  // "Silky Cool" preset
   bool hasNoWindFeel;
   /// humidity
   uint8_t humidity;

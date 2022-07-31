@@ -140,7 +140,9 @@ class StatusData : public FrameData {
 /// Specific DeviceStateQuery 0x41 frame
 class FrameDataDevQuery41 : public FrameData {
  public:
-  FrameDataDevQuery41() : FrameData({65, -127, 0, -1, 3, -1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4}) {
+  FrameDataDevQuery41()
+      : FrameData({0x41, 0x81, 0x00, 0xFF, 0x03, 0xFF, 0x00, 0x02, 0x00, 0x00, 0x00,
+                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x04}) {
     this->appendCRC();
   }
 };
@@ -148,7 +150,9 @@ class FrameDataDevQuery41 : public FrameData {
 /// Specific PowerQuery 0x41 frame
 class FrameDataQuery41 : public FrameData {
  public:
-  FrameDataQuery41() : FrameData({65, 33, 1, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4}) {
+  FrameDataQuery41()
+      : FrameData({0x41, 0x21, 0x01, 0x44, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04}) {
     this->appendCRC();
   }
 };
@@ -156,7 +160,9 @@ class FrameDataQuery41 : public FrameData {
 /// Specific DisplayToggle 0x41 command frame
 class FrameDataLight41 : public FrameData {
  public:
-  FrameDataLight41() : FrameData({65, 97, 0, -1, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, random(100) + 1}) {
+  FrameDataLight41()
+      : FrameData({0x41, 0x61, 0x00, 0xFF, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00,
+                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, static_cast<uint8_t>(random(100) + 1)}) {
     this->appendCRC();
   }
 };
@@ -164,18 +170,20 @@ class FrameDataLight41 : public FrameData {
 /// Starting B5Query frame
 class FrameDataB5Query : public FrameData {
  public:
-  FrameDataB5Query() : FrameData({-75, 1, 17}) { this->appendCRC(); }
+  FrameDataB5Query() : FrameData({0xB5, 0x01, 0x11}) { this->appendCRC(); }
 };
 
 class FrameDataSecondB5Query : public FrameData {
  public:
-  explicit FrameDataSecondB5Query(uint8_t idx) : FrameData({-75, 1, 1, idx}) { this->appendCRC(); }
+  explicit FrameDataSecondB5Query(uint8_t idx) : FrameData({0xB5, 0x01, 0x01, idx}) { this->appendCRC(); }
 };
 
 class FrameDataB1Query : public FrameData {
  public:
   // DataBodyQueryB1
-  FrameDataB1Query() : FrameData({-79, 8, 24, 0, 26, 0, 57, 0, 67, 0, 66, 0, 48, 0, 21, 0, 44, 2}) {
+  FrameDataB1Query()
+      : FrameData({0xB1, 0x08, 0x18, 0x00, 0x1A, 0x00, 0x39, 0x00, 0x43, 0x00, 0x42, 0x00, 0x30, 0x00, 0x15, 0x00, 0x2C,
+                   0x02}) {
     this->appendCRC();
   }
   // DataBodyDevB1

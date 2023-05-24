@@ -211,6 +211,7 @@ ResponseStatus AirConditioner::m_readStatus(FrameData data) {
     if (newStatus.getMode() == Mode::MODE_OFF)
       this->m_lastPreset = this->m_preset;
   }
+  setProperty(this->m_light, newStatus.getLight(), hasUpdate); 
   setProperty(this->m_preset, newStatus.getPreset(), hasUpdate);
   setProperty(this->m_fanMode, newStatus.getFanMode(), hasUpdate);
   setProperty(this->m_swingMode, newStatus.getSwingMode(), hasUpdate);

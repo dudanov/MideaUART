@@ -48,6 +48,17 @@ void StatusData::setMode(Mode mode) {
   }
 }
 
+FanMode StatusData::getFanMode() const {
+  //some ACs return 30 for LOW and 50 for MEDIUM. Note though, in appMode, this device still uses 40/60
+  uint8_t fanMode = this->m_getValue(3);
+  if ( fanMode == 30 ){
+    fanMode = FAN_LOW;
+  } else if ( fanMode == 50 ){
+    fanMode = FAN_MEDIUM;
+  }
+  return static_cast<FanMode>(fanMode); 
+}
+
 Preset StatusData::getPreset() const {
   if (this->m_getEco())
     return Preset::PRESET_ECO;

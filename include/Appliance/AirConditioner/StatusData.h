@@ -84,7 +84,7 @@ class StatusData : public FrameData {
   void setMode(Mode mode);
 
   /* FAN SPEED */
-  FanMode getFanMode() const { return static_cast<FanMode>(this->m_getValue(3)); }
+  FanMode getFanMode() const;
   void setFanMode(FanMode mode) { this->m_setValue(3, mode); };
 
   /* SWING MODE */

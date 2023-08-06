@@ -32,11 +32,9 @@ uint8_t FrameData::m_calcCRC() const {
 }
 
 uint8_t FrameData::m_getValue(uint8_t idx, uint8_t mask, uint8_t shift) const {
-  if ( idx < this->m_data.size() ){
+  if (idx < this->m_data.size())
     return (this->m_data[idx] >> shift) & mask;
-  } else {
-    return 0;
-  }
+  return 0;
 }
 
 void NetworkNotifyData::setIP(const IPAddress &ip) {

@@ -1,6 +1,6 @@
 {
   "name": "MideaUART",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "A library for controlling Midea home appliances using the UART protocol.",
   "keywords": "midea, iot, air-conditioner, uart, serial, control, home-automation, electrolux, qlima, comfee, artel",
   "repository":

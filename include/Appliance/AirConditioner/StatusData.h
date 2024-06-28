@@ -179,18 +179,6 @@ class FrameDataSecondB5Query : public FrameData {
   explicit FrameDataSecondB5Query(uint8_t idx) : FrameData({0xB5, 0x01, 0x01, idx}) { this->appendCRC(); }
 };
 
-class FrameDataB1Query : public FrameData {
- public:
-  // DataBodyQueryB1
-  FrameDataB1Query()
-      : FrameData({0xB1, 0x08, 0x18, 0x00, 0x1A, 0x00, 0x39, 0x00, 0x43, 0x00, 0x42, 0x00, 0x30, 0x00, 0x15, 0x00, 0x2C,
-                   0x02}) {
-    this->appendCRC();
-  }
-  // DataBodyDevB1
-  explicit FrameDataB1Query(const CmdB5 &b5);
-};
-
 class NewFramesData : public FrameData {
  public:
   NewFramesData(uint8_t frameType);
@@ -207,6 +195,14 @@ class NewFramesData : public FrameData {
   uint8_t *m_cmdDataLengthPointer{nullptr};
 
   void m_ensureLengthIt();
+};
+
+class B1QueryData : public NewFramesData {
+ public:
+  // DataBodyQueryB1
+  B1QueryData();
+  // DataBodyDevB1
+  explicit B1QueryData(const CmdB5 &b5);
 };
 
 }  // namespace ac

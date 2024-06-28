@@ -9,7 +9,7 @@ class FrameData;
 
 namespace ac {
 
-enum B5Func : uint16_t {
+enum Feature : uint16_t {
   VERTICAL_WIND = 0x0009,
   HORIZONTAL_WIND = 0x000A,
   INDOOR_HUMIDITY = 0x0015,

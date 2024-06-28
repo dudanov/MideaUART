@@ -193,19 +193,20 @@ class FrameDataB1Query : public FrameData {
 
 class NewFramesData : public FrameData {
  public:
-  NewFramesData(uint8_t type) : FrameData({type, 0x00}) {}
+  NewFramesData(uint8_t frameType);
 
   void appendCommand(uint16_t cmd);
 
   template<typename T> void appendCommandData(const T &data) {
-    this->m_appendLength();
+    this->m_ensureLengthIt();
     this->append(data);
     *this->m_cmdDataLengthPointer += sizeof(data);
   }
 
  protected:
   uint8_t *m_cmdDataLengthPointer{nullptr};
-  void m_appendLength();
+
+  void m_ensureLengthIt();
 };
 
 }  // namespace ac

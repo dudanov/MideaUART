@@ -140,13 +140,18 @@ FrameDataB1Query::FrameDataB1Query(const CmdB5 &b5) : FrameData({0xB1, 0x00}) {
 
 /* NewFramesData */
 
+NewFramesData::NewFramesData(uint8_t frameType) {
+  this->append(frameType);
+  this->append<uint8_t>(0);
+}
+
 void NewFramesData::appendCommand(uint16_t cmd) {
   this->append(cmd);
   this->m_data[1]++;
   this->m_cmdDataLengthPointer = nullptr;
 }
 
-void NewFramesData::m_appendLength() {
+void NewFramesData::m_ensureLengthIt() {
   if (this->m_cmdDataLengthPointer != nullptr)
     return;
 

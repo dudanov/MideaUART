@@ -128,6 +128,25 @@ class DeviceStatus {
   bool wiseEye;
 };
 
+struct B1Status {
+  uint8_t hWindDirection{};
+  uint8_t vWindDirection{};
+  uint8_t indoorHumidity{};
+  std::vector<uint8_t> mMasterValues{};
+  std::vector<uint8_t> mSlaveValues{};
+  bool isSelfCleanOn{};
+  uint8_t breezeType{1};
+  bool isBuzzerOn{true};
+  bool isNoWindFeelOn{false};
+  bool isSoundOn{false};
+  bool isBlowingPeopleOn{false};
+  bool isAvoidPeopleOn{false};
+  bool isOneKeyNoWindOnMeOn{false};
+  bool isCombineBreezeOn{false};
+  bool isSmartEyeOn{false};
+  bool DehumLight{false};
+};
+
 }  // namespace ac
 }  // namespace midea
 }  // namespace dudanov

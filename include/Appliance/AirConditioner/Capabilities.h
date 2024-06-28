@@ -116,7 +116,9 @@ class CmdB5 {
   bool hasIndoorHumidity{false};
   // Sound
   bool hasBuzzer{false};
+  // adjusting the direction of horizontal air flow
   bool hasHorizontalWind{false};
+  // adjusting the direction of vertical air flow
   bool hasVerticalWind{false};
   bool isTwins{false};
   bool isFourDirection{false};

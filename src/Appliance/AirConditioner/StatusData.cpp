@@ -6,6 +6,16 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
+uint8_t get_louver_position(uint8_t position) {
+  if (position == 0)
+    return 1;
+
+  if (position >= 4)
+    return 100;
+
+  return position * 25;
+}
+
 float StatusData::getTargetTemp() const {
   float temp = static_cast<float>(this->m_getValue(2, 15) + 16);
   if (this->m_getValue(2, 16))
@@ -126,6 +136,22 @@ FrameDataB1Query::FrameDataB1Query(const CmdB5 &b5) : FrameData({0xB1, 0x00}) {
     this->append(Feature::FRESH_AIR);
   this->m_setValue(1, (this->m_data.size() - 2) / sizeof(Feature));  // set number of requested functions
   this->appendCRC();
+}
+
+/* NewFramesData */
+
+void NewFramesData::appendCommand(uint16_t cmd) {
+  this->append(cmd);
+  this->m_data[1]++;
+  this->m_cmdDataLengthPointer = nullptr;
+}
+
+void NewFramesData::m_appendLength() {
+  if (this->m_cmdDataLengthPointer != nullptr)
+    return;
+
+  this->append<uint8_t>(0);
+  this->m_cmdDataLengthPointer = &this->m_data.back();
 }
 
 }  // namespace ac

@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include "Frame/FrameData.h"
+#include "Helpers/Helpers.h"
 
 namespace dudanov {
 namespace midea {
@@ -188,6 +189,23 @@ class FrameDataB1Query : public FrameData {
   }
   // DataBodyDevB1
   explicit FrameDataB1Query(const CmdB5 &b5);
+};
+
+class NewFramesData : public FrameData {
+ public:
+  NewFramesData(uint8_t type) : FrameData({type, 0x00}) {}
+
+  void appendCommand(uint16_t cmd);
+
+  template<typename T> void appendCommandData(const T &data) {
+    this->m_appendLength();
+    this->append(data);
+    *this->m_cmdDataLengthPointer += sizeof(data);
+  }
+
+ protected:
+  uint8_t *m_cmdDataLengthPointer{nullptr};
+  void m_appendLength();
 };
 
 }  // namespace ac

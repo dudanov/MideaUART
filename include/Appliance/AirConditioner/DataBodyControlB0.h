@@ -11,6 +11,7 @@ typedef unsigned char uint8_t;
 class DataBodyControlB0 : public FrameData {
  public:
   DataBodyControlB0(uint8_t funcLo, uint8_t value, uint8_t sound) : DataBodyControlB0(funcLo, value, {}, sound, 0x00) {}
+
   DataBodyControlB0(uint8_t funcLo, uint8_t value, std::vector<uint8_t> values, uint8_t sound, uint8_t funcHi) {
     if (funcLo == 0x63 || funcLo == 0x64) {
       // Control function: 0x0018: SILKY_COOL (NoWindFeel)

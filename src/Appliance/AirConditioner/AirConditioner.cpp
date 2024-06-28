@@ -61,9 +61,9 @@ void AirConditioner::control(const Control &control) {
   }
   if (mode != Mode::MODE_OFF) {
     if (mode == Mode::MODE_AUTO || preset != Preset::PRESET_NONE) {
-      if (this->m_fanMode != FanMode::FAN_AUTO) {
+      if (this->m_fanMode != FanSpeed::FAN_AUTO) {
         hasUpdate = true;
-        status.setFanMode(FanMode::FAN_AUTO);
+        status.setFanMode(FanSpeed::FAN_AUTO);
       }
     } else if (control.fanMode.hasUpdate(this->m_fanMode)) {
       hasUpdate = true;

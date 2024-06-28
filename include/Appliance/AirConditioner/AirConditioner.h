@@ -14,7 +14,7 @@ struct Control {
   Optional<float> targetTemp{};
   Optional<Mode> mode{};
   Optional<Preset> preset{};
-  Optional<FanMode> fanMode{};
+  Optional<FanSpeed> fanMode{};
   Optional<SwingMode> swingMode{};
 };
 
@@ -34,7 +34,7 @@ class AirConditioner : public ApplianceBase {
   float getPowerUsage() const { return this->m_powerUsage; }
   Mode getMode() const { return this->m_mode; }
   SwingMode getSwingMode() const { return this->m_swingMode; }
-  FanMode getFanMode() const { return this->m_fanMode; }
+  FanSpeed getFanMode() const { return this->m_fanMode; }
   Preset getPreset() const { return this->m_preset; }
   const CmdB5 &getCapabilities() const { return this->m_capabilities; }
   void displayToggle() { this->m_displayToggle(); }
@@ -55,7 +55,7 @@ class AirConditioner : public ApplianceBase {
   float m_powerUsage{};
   Mode m_mode{Mode::MODE_OFF};
   Preset m_preset{Preset::PRESET_NONE};
-  FanMode m_fanMode{FanMode::FAN_AUTO};
+  FanSpeed m_fanMode{FanSpeed::FAN_AUTO};
   SwingMode m_swingMode{SwingMode::SWING_OFF};
   Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};

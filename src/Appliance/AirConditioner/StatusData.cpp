@@ -1,5 +1,6 @@
 #include "Appliance/AirConditioner/StatusData.h"
 #include "Appliance/AirConditioner/Capabilities.h"
+#include "StatusData.h"
 
 namespace dudanov {
 namespace midea {
@@ -31,6 +32,18 @@ void StatusData::setMode(Mode mode) {
   } else {
     this->m_setPower(false);
   }
+}
+
+FanSpeed StatusData::getFanMode() const {
+  const auto speed = static_cast<FanSpeed>(this->m_getValue(3));
+
+  if (speed <= FanSpeed::FAN_LOW)
+    return FanSpeed::FAN_LOW;
+
+  if (speed <= FanSpeed::FAN_MEDIUM)
+    return FanSpeed::FAN_MEDIUM;
+
+  return speed;
 }
 
 Preset StatusData::getPreset() const {

@@ -179,25 +179,7 @@ class FrameDataSecondB5Query : public FrameData {
   explicit FrameDataSecondB5Query(uint8_t idx) : FrameData({0xB5, 0x01, 0x01, idx}) { this->appendCRC(); }
 };
 
-class NewFramesData : public FrameData {
- public:
-  NewFramesData(uint8_t frameType);
-
-  void appendCommand(uint16_t cmd);
-
-  template<typename T> void appendCommandData(const T &data) {
-    this->m_ensureLengthIt();
-    this->append(data);
-    *this->m_cmdDataLengthPointer += sizeof(data);
-  }
-
- protected:
-  uint8_t *m_cmdDataLengthPointer{nullptr};
-
-  void m_ensureLengthIt();
-};
-
-class B1QueryData : public NewFramesData {
+class B1QueryData : public NewFrameData {
  public:
   // DataBodyQueryB1
   B1QueryData();

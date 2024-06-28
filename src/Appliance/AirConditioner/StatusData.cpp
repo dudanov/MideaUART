@@ -105,30 +105,9 @@ float StatusData::getPowerUsage() const {
   }
 }
 
-/* NewFramesData */
-
-NewFramesData::NewFramesData(uint8_t frameType) {
-  this->append(frameType);
-  this->append<uint8_t>(0);
-}
-
-void NewFramesData::appendCommand(uint16_t cmd) {
-  this->append(cmd);
-  this->m_data[1]++;
-  this->m_cmdDataLengthPointer = nullptr;
-}
-
-void NewFramesData::m_ensureLengthIt() {
-  if (this->m_cmdDataLengthPointer != nullptr)
-    return;
-
-  this->append<uint8_t>(0);
-  this->m_cmdDataLengthPointer = &this->m_data.back();
-}
-
 /* B1QueryData */
 
-B1QueryData::B1QueryData() : NewFramesData(0xB1) {
+B1QueryData::B1QueryData() : NewFrameData(0xB1) {
   this->appendCommand(INDOOR_HUMIDITY);
   this->appendCommand(SILKY_COOL);
   this->appendCommand(0x1A);
@@ -140,7 +119,7 @@ B1QueryData::B1QueryData() : NewFramesData(0xB1) {
   this->appendCRC();
 }
 
-B1QueryData::B1QueryData(const CmdB5 &b5) : NewFramesData(0xB1) {
+B1QueryData::B1QueryData(const CmdB5 &b5) : NewFrameData(0xB1) {
   if (b5.hasBlowingPeople)
     this->appendCommand(Feature::BLOWING_PEOPLE);
 

@@ -4,6 +4,8 @@
 namespace dudanov {
 namespace midea {
 
+/* FrameData */
+
 // com.midea.api.command.DataBodyDevOld class
 // Message ID generator
 uint8_t FrameData::m_getID() {
@@ -34,6 +36,29 @@ uint8_t FrameData::m_calcCRC() const {
     crc = pgm_read_byte(CRC8_854_TABLE + (crc ^ data));
   return crc;
 }
+
+/* NewFrameData */
+
+NewFrameData::NewFrameData(uint8_t frameType) {
+  this->append(frameType);
+  this->append<uint8_t>(0);
+}
+
+void NewFrameData::appendCommand(uint16_t cmd) {
+  this->append(cmd);
+  this->m_data[1]++;
+  this->m_cmdDataLengthPointer = nullptr;
+}
+
+void NewFrameData::m_ensureLengthIt() {
+  if (this->m_cmdDataLengthPointer != nullptr)
+    return;
+
+  this->append<uint8_t>(0);
+  this->m_cmdDataLengthPointer = &this->m_data.back();
+}
+
+/* NetworkNotifyData */
 
 void NetworkNotifyData::setIP(const IPAddress &ip) {
   this->m_data[3] = ip[3];

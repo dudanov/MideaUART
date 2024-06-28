@@ -48,6 +48,24 @@ class FrameData {
   void m_setMask(uint8_t idx, bool state, uint8_t mask = 255) { this->m_setValue(idx, state ? mask : 0, mask); }
 };
 
+class NewFrameData : public FrameData {
+ public:
+  NewFrameData(uint8_t frameType);
+
+  void appendCommand(uint16_t cmd);
+
+  template<typename T> void appendCommandData(const T &data) {
+    this->m_ensureLengthIt();
+    this->append(data);
+    *this->m_cmdDataLengthPointer += sizeof(data);
+  }
+
+ protected:
+  uint8_t *m_cmdDataLengthPointer{nullptr};
+
+  void m_ensureLengthIt();
+};
+
 class NetworkNotifyData : public FrameData {
  public:
   NetworkNotifyData()

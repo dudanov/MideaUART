@@ -146,17 +146,29 @@ class FrameData {
   void m_setMask(uint8_t idx, bool state, uint8_t mask = 255) { this->m_setValue(idx, state ? mask : 0, mask); }
 };
 
+class ApplianceProperty {
+ public:
+  static ApplianceProperty *fromPointer(void *ptr) { return reinterpret_cast<ApplianceProperty *>(ptr); }
+  PropertyUUID uuid() const { return 256 * m_uuid[1] + m_uuid[0]; }
+  uint8_t &operator[](size_t idx) { return m_data[idx]; }
+
+ protected:
+  uint8_t m_uuid[2];
+  uint8_t m_length;
+  uint8_t m_data[];
+};
+
 /**
  * @brief FrameData for new commands 0xB0 (set), 0xB1 (get).
  *
  */
-class NewFrameData : public FrameData {
+class PropertyQuery : public FrameData {
  public:
   /**
    * @brief Initializes a new frame with type ID.
    * @param id frame type ID.
    */
-  NewFrameData(uint8_t id) : FrameData{{id, 0}} {}
+  PropertyQuery(uint8_t id) : FrameData{{id, 0}} {}
 
   /**
    * @brief Append `getProperty` command (used in 0xB1 GET queries).

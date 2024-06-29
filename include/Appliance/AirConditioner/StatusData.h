@@ -179,12 +179,12 @@ class FrameDataSecondB5Query : public FrameData {
   explicit FrameDataSecondB5Query(uint8_t idx) : FrameData({0xB5, 0x01, 0x01, idx}) { this->appendCRC(); }
 };
 
-class B1QueryData : public NewFrameData {
+class GetFeatureStateQuery : public PropertyQuery {
  public:
   // DataBodyQueryB1
-  B1QueryData();
+  GetFeatureStateQuery();
   // DataBodyDevB1
-  explicit B1QueryData(const CmdB5 &b5);
+  explicit GetFeatureStateQuery(const CmdB5 &b5);
 };
 
 }  // namespace ac

@@ -105,9 +105,9 @@ float StatusData::getPowerUsage() const {
   }
 }
 
-/* B1QueryData */
+/* GetFeatureStateQuery */
 
-B1QueryData::B1QueryData() : NewFrameData(0xB1) {
+GetFeatureStateQuery::GetFeatureStateQuery() : PropertyQuery(0xB1) {
   this->getProperty(INDOOR_HUMIDITY);
   this->getProperty(SILKY_COOL);
   this->getProperty(0x1A);
@@ -119,7 +119,7 @@ B1QueryData::B1QueryData() : NewFrameData(0xB1) {
   this->appendCRC();
 }
 
-B1QueryData::B1QueryData(const CmdB5 &b5) : NewFrameData(0xB1) {
+GetFeatureStateQuery::GetFeatureStateQuery(const CmdB5 &b5) : PropertyQuery(0xB1) {
   if (b5.hasBlowingPeople)
     this->getProperty(Feature::BLOWING_PEOPLE);
 

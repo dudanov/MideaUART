@@ -45,7 +45,7 @@ uint8_t FrameData::m_calcCRC() const {
 
 /* NewFrameData */
 
-NewFrameData::NewFrameData(uint8_t id) {
+NewFrameData::NewFrameData(uint8_t id) : m_lenIdx(0) {
   this->m_data.push_back(id);
   this->m_data.push_back(0);  // number of commands in frame
 }
@@ -53,17 +53,17 @@ NewFrameData::NewFrameData(uint8_t id) {
 void NewFrameData::appendCommand(uint16_t uuid) {
   this->append(uuid);
   this->m_data[1]++;  // increment number of commands
-  this->m_cmdDataLengthPointer = nullptr;
+  this->m_lenIdx = 0;
 }
 
 void NewFrameData::appendData(uint8_t data) {
-  if (this->m_cmdDataLengthPointer == nullptr) {
+  if (this->m_lenIdx == 0) {
+    this->m_lenIdx = this->m_data.size();
     this->m_data.push_back(0);
-    this->m_cmdDataLengthPointer = &this->m_data.back();
   }
 
   this->m_data.push_back(data);
-  *this->m_cmdDataLengthPointer += sizeof(data);  // increment command data length
+  this->m_data[this->m_lenIdx]++;  // increment command data length
 }
 
 /* NetworkNotifyData */

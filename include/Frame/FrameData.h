@@ -156,7 +156,7 @@ class NewFrameData : public FrameData {
   void appendData(uint8_t data);
 
  protected:
-  uint8_t *m_cmdDataLengthPointer{nullptr};
+  uint8_t m_lenIdx;
 };
 
 class NetworkNotifyData : public FrameData {

@@ -45,7 +45,7 @@ uint8_t FrameData::m_calcCRC() const {
 
 /* NewFrameData */
 
-void NewFrameData::getProperty(uint16_t uuid) {
+void NewFrameData::getProperty(PropertyUUID uuid) {
   this->append(uuid);
   this->m_data[1]++;  // increment number of commands
 }

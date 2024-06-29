@@ -8,6 +8,12 @@ namespace dudanov {
 namespace midea {
 
 /**
+ * @brief Type of property's 16-bit UUID.
+ *
+ */
+using PropertyUUID = uint16_t;
+
+/**
  * @brief Message body.
  *
  */
@@ -155,17 +161,17 @@ class NewFrameData : public FrameData {
   /**
    * @brief Append `getProperty` command (used in 0xB1 GET queries).
    *
-   * @param uuid 16-bit UUID of property.
+   * @param uuid UUID of property.
    */
-  void getProperty(uint16_t uuid);
+  void getProperty(PropertyUUID uuid);
 
   /**
    * @brief Append `setProperty` command (used in 0xB0 SET queries).
    *
-   * @param uuid 16-bit UUID of property.
+   * @param uuid UUID of property.
    * @param ...data data of property to set.
    */
-  template<typename... Args> void setProperty(uint16_t uuid, Args... data) {
+  template<typename... Args> void setProperty(PropertyUUID uuid, Args... data) {
     this->getProperty(uuid);
     this->append(static_cast<uint8_t>(sizeof...(Args)), data...);
   }

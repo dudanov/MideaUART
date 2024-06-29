@@ -135,20 +135,28 @@ class FrameData {
  */
 class NewFrameData : public FrameData {
  public:
-  NewFrameData(uint8_t frameType);
+  /**
+   * @brief Initializes a new frame with ID.
+   * @param id frame ID.
+   */
+  NewFrameData(uint8_t id);
 
-  void appendCommand(uint16_t cmd);
+  /**
+   * @brief Append new command.
+   *
+   * @param uuid command 16-bit UUID.
+   */
+  void appendCommand(uint16_t uuid);
 
-  template<typename T> void appendCommandData(const T &data) {
-    this->m_ensureLengthIt();
-    this->append(data);
-    *this->m_cmdDataLengthPointer += sizeof(data);
-  }
+  /**
+   * @brief Append command data.
+   *
+   * @param data command data.
+   */
+  void appendData(uint8_t data);
 
  protected:
   uint8_t *m_cmdDataLengthPointer{nullptr};
-
-  void m_ensureLengthIt();
 };
 
 class NetworkNotifyData : public FrameData {

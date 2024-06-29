@@ -173,7 +173,7 @@ class NewFrameData : public FrameData {
    */
   template<typename... Args> void setProperty(PropertyUUID uuid, Args... data) {
     this->getProperty(uuid);
-    this->append(static_cast<uint8_t>(sizeof...(Args)), data...);
+    this->append(static_cast<uint8_t>(sizeof...(Args)), static_cast<uint8_t>(data)...);
   }
 };
 

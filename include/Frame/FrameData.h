@@ -38,7 +38,7 @@ class FrameData {
 
   const uint8_t *data() const { return this->m_data.data(); }
 
-  uint8_t size() const { return this->m_data.size(); }
+  virtual uint8_t size() const { return this->m_data.size(); }
 
   bool hasID(uint8_t value) const { return this->m_data[0] == value; }
 
@@ -146,18 +146,6 @@ class FrameData {
   void m_setMask(uint8_t idx, bool state, uint8_t mask = 255) { this->m_setValue(idx, state ? mask : 0, mask); }
 };
 
-class ApplianceProperty {
- public:
-  static ApplianceProperty *fromPointer(void *ptr) { return reinterpret_cast<ApplianceProperty *>(ptr); }
-  PropertyUUID uuid() const { return 256 * m_uuid[1] + m_uuid[0]; }
-  uint8_t &operator[](size_t idx) { return m_data[idx]; }
-
- protected:
-  uint8_t m_uuid[2];
-  uint8_t m_length;
-  uint8_t m_data[];
-};
-
 /**
  * @brief FrameData for new commands 0xB0 (set), 0xB1 (get).
  *
@@ -169,6 +157,8 @@ class PropertyQuery : public FrameData {
    * @param id frame type ID.
    */
   PropertyQuery(uint8_t id) : FrameData{{id, 0}} {}
+
+  uint8_t size() const override { return this->m_data[1]; }
 
   /**
    * @brief Append `getProperty` command (used in 0xB1 GET queries).
@@ -187,6 +177,18 @@ class PropertyQuery : public FrameData {
     this->getProperty(uuid);
     this->append(static_cast<uint8_t>(sizeof...(Args)), static_cast<uint8_t>(data)...);
   }
+};
+
+class ApplianceProperty {
+ public:
+  static ApplianceProperty *ptr(PropertyQuery *ptr) { return reinterpret_cast<ApplianceProperty *>(&ptr->m_data[2]); }
+  PropertyUUID uuid() const { return 256 * m_uuid[1] + m_uuid[0]; }
+  uint8_t &operator[](size_t idx) { return m_data[idx]; }
+
+ protected:
+  uint8_t m_uuid[2];
+  uint8_t m_length;
+  uint8_t m_data[];
 };
 
 class NetworkNotifyData : public FrameData {

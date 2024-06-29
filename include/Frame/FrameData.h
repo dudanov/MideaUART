@@ -63,7 +63,18 @@ class FrameData {
   bool hasValidCRC() const { return this->m_calcCRC() == 0; }
 
   /**
-   * @brief Appends data.
+   * @brief Appends variadic number of integer arguments.
+   *
+   * @param data first argument.
+   * @param ...args other arguments.
+   */
+  template<typename T, typename... Args> void append(const T &data, Args... args) {
+    this->append(data);
+    this->append(args...);
+  }
+
+  /**
+   * @brief Appends integer data.
    *
    * @tparam T integer data type.
    * @param data data to append.
@@ -136,27 +147,28 @@ class FrameData {
 class NewFrameData : public FrameData {
  public:
   /**
-   * @brief Initializes a new frame with ID.
-   * @param id frame ID.
+   * @brief Initializes a new frame with type ID.
+   * @param id frame type ID.
    */
-  NewFrameData(uint8_t id);
+  NewFrameData(uint8_t id) : FrameData{{id, 0}} {}
 
   /**
-   * @brief Append new command.
+   * @brief Append `getProperty` command (used in 0xB1 GET queries).
    *
-   * @param uuid command 16-bit UUID.
+   * @param uuid 16-bit UUID of property.
    */
-  void appendCommand(uint16_t uuid);
+  void getProperty(uint16_t uuid);
 
   /**
-   * @brief Append command data.
+   * @brief Append `setProperty` command (used in 0xB0 SET queries).
    *
-   * @param data command data.
+   * @param uuid 16-bit UUID of property.
+   * @param ...data data of property to set.
    */
-  void appendData(uint8_t data);
-
- protected:
-  uint8_t m_lenIdx;
+  template<typename... Args> void setProperty(uint16_t uuid, Args... data) {
+    this->getProperty(uuid);
+    this->append(static_cast<uint8_t>(sizeof...(Args)), data...);
+  }
 };
 
 class NetworkNotifyData : public FrameData {

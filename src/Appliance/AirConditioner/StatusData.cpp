@@ -108,59 +108,59 @@ float StatusData::getPowerUsage() const {
 /* B1QueryData */
 
 B1QueryData::B1QueryData() : NewFrameData(0xB1) {
-  this->appendCommand(INDOOR_HUMIDITY);
-  this->appendCommand(SILKY_COOL);
-  this->appendCommand(0x1A);
-  this->appendCommand(SMART_EYE);
-  this->appendCommand(SELF_CLEAN);
-  this->appendCommand(ONE_KEY_NO_WIND_ON_ME);
-  this->appendCommand(BREEZE);
-  this->appendCommand(HAS_BUZZER);
+  this->getProperty(INDOOR_HUMIDITY);
+  this->getProperty(SILKY_COOL);
+  this->getProperty(0x1A);
+  this->getProperty(SMART_EYE);
+  this->getProperty(SELF_CLEAN);
+  this->getProperty(ONE_KEY_NO_WIND_ON_ME);
+  this->getProperty(BREEZE);
+  this->getProperty(HAS_BUZZER);
   this->appendCRC();
 }
 
 B1QueryData::B1QueryData(const CmdB5 &b5) : NewFrameData(0xB1) {
   if (b5.hasBlowingPeople)
-    this->appendCommand(Feature::BLOWING_PEOPLE);
+    this->getProperty(Feature::BLOWING_PEOPLE);
 
   if (b5.hasAvoidPeople)
-    this->appendCommand(Feature::AVOID_PEOPLE);
+    this->getProperty(Feature::AVOID_PEOPLE);
 
   if (b5.hasSelfClean)
-    this->appendCommand(Feature::SELF_CLEAN);
+    this->getProperty(Feature::SELF_CLEAN);
 
   if (b5.hasOneKeyNoWindOnMe)
-    this->appendCommand(Feature::ONE_KEY_NO_WIND_ON_ME);
+    this->getProperty(Feature::ONE_KEY_NO_WIND_ON_ME);
 
   if (b5.hasBreeze)
-    this->appendCommand(Feature::BREEZE);
+    this->getProperty(Feature::BREEZE);
 
   if (b5.hasSmartEye)
-    this->appendCommand(Feature::SMART_EYE);
+    this->getProperty(Feature::SMART_EYE);
 
   if (b5.hasBuzzer)
-    this->appendCommand(Feature::HAS_BUZZER);
+    this->getProperty(Feature::HAS_BUZZER);
 
   if (b5.hasAutoClearHumidity || b5.hasHandClearHumidity)
-    this->appendCommand(Feature::INDOOR_HUMIDITY);
+    this->getProperty(Feature::INDOOR_HUMIDITY);
 
   if (b5.hasVerticalWind)
-    this->appendCommand(Feature::VERTICAL_WIND);
+    this->getProperty(Feature::VERTICAL_WIND);
 
   if (b5.hasHorizontalWind)
-    this->appendCommand(Feature::HORIZONTAL_WIND);
+    this->getProperty(Feature::HORIZONTAL_WIND);
 
   if (b5.isTwins)
-    this->appendCommand(2 * 256 + 49);
+    this->getProperty(2 * 256 + 49);
 
   if (b5.isFourDirection)
-    this->appendCommand(2 * 256 + 48);
+    this->getProperty(2 * 256 + 48);
 
   if (b5.hasJetCool)
-    this->appendCommand(Feature::JET_COOL);
+    this->getProperty(Feature::JET_COOL);
 
   if (b5.hasFreshAir)
-    this->appendCommand(Feature::FRESH_AIR);
+    this->getProperty(Feature::FRESH_AIR);
 
   this->appendCRC();
 }

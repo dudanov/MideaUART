@@ -43,15 +43,6 @@ uint8_t FrameData::m_calcCRC() const {
   return crc;
 }
 
-/* PropertyQuery */
-
-void PropertyQuery::getProperty(PropertyUUID uuid) {
-  this->append(uuid);
-  this->m_data[1]++;  // increment number of commands
-}
-
-PropertyQuery::ResponseReader PropertyQuery::getReader() const { return ResponseReader(*this); }
-
 /* NetworkNotifyData */
 
 void NetworkNotifyData::setIP(const IPAddress &ip) {

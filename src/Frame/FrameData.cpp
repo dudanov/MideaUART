@@ -1,10 +1,14 @@
 #include "Frame/FrameData.h"
-#include <IPAddress.h>
+
+#ifndef PROGMEM
+#define PROGMEM
+#endif
+#ifndef pgm_read_byte
+#define pgm_read_byte(ptr) (*(ptr))
+#endif
 
 namespace dudanov {
 namespace midea {
-
-/* FrameData */
 
 // com.midea.api.command.DataBodyDevOld class
 // Message ID generator
@@ -41,15 +45,6 @@ uint8_t FrameData::m_calcCRC() const {
     crc = pgm_read_byte(CRC8_854_TABLE + (crc ^ data));
 
   return crc;
-}
-
-/* NetworkNotifyData */
-
-void NetworkNotifyData::setIP(const IPAddress &ip) {
-  this->m_data[3] = ip[3];
-  this->m_data[4] = ip[2];
-  this->m_data[5] = ip[1];
-  this->m_data[6] = ip[0];
 }
 
 }  // namespace midea

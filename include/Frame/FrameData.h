@@ -1,9 +1,6 @@
 #pragma once
-#include <Arduino.h>
+#include <cstdint>
 #include <vector>
-#include <iterator>
-
-class IPAddress;
 
 namespace dudanov {
 namespace midea {
@@ -139,19 +136,6 @@ class FrameData {
    * @param mask bitmask.
    */
   void m_setMask(uint8_t idx, bool state, uint8_t mask = 255) { this->m_setValue(idx, state ? mask : 0, mask); }
-};
-
-class NetworkNotifyData : public FrameData {
- public:
-  NetworkNotifyData()
-      : FrameData({0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x01, 0x00,
-                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) {}
-
-  void setConnected(bool state) { this->m_setMask(8, !state, 1); }
-
-  void setSignalStrength(uint8_t value) { this->m_setValue(2, value); }
-
-  void setIP(const IPAddress &ip);
 };
 
 }  // namespace midea

@@ -50,16 +50,16 @@ class CmdB5 {
   bool isNeedB1Query() const;
 
   CmdB5 &setBaseFunc();
-  CmdB5 &toSubCool();
   CmdB5 &toOnlyCool();
-  CmdB5 &toOnlyHot();
   CmdB5 &toAllEnable();
+  CmdB5 &toOnlyHot();
+  CmdB5 &toSubCool();
 
   enum ACType : uint8_t {
-    COLD,
-    COLD_HOT,
-    HOT,
-    COLD_SUB,
+    COLD,      // toOnlyCool()
+    COLD_HOT,  // toAllEnable()
+    HOT,       // toOnlyHot()
+    COLD_SUB,  // toSubCool()
     COLD_SUB_COLD_HOT,
     COLD_SUB_COLD,
   };

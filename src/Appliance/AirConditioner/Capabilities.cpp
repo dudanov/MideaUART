@@ -246,32 +246,32 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
     case Feature::MODES:
       dst.hotcold = b0;
 
-      if (b0 == 1) {
+      if (b0 == CmdB5::COLD_HOT) {
         dst.cool = true;
         dst.hot = true;
         dst.dry = true;
         dst.auto1 = true;
 
-      } else if (b0 == 2) {
+      } else if (b0 == CmdB5::HOT) {
         dst.cool = false;
         dst.dry = false;
         dst.hot = true;
         dst.auto1 = true;
 
-      } else if (b0 == 3) {
+      } else if (b0 == CmdB5::COLD_SUB) {
         dst.cool = true;
         dst.dry = false;
         dst.hot = false;
         dst.auto1 = false;
 
-      } else if (b0 == 4) {
+      } else if (b0 == CmdB5::COLD_SUB_COLD_HOT) {
         dst.cool = true;
         dst.dry = false;
         dst.hot = true;
         dst.auto1 = false;
         dst.wind = true;
 
-      } else if (b0 == 5) {
+      } else if (b0 == CmdB5::COLD_SUB_COLD) {
         dst.cool = true;
         dst.dry = true;
         dst.hot = false;
@@ -279,6 +279,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
         dst.wind = true;
 
       } else {
+        // CmdB5::COLD
         dst.hot = false;
         dst.cool = true;
         dst.dry = true;

@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <vector>
+#include <iterator>
 
 class IPAddress;
 
@@ -38,7 +39,7 @@ class FrameData {
 
   const uint8_t *data() const { return this->m_data.data(); }
 
-  virtual uint8_t size() const { return this->m_data.size(); }
+  uint8_t size() const { return this->m_data.size(); }
 
   bool hasID(uint8_t value) const { return this->m_data[0] == value; }
 
@@ -158,8 +159,6 @@ class PropertyQuery : public FrameData {
    */
   PropertyQuery(uint8_t id) : FrameData{{id, 0}} {}
 
-  uint8_t size() const override { return this->m_data[1]; }
-
   /**
    * @brief Append `getProperty` command (used in 0xB1 GET queries).
    *
@@ -177,18 +176,73 @@ class PropertyQuery : public FrameData {
     this->getProperty(uuid);
     this->append(static_cast<uint8_t>(sizeof...(Args)), static_cast<uint8_t>(data)...);
   }
+
+  /**
+   * @brief Properties data reader.
+   *
+   */
+  class ResponseReader;
+
+  /**
+   * @brief Create properties data reader. Valid only for one read.
+   *
+   * @return `ResponseReader` instance.
+   */
+  ResponseReader getReader() const;
 };
 
-class ApplianceProperty {
+class PropertyQuery::ResponseReader {
  public:
-  static ApplianceProperty *ptr(PropertyQuery *ptr) { return reinterpret_cast<ApplianceProperty *>(&ptr->m_data[2]); }
-  PropertyUUID uuid() const { return 256 * m_uuid[1] + m_uuid[0]; }
-  uint8_t &operator[](size_t idx) { return m_data[idx]; }
+  /**
+   * @brief Constructor from `PropertyQuery`. Skip `ID`, `NUM` and `CRC` fields.
+   *
+   * @param data reference to `PropertyQuery`.
+   */
+  explicit ResponseReader(const PropertyQuery &query) : m_it{&query.m_data[2]}, m_end{&query.m_data.back()} {}
 
- protected:
-  uint8_t m_uuid[2];
-  uint8_t m_length;
-  uint8_t m_data[];
+  ResponseReader() = delete;
+
+  /**
+   * @brief Property UUID.
+   *
+   * @return UUID.
+   */
+  PropertyUUID uuid() const { return m_it[1] * 256 + m_it[0]; }
+
+  /**
+   * @brief Size of properties data.
+   *
+   * @return size of properties data.
+   */
+  size_t size() const { return this->m_it[2]; }
+
+  /**
+   * @brief Property data access `operator[]`.
+   *
+   * @param idx byte index.
+   * @return property byte.
+   */
+  uint8_t operator[](int idx) const { return this->m_it[idx + 3]; }
+
+  /**
+   * @brief Current property is valid.
+   *
+   * @return property validation result.
+   */
+  bool valid() const {
+    const auto available = std::distance(this->m_it + 3, this->m_end);
+    return available >= 0 && available >= this->size();
+  }
+
+  /**
+   * @brief Advance reader to next property.
+   *
+   */
+  void advance() { this->m_it += this->size() + 3; }
+
+ private:
+  const uint8_t *m_it;
+  const uint8_t *const m_end;
 };
 
 class NetworkNotifyData : public FrameData {

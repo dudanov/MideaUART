@@ -50,6 +50,8 @@ void PropertyQuery::getProperty(PropertyUUID uuid) {
   this->m_data[1]++;  // increment number of commands
 }
 
+PropertyQuery::ResponseReader PropertyQuery::getReader() const { return ResponseReader(*this); }
+
 /* NetworkNotifyData */
 
 void NetworkNotifyData::setIP(const IPAddress &ip) {

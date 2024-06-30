@@ -9,12 +9,6 @@ namespace dudanov {
 namespace midea {
 
 /**
- * @brief Type of property's 16-bit UUID.
- *
- */
-using PropertyUUID = uint16_t;
-
-/**
  * @brief Message body.
  *
  */

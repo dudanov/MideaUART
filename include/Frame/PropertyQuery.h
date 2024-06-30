@@ -4,6 +4,12 @@ namespace dudanov {
 namespace midea {
 
 /**
+ * @brief Type of property's 16-bit UUID.
+ *
+ */
+using PropertyUUID = uint16_t;
+
+/**
  * @brief FrameData for new commands 0xB0 (set), 0xB1 (get).
  *
  */

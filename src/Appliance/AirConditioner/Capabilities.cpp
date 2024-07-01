@@ -407,17 +407,17 @@ void CmdB5::dump() const {
    *
    * 1. Fan speed setting not supported in `AUTO`, `DRY` modes.
    * 2. `hasWindSpeed` value from 0 to 7.
-   *    ╔══════════════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╗
-   *    ║ Flag / Value ║ 0,5,6 ║   1   ║   2   ║   3   ║   4   ║   7   ║
-   *    ╠══════════════╬═══════╬═══════╬═══════╬═══════╬═══════╬═══════╣
-   *    ║ AUTO         ║ true  ║ false ║ false ║ false ║ true  ║ false ║
-   *    ║ MEDIUM       ║ true  ║ false ║ false ║ false ║ false ║ true  ║
-   *    ║ ONE_LOW      ║ false ║ false ║ true  ║ false ║ false ║ false ║
-   *    ║ PERCENT      ║ false ║ true  ║ false ║ false ║ false ║ false ║
-   *    ╚══════════════╩═══════╩═══════╩═══════╩═══════╩═══════╩═══════╝
-   * 
-   * 
-   * 
+   *
+   *    +--------------+-------+-------+-------+-------+-------+-------+
+   *    | Flag / Value | 0,5,6 |   1   |   2   |   3   |   4   |   7   |
+   *    +--------------+-------+-------+-------+-------+-------+-------+
+   *    | AUTO         | true  | false | false | false | true  | false |
+   *    | MEDIUM       | true  | false | false | false | false | true  |
+   *    | ONE_LOW      | false | false | true  | false | false | false |
+   *    | PERCENT      | false | true  | false | false | false | false |
+   *    +--------------+-------+-------+-------+-------+-------+-------+
+   *
+   *
    */
   LOG_CONFIG(TAG, "  [x] Wind Speed: %d", this->hasWindSpeed);
 

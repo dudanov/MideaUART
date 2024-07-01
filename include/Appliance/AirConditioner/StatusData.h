@@ -1,3 +1,14 @@
+/**
+ * @file StatusData.h
+ * @author Sergey V. DUDANOV (sergey.dudanov@gmail.com)
+ * @brief
+ * @version 0.1
+ * @date 2024-07-01
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
+
 #pragma once
 #include <Arduino.h>
 
@@ -32,20 +43,38 @@ enum Mode : uint8_t {
   MODE_DRY_CUSTOM,
 };
 
-/// Enum for all modes a Midea fan can be in
+/**
+ * @brief Fan speeds enum.
+ *
+ * 1. Fan speed setting not supported in `AUTO` and `DRY` modes. Always `AUTO`.
+ * 2. `hasWindSpeed` value from 0 to 7.
+ *
+ * | Flag / Value | 0,5,6 |   1   |   2   |   3   |   4   |   7   |
+ * |--------------|-------|-------|-------|-------|-------|-------|
+ * | AUTO         | true  | false | false | false | true  | false |
+ * | MEDIUM       | true  | false | false | false | false | true  |
+ * | ONE_LOW      | false | false | true  | false | false | false |
+ * | PERCENT      | false | true  | false | false | false | false |
+ *
+ *
+ *
+ * | Enumerator | Write |  Read   |
+ * |------------|-------|---------|
+ * | FAN_SILENT |    20 | 20      |
+ * | FAN_LOW    |    40 | 40 (30) |
+ * | FAN_MEDIUM |    60 | 60 (50) |
+ * | FAN_HIGH   |    80 | 80      |
+ * | FAN_TURBO  |   100 | 100     |
+ * | FAN_AUTO   |   102 | 102     |
+ *
+ */
 enum FanSpeed : uint8_t {
-  /// The fan mode is set to Auto
-  FAN_AUTO = 102,
-  /// The fan mode is set to Silent
   FAN_SILENT = 20,
-  /// The fan mode is set to Low
   FAN_LOW = 40,
-  /// The fan mode is set to Medium
   FAN_MEDIUM = 60,
-  /// The fan mode is set to High
   FAN_HIGH = 80,
-  /// The fan mode is set to Turbo
   FAN_TURBO = 100,
+  FAN_AUTO = 102,
 };
 
 /// Enum for all modes a Midea swing can be in

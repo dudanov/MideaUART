@@ -9,7 +9,10 @@ namespace ac {
 
 class CmdB5;
 
-/// Enum for all modes a Midea device can be in.
+/**
+ * @brief All modes a Midea device can be in.
+ *
+ */
 enum Mode : uint8_t {
   ///
   MODE_OFF,

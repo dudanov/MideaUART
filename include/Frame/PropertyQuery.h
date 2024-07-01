@@ -22,20 +22,18 @@ class PropertyQuery : public FrameData {
   PropertyQuery(uint8_t id) : FrameData{{id, 0}} {}
 
   /**
-   * @brief Append `getProperty` command (used in 0xB1 GET queries).
+   * @brief Append `appendUUID` command (used in 0xB1 GET queries).
    *
    * @param uuid UUID of property.
    */
-  void getProperty(PropertyUUID uuid);
+  void appendUUID(PropertyUUID uuid);
 
   /**
-   * @brief Append `setProperty` command (used in 0xB0 SET queries).
+   * @brief Adds a Pascal-type byte array. The array size is added automatically.
    *
-   * @param uuid UUID of property.
-   * @param ...data data of property to set.
+   * @param ...data bytes to set.
    */
-  template<typename... Args> void setProperty(PropertyUUID uuid, Args... data) {
-    this->getProperty(uuid);
+  template<typename... Args> void appendPascalArray(Args... data) {
     this->append(static_cast<uint8_t>(sizeof...(Args)), static_cast<uint8_t>(data)...);
   }
 

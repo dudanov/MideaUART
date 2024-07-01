@@ -1,5 +1,7 @@
 #include "Appliance/ApplianceBase.h"
+#include "Frame/NetworkNotify.h"
 #include "Helpers/Log.h"
+
 #ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
 #else
@@ -77,7 +79,7 @@ void ApplianceBase::loop() {
   if (this->m_request->onData != nullptr) {
     this->m_resetAttempts();
     this->m_resetTimeout();
-  } else {    
+  } else {
     this->m_destroyRequest();
   }
 }
@@ -169,14 +171,18 @@ void ApplianceBase::m_sendFrame(FrameType type, const FrameData &data) {
   this->m_periodTimer.start(this->m_period);
 }
 
-void ApplianceBase::m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess, Handler onError) {
+void ApplianceBase::m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess,
+                                   Handler onError) {
   LOG_D(TAG, "Enqueuing the request...");
-  this->m_queue.push_back(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
+  this->m_queue.push_back(
+      new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
 }
 
-void ApplianceBase::m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess, Handler onError) {
+void ApplianceBase::m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess,
+                                           Handler onError) {
   LOG_D(TAG, "Priority request queuing...");
-  this->m_queue.push_front(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
+  this->m_queue.push_front(
+      new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
 }
 
 void ApplianceBase::setBeeper(bool value) {
@@ -184,5 +190,5 @@ void ApplianceBase::setBeeper(bool value) {
   this->m_beeper = value;
 }
 
-} // namespace midea
-} // namespace dudanov
+}  // namespace midea
+}  // namespace dudanov

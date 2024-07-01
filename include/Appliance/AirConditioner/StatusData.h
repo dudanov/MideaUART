@@ -1,6 +1,8 @@
 #pragma once
 #include <Arduino.h>
+
 #include "Frame/FrameData.h"
+#include "Frame/PropertyQuery.h"
 #include "Helpers/Helpers.h"
 
 namespace dudanov {

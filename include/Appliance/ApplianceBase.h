@@ -41,7 +41,7 @@ enum FrameType : uint8_t {
 };
 
 using Handler = std::function<void()>;
-using ResponseHandler = std::function<ResponseStatus(DataBody)>;
+using ResponseHandler = std::function<ResponseStatus(FrameData)>;
 using OnStateCallback = std::function<void()>;
 
 class ApplianceBase {

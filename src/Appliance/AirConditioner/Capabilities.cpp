@@ -408,17 +408,16 @@ void CmdB5::dump() const {
   LOG_CAPABILITY("  [x] Unit Changeable", this->unitChangeable);
   LOG_CAPABILITY("  [x] Fresh Air", this->hasFreshAir);
   LOG_CAPABILITY("  [x] Cool Flash", this->hasJetCool);
-  LOG_CAPABILITY("  [x] Breezeless", this->hasBreeze);
+  LOG_CAPABILITY("  [x] Breezeless", this->hasBreeze);  // Only in `COOL` mode. Values: 1, 2, 3, 4.
   LOG_CAPABILITY("  [x] Vertical Direction", this->hasVerticalWind);
   LOG_CAPABILITY("  [x] Horizontal Direction", this->hasHorizontalWind);
   LOG_CAPABILITY("  [x] Twins", this->isTwins);
   LOG_CAPABILITY("  [x] Four Direction", this->isFourDirection);
   LOG_CAPABILITY("  [x] Vertical Swing", this->leftrightFan);
   LOG_CAPABILITY("  [x] Horizontal Swing", this->updownFan);
-  // Works only in COOL mode
-  LOG_CAPABILITY("  [x] Silky Cool", this->hasNoWindFeel);
-  LOG_CAPABILITY("  [x] ECO", this->eco);
-  LOG_CAPABILITY("  [x] Special ECO", this->special_eco);
+  LOG_CAPABILITY("  [x] Silky Cool", this->hasNoWindFeel);  // Only in `COOL` mode.
+  LOG_CAPABILITY("  [x] ECO", this->eco);                   // Only in `COOL` mode.
+  LOG_CAPABILITY("  [x] Special ECO", this->special_eco);   // Only in `AUTO`, `COOL`, `DRY` modes.
   LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);
   LOG_CAPABILITY("  [x] Frost Protection", this->eightHot);
   // in HEAT mode DeviceStatus.ptcAssis must be 1

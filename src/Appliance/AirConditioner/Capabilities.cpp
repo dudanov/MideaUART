@@ -402,32 +402,50 @@ void CmdB5::dump() const {
   }
   LOG_CAPABILITY("  [x] Fan Mode", this->wind);
 
+  /*
+   * FAN SPEED:
+   *
+   * 1. Fan speed setting not supported in `AUTO`, `DRY` modes.
+   * 2. `hasWindSpeed` value from 0 to 7.
+   *    ╔══════════════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╗
+   *    ║ Flag / Value ║ 0,5,6 ║   1   ║   2   ║   3   ║   4   ║   7   ║
+   *    ╠══════════════╬═══════╬═══════╬═══════╬═══════╬═══════╬═══════╣
+   *    ║ AUTO         ║ true  ║ false ║ false ║ false ║ true  ║ false ║
+   *    ║ MEDIUM       ║ true  ║ false ║ false ║ false ║ false ║ true  ║
+   *    ║ ONE_LOW      ║ false ║ false ║ true  ║ false ║ false ║ false ║
+   *    ║ PERCENT      ║ false ║ true  ║ false ║ false ║ false ║ false ║
+   *    ╚══════════════╩═══════╩═══════╩═══════╩═══════╩═══════╩═══════╝
+   * 
+   * 
+   * 
+   */
   LOG_CONFIG(TAG, "  [x] Wind Speed: %d", this->hasWindSpeed);
+
   LOG_CAPABILITY("  [x] Indoor Humidity", this->hasIndoorHumidity);  // Indoor humidity in B1 response
   LOG_CAPABILITY("  [x] Decimal Point", this->isHavePoint);
   LOG_CAPABILITY("  [x] Unit Changeable", this->unitChangeable);
   LOG_CAPABILITY("  [x] Fresh Air", this->hasFreshAir);
   LOG_CAPABILITY("  [x] Cool Flash", this->hasJetCool);
-  LOG_CAPABILITY("  [x] Breezeless", this->hasBreeze);  // Only in `COOL` mode. Values: 1, 2, 3, 4.
+  LOG_CAPABILITY("  [x] Breezeless", this->hasBreeze);  // Only in `COOL` mode. Valid values are: 1, 2, 3, 4.
   LOG_CAPABILITY("  [x] Vertical Direction", this->hasVerticalWind);
   LOG_CAPABILITY("  [x] Horizontal Direction", this->hasHorizontalWind);
   LOG_CAPABILITY("  [x] Twins", this->isTwins);
   LOG_CAPABILITY("  [x] Four Direction", this->isFourDirection);
   LOG_CAPABILITY("  [x] Vertical Swing", this->leftrightFan);
   LOG_CAPABILITY("  [x] Horizontal Swing", this->updownFan);
-  LOG_CAPABILITY("  [x] Silky Cool", this->hasNoWindFeel);  // Only in `COOL` mode.
-  LOG_CAPABILITY("  [x] ECO", this->eco);                   // Only in `COOL` mode.
-  LOG_CAPABILITY("  [x] Special ECO", this->special_eco);   // Only in `AUTO`, `COOL`, `DRY` modes.
-  LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);
-  LOG_CAPABILITY("  [x] Frost Protection", this->eightHot);
+  LOG_CAPABILITY("  [x] Silky Cool", this->hasNoWindFeel);         // Only in `COOL` mode. Temperature: >= 24°C.
+  LOG_CAPABILITY("  [x] ECO", this->eco);                          // Only in `COOL` mode. Temperature: >= 24°C.
+  LOG_CAPABILITY("  [x] Special ECO", this->special_eco);          // Only in `AUTO`, `COOL`, `DRY` modes.
+  LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);  // Not supported modes: `DRY`, `FAN_ONLY`.
+  LOG_CAPABILITY("  [x] 8°C Heat", this->hot && this->eightHot);   // Only in `HEAT` mode and not supported by `SLEEP`.
   // in HEAT mode DeviceStatus.ptcAssis must be 1
   LOG_CAPABILITY("  [x] Electric Auxiliary Heat", this->dianfure);
   LOG_CAPABILITY("  [x] Wind ON me", this->hasBlowingPeople);
   LOG_CAPABILITY("  [x] Wind OFF me", this->hasAvoidPeople);
   LOG_CAPABILITY("  [x] LED", this->lightType);
-  LOG_CAPABILITY("  [x] Sound", this->hasBuzzer);
+  LOG_CAPABILITY("  [x] Buzzer", this->hasBuzzer);
   LOG_CAPABILITY("  [x] Active Clean", this->hasSelfClean);
-  LOG_CAPABILITY("  [x] Breeze Away", this->hasOneKeyNoWindOnMe);
+  LOG_CAPABILITY("  [x] Breeze Away", this->hasOneKeyNoWindOnMe);  // Only in `AUTO`, `HEAT` modes.
   // DeviceStatus.dusFull. cleanFanTime == 1 in command clear timer
   LOG_CAPABILITY("  [x] Air Filter Cleaning Reminder", this->nestCheck);
   LOG_CAPABILITY("  [x] Air Filter Replacement Reminder", this->nestNeedChange);

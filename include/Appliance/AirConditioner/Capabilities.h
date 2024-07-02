@@ -1,3 +1,13 @@
+/**
+ * @file Capabilities.h
+ * @author Sergey V. DUDANOV (sergey.dudanov@gmail.com)
+ * @brief
+ * @version 0.1
+ * @date 2024-07-02
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 #pragma once
 #include <Arduino.h>
 #include <set>
@@ -9,35 +19,42 @@ class FrameData;
 
 namespace ac {
 
+/**
+ * @brief Feature
+ *
+ *
+ *
+ *
+ */
 enum Feature : uint16_t {
-  VERTICAL_WIND = 0x0009,
-  HORIZONTAL_WIND = 0x000A,
-  INDOOR_HUMIDITY = 0x0015,
-  SILKY_COOL = 0x0018,
-  SMART_EYE = 0x0030,
-  BLOWING_PEOPLE = 0x0032,
-  AVOID_PEOPLE = 0x0033,
-  SELF_CLEAN = 0x0039,
-  ONE_KEY_NO_WIND_ON_ME = 0x0042,
-  BREEZE = 0x0043,
-  FRESH_AIR = 0x004B,
-  JET_COOL = 0x0067,
-  NO_WIND_SPEED = 0x0210,
-  ECO_MODES = 0x0212,
-  EIGHT_HOT = 0x0213,
-  MODES = 0x0214,
-  SWING_MODES = 0x0215,
-  POWER_FUNC = 0x0216,
-  NEST = 0x0217,
-  DIANFURE = 0x0219,
-  TURBO_MODES = 0x021A,
-  HUMIDITY = 0x021F,
-  UNIT_CHANGEABLE = 0x0222,
-  LIGHT_TYPE = 0x0224,
-  TEMPERATURES = 0x0225,
-  HAS_BUZZER = 0x022C,
-  IS_TWINS = 0x0232,
-  IS_FOUR_DIRECTION = 0x0233,
+  VERTICAL_WIND = 0x0009,         /**< Vertical Air Flow Direction */
+  HORIZONTAL_WIND = 0x000A,       /**< Horizontal Air Flow Direction */
+  INDOOR_HUMIDITY = 0x0015,       /**< Indoor Humidity */
+  SILKY_COOL = 0x0018,            /**< Silky Cool */
+  SMART_EYE = 0x0030,             /**< ECO SmartEye */
+  BLOWING_PEOPLE = 0x0032,        /**< Wind ON me */
+  AVOID_PEOPLE = 0x0033,          /**< Wind OFF me */
+  SELF_CLEAN = 0x0039,            /**< Active Clean */
+  ONE_KEY_NO_WIND_ON_ME = 0x0042, /**< Breeze Away */
+  BREEZE = 0x0043,                /**< Breeze. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
+  FRESH_AIR = 0x004B,             /**< Fresh Air */
+  JET_COOL = 0x0067,              /**< Cool Flash */
+  WIND_SPEED = 0x0210,            /**< Supported Fan Speeds */
+  ECO_MODES = 0x0212,             /**< ECO */
+  EIGHT_HOT = 0x0213,             /**< 8°C Heat */
+  MODES = 0x0214,                 /**< Supported Modes */
+  SWING_MODES = 0x0215,           /**< Swing Modes */
+  POWER_FUNC = 0x0216,            /**< Power Features */
+  NEST = 0x0217,                  /**< Air Filter Features */
+  DIANFURE = 0x0219,              /**< Electric Auxiliary Heating */
+  TURBO_MODES = 0x021A,           /**< Turbo Mode Features */
+  HUMIDITY = 0x021F,              /**< Drying Modes */
+  UNIT_CHANGEABLE = 0x0222,       /**<  */
+  LIGHT_TYPE = 0x0224,            /**<  */
+  TEMPERATURES = 0x0225,          /**<  */
+  HAS_BUZZER = 0x022C,            /**<  */
+  IS_TWINS = 0x0232,              /**<  */
+  IS_FOUR_DIRECTION = 0x0233,     /**<  */
 };
 
 class CmdB5 {

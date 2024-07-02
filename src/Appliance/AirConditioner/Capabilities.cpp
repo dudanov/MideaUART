@@ -159,7 +159,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
       dst.hasBreeze = b0 == 1;
       break;
 
-    case Feature::NO_WIND_SPEED:
+    case Feature::WIND_SPEED:
       dst.hasNoWindSpeed = b0 == 1;
       dst.hasWindSpeed = b0;
       break;

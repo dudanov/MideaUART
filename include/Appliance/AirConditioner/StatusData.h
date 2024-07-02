@@ -44,10 +44,12 @@ enum Mode : uint8_t {
 };
 
 /**
- * @brief Fan speeds enum.
+ * @brief Fan speeds presets enumeration.
  *
- * 1. Fan speed setting not supported in `AUTO` and `DRY` modes. Always `AUTO`.
- * 2. `hasWindSpeed` value from 0 to 7.
+ * 1. The fan speed is coded as a percentage. For `AUTO` mode used `102`.
+ * 2. As a rule, devices do not support arbitrary speed setting and are represented by a small set of presets.
+ * 3. The fan speed is always `AUTO` in `AUTO` and `DRY` operating modes and cannot be changed.
+ * 4. `hasWindSpeed` value from 0 to 7.
  *
  * | Flag / Value | 0,5,6 |   1   |   2   |   3   |   4   |   7   |
  * |--------------|-------|-------|-------|-------|-------|-------|
@@ -58,14 +60,14 @@ enum Mode : uint8_t {
  *
  *
  *
- * | Enumerator | Write |  Read   |
- * |------------|-------|---------|
- * | FAN_SILENT |    20 | 20      |
- * | FAN_LOW    |    40 | 40 (30) |
- * | FAN_MEDIUM |    60 | 60 (50) |
- * | FAN_HIGH   |    80 | 80      |
- * | FAN_TURBO  |   100 | 100     |
- * | FAN_AUTO   |   102 | 102     |
+ * | Speed Preset | Write |  Read   |
+ * |--------------|-------|---------|
+ * | FAN_SILENT   |    20 | 20      |
+ * | FAN_LOW      |    40 | 40 (30) |
+ * | FAN_MEDIUM   |    60 | 60 (50) |
+ * | FAN_HIGH     |    80 | 80      |
+ * | FAN_TURBO    |   100 | 100     |
+ * | FAN_AUTO     |   102 | 102     |
  *
  */
 enum FanSpeed : uint8_t {

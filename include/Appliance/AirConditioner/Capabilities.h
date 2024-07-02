@@ -27,12 +27,12 @@ namespace ac {
  *
  */
 enum Feature : uint16_t {
-  VERTICAL_WIND = 0x0009,         /**< Vertical Air Flow Direction */
-  HORIZONTAL_WIND = 0x000A,       /**< Horizontal Air Flow Direction */
+  VERTICAL_WIND = 0x0009,         /**< Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100. */
+  HORIZONTAL_WIND = 0x000A,       /**< Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100. */
   INDOOR_HUMIDITY = 0x0015,       /**< Indoor Humidity */
   SILKY_COOL = 0x0018,            /**< Silky Cool */
-  SMART_EYE = 0x0030,             /**< ECO SmartEye */
-  BLOWING_PEOPLE = 0x0032,        /**< Wind ON me */
+  SMART_EYE = 0x0030,             /**< ECO Intelligent Eye */
+  BLOWING_PEOPLE = 0x0032,        /**< Wind ON me. Only in `COOL` and `HEAT`. */
   AVOID_PEOPLE = 0x0033,          /**< Wind OFF me */
   SELF_CLEAN = 0x0039,            /**< Active Clean */
   ONE_KEY_NO_WIND_ON_ME = 0x0042, /**< Breeze Away */
@@ -49,12 +49,12 @@ enum Feature : uint16_t {
   DIANFURE = 0x0219,              /**< Electric Auxiliary Heating */
   TURBO_MODES = 0x021A,           /**< Turbo Mode Features */
   HUMIDITY = 0x021F,              /**< Drying Modes */
-  UNIT_CHANGEABLE = 0x0222,       /**<  */
-  LIGHT_TYPE = 0x0224,            /**<  */
-  TEMPERATURES = 0x0225,          /**<  */
-  HAS_BUZZER = 0x022C,            /**<  */
-  IS_TWINS = 0x0232,              /**<  */
-  IS_FOUR_DIRECTION = 0x0233,     /**<  */
+  UNIT_CHANGEABLE = 0x0222,       /**< Fahrenheit Support */
+  LIGHT_TYPE = 0x0224,            /**< LED Control. Values: 0 (Off), 7 (On). */
+  TEMPERATURES = 0x0225,          /**< Temperature Ranges */
+  HAS_BUZZER = 0x022C,            /**< Buzzer. Values: 0 (Off), 1 (On). */
+  IS_TWINS = 0x0232,              /**< Slave */
+  IS_FOUR_DIRECTION = 0x0233,     /**< Master */
 };
 
 class CmdB5 {

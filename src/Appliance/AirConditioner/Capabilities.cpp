@@ -109,11 +109,11 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
   const uint8_t b0 = data[0];
 
   switch (data.getFunction()) {
-    case Feature::VERTICAL_WIND:
+    case Feature::V_WIND_DIRECTION:
       dst.hasVerticalWind = b0 == 1;
       break;
 
-    case Feature::HORIZONTAL_WIND:
+    case Feature::H_WIND_DIRECTION:
       dst.hasHorizontalWind = b0 == 1;
       break;
 
@@ -125,11 +125,11 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
       dst.hasNoWindFeel = b0 != 0;
       break;
 
-    case Feature::SMART_EYE:
+    case Feature::ECO_EYE:
       dst.hasSmartEye = b0 == 1;
       break;
 
-    case Feature::SELF_CLEAN:
+    case Feature::ACTIVE_CLEAN:
       dst.hasSelfClean = b0 == 1;
       break;
 
@@ -143,15 +143,15 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
       dst.isJetCoolEnable = b0 == 1;
       break;
 
-    case Feature::BLOWING_PEOPLE:
+    case Feature::WIND_ON_ME:
       dst.hasBlowingPeople = b0 == 1;
       break;
 
-    case Feature::AVOID_PEOPLE:
+    case Feature::WIND_OFF_ME:
       dst.hasAvoidPeople = b0 == 1;
       break;
 
-    case Feature::ONE_KEY_NO_WIND_ON_ME:
+    case Feature::BREEZE_AWAY:
       dst.hasOneKeyNoWindOnMe = b0 == 1;
       break;
 
@@ -159,7 +159,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
       dst.hasBreeze = b0 == 1;
       break;
 
-    case Feature::WIND_SPEED:
+    case Feature::FAN_SPEED:
       dst.hasNoWindSpeed = b0 == 1;
       dst.hasWindSpeed = b0;
       break;
@@ -188,11 +188,11 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
       dst.unitChangeable = b0 == 0;
       break;
 
-    case Feature::HAS_BUZZER:
+    case Feature::BUZZER:
       dst.hasBuzzer = b0 != 0;
       break;
 
-    case Feature::DIANFURE:
+    case Feature::AUX_HEATER:
       dst.dianfure = b0 == 1;
       break;
 
@@ -216,11 +216,11 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
 
       break;
 
-    case Feature::LIGHT_TYPE:
+    case Feature::LED_LIGHT:
       dst.lightType = b0;
       break;
 
-    case Feature::TEMPERATURES:
+    case Feature::TEMP_RANGES:
       dst.cool_adjust_down_temp = b0 / 2;
       dst.cool_adjust_up_temp = data[1] / 2;
       dst.auto_adjust_down_temp = data[2] / 2;
@@ -239,7 +239,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
       dst.special_eco = b0 == 2;
       break;
 
-    case Feature::EIGHT_HOT:
+    case Feature::EIGHT_HEAT:
       dst.eightHot = b0 == 1;
       break;
 
@@ -337,7 +337,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
 
       break;
 
-    case Feature::NEST:
+    case Feature::AIR_FILTER:
       if (b0 == 0) {
         dst.nestCheck = false;
         dst.nestNeedChange = false;

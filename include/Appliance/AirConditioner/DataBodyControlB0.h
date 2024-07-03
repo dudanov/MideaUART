@@ -27,8 +27,8 @@ class DataBodyControlB0 : public FrameData {
                (funcLo == 0x09 || funcLo == 0x0A || funcLo == 0x30 || funcLo == 0x32 || funcLo == 0x33 ||
                 funcLo == 0x39 || funcLo == 0x42 || funcLo == 0x43 || funcLo == 0x67)) {
       // Control functions:
-      // 0x0009: VERTICAL_WIND, 0x000A: HORIZONTAL_WIND, 0x0030: SMART_EYE, 0x0032: BLOWING_PEOPLE
-      // 0x0033: AVOID_PEOPLE, 0x0039: SELF_CLEAN, 0x0042: ONE_KEY_NO_WIND_ON_ME
+      // 0x0009: V_WIND_DIRECTION, 0x000A: H_WIND_DIRECTION, 0x0030: ECO_EYE, 0x0032: WIND_ON_ME
+      // 0x0033: WIND_OFF_ME, 0x0039: ACTIVE_CLEAN, 0x0042: BREEZE_AWAY
       // 0x0043: BREEZE, 0x0067: JET_COOL
       // Device: 0xAC, FrameType: 0x02
       this->m_data = {0xB0, 0x02, funcLo, 0x00, 0x01, value, 0x1A, 0x00, 0x01, 0x01};

@@ -110,44 +110,44 @@ GetFeatureStateQuery::GetFeatureStateQuery() : PropertyQuery(0xB1) {
   this->appendUUID(INDOOR_HUMIDITY);
   this->appendUUID(SILKY_COOL);
   this->appendUUID(0x1A);
-  this->appendUUID(SMART_EYE);
-  this->appendUUID(SELF_CLEAN);
-  this->appendUUID(ONE_KEY_NO_WIND_ON_ME);
+  this->appendUUID(ECO_EYE);
+  this->appendUUID(ACTIVE_CLEAN);
+  this->appendUUID(BREEZE_AWAY);
   this->appendUUID(BREEZE);
-  this->appendUUID(HAS_BUZZER);
+  this->appendUUID(BUZZER);
   this->appendCRC();
 }
 
 GetFeatureStateQuery::GetFeatureStateQuery(const CmdB5 &b5) : PropertyQuery(0xB1) {
   if (b5.hasBlowingPeople)
-    this->appendUUID(Feature::BLOWING_PEOPLE);
+    this->appendUUID(Feature::WIND_ON_ME);
 
   if (b5.hasAvoidPeople)
-    this->appendUUID(Feature::AVOID_PEOPLE);
+    this->appendUUID(Feature::WIND_OFF_ME);
 
   if (b5.hasSelfClean)
-    this->appendUUID(Feature::SELF_CLEAN);
+    this->appendUUID(Feature::ACTIVE_CLEAN);
 
   if (b5.hasOneKeyNoWindOnMe)
-    this->appendUUID(Feature::ONE_KEY_NO_WIND_ON_ME);
+    this->appendUUID(Feature::BREEZE_AWAY);
 
   if (b5.hasBreeze)
     this->appendUUID(Feature::BREEZE);
 
   if (b5.hasSmartEye)
-    this->appendUUID(Feature::SMART_EYE);
+    this->appendUUID(Feature::ECO_EYE);
 
   if (b5.hasBuzzer)
-    this->appendUUID(Feature::HAS_BUZZER);
+    this->appendUUID(Feature::BUZZER);
 
   if (b5.hasAutoClearHumidity || b5.hasHandClearHumidity)
     this->appendUUID(Feature::INDOOR_HUMIDITY);
 
   if (b5.hasVerticalWind)
-    this->appendUUID(Feature::VERTICAL_WIND);
+    this->appendUUID(Feature::V_WIND_DIRECTION);
 
   if (b5.hasHorizontalWind)
-    this->appendUUID(Feature::HORIZONTAL_WIND);
+    this->appendUUID(Feature::H_WIND_DIRECTION);
 
   if (b5.isTwins)
     this->appendUUID(2 * 256 + 49);

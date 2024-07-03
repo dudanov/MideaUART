@@ -27,36 +27,40 @@ namespace ac {
  *
  */
 enum Feature : uint16_t {
-  VERTICAL_WIND = 0x0009,         /**< Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100. */
-  HORIZONTAL_WIND = 0x000A,       /**< Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100. */
-  INDOOR_HUMIDITY = 0x0015,       /**< Indoor Humidity */
-  SILKY_COOL = 0x0018,            /**< Silky Cool */
-  SMART_EYE = 0x0030,             /**< ECO Intelligent Eye */
-  BLOWING_PEOPLE = 0x0032,        /**< Wind ON me. Only in `COOL` and `HEAT`. */
-  AVOID_PEOPLE = 0x0033,          /**< Wind OFF me */
-  SELF_CLEAN = 0x0039,            /**< Active Clean */
-  ONE_KEY_NO_WIND_ON_ME = 0x0042, /**< Breeze Away */
-  BREEZE = 0x0043,                /**< Breeze. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
-  FRESH_AIR = 0x004B,             /**< Fresh Air */
-  JET_COOL = 0x0067,              /**< Cool Flash */
-  WIND_SPEED = 0x0210,            /**< Supported Fan Speeds */
-  ECO_MODES = 0x0212,             /**< ECO */
-  EIGHT_HOT = 0x0213,             /**< 8°C Heat */
-  MODES = 0x0214,                 /**< Supported Modes */
-  SWING_MODES = 0x0215,           /**< Swing Modes */
-  POWER_FUNC = 0x0216,            /**< Power Features */
-  NEST = 0x0217,                  /**< Air Filter Features */
-  DIANFURE = 0x0219,              /**< Electric Auxiliary Heating */
-  TURBO_MODES = 0x021A,           /**< Turbo Mode Features */
-  HUMIDITY = 0x021F,              /**< Drying Modes */
-  UNIT_CHANGEABLE = 0x0222,       /**< Fahrenheit Support */
-  LIGHT_TYPE = 0x0224,            /**< LED Control. Values: 0 (Off), 7 (On). */
-  TEMPERATURES = 0x0225,          /**< Temperature Ranges */
-  HAS_BUZZER = 0x022C,            /**< Buzzer. Values: 0 (Off), 1 (On). */
-  IS_TWINS = 0x0232,              /**< Slave */
-  IS_FOUR_DIRECTION = 0x0233,     /**< Master */
+  V_WIND_DIRECTION = 0x0009,  /**< Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100. */
+  H_WIND_DIRECTION = 0x000A,  /**< Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100. */
+  INDOOR_HUMIDITY = 0x0015,   /**< Indoor Humidity */
+  SILKY_COOL = 0x0018,        /**< Silky Cool */
+  ECO_EYE = 0x0030,           /**< ECO Intelligent Eye */
+  WIND_ON_ME = 0x0032,        /**< Wind ON me. Only in `COOL` and `HEAT`. Turn on all swing. */
+  WIND_OFF_ME = 0x0033,       /**< Wind OFF me. Only in `COOL` and `HEAT`. Turn off all swing. */
+  ACTIVE_CLEAN = 0x0039,      /**< Active Clean */
+  BREEZE_AWAY = 0x0042,       /**< Breeze Away */
+  BREEZE = 0x0043,            /**< Breeze. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
+  FRESH_AIR = 0x004B,         /**< Fresh Air */
+  JET_COOL = 0x0067,          /**< Cool Flash */
+  FAN_SPEED = 0x0210,         /**< Supported Fan Speeds */
+  ECO_MODES = 0x0212,         /**< ECO */
+  EIGHT_HEAT = 0x0213,        /**< 8°C Heat */
+  MODES = 0x0214,             /**< Supported Modes */
+  SWING_MODES = 0x0215,       /**< Swing Modes */
+  POWER_FUNC = 0x0216,        /**< Power Features */
+  AIR_FILTER = 0x0217,        /**< Air Filter Features. (dusFull) */
+  AUX_HEATER = 0x0219,        /**< Electric Auxiliary Heating */
+  TURBO_MODES = 0x021A,       /**< Turbo Mode Features */
+  HUMIDITY = 0x021F,          /**< Drying Modes */
+  UNIT_CHANGEABLE = 0x0222,   /**< Fahrenheit Support */
+  LED_LIGHT = 0x0224,         /**< LED Control. Values: 0 (Off), 7 (On). */
+  TEMP_RANGES = 0x0225,       /**< Temperature Ranges */
+  BUZZER = 0x022C,            /**< Buzzer. Values: 0 (Off), 1 (On). */
+  IS_TWINS = 0x0232,          /**< Slave */
+  IS_FOUR_DIRECTION = 0x0233, /**< Master */
 };
 
+/**
+ * @brief Frame for request appliance capabilities.
+ *
+ */
 class CmdB5 {
  public:
   // Read AC capabilities from frame data
@@ -82,6 +86,25 @@ class CmdB5 {
   };
 
   ACType getDeviceType() const { return static_cast<ACType>(this->hotcold); }
+
+  /* B5 Features */
+
+  bool hasBlowingPeople{false};
+  bool hasAvoidPeople{false};
+  // Active clean
+  bool hasSelfClean{false};
+  bool hasOneKeyNoWindOnMe{false};
+  bool hasBreeze{false};
+  bool hasSmartEye{false};
+  // Sound
+  bool hasBuzzer{false};
+  bool hasIndoorHumidity{false};
+  // adjusting the direction of horizontal air flow
+  bool hasHorizontalWind{false};
+  // adjusting the direction of vertical air flow
+  bool hasVerticalWind{false};
+  bool isTwins{false};
+  bool isFourDirection{false};
 
   // Fahrenheits
   bool unitChangeable{true};
@@ -123,22 +146,6 @@ class CmdB5 {
   bool hasAutoClearHumidity{false};
   bool hasHandClearHumidity{false};
   bool isHavePoint{false};
-  bool hasBlowingPeople{false};
-  bool hasAvoidPeople{false};
-  // Active clean
-  bool hasSelfClean{false};
-  bool hasOneKeyNoWindOnMe{false};
-  bool hasBreeze{false};
-  bool hasSmartEye{false};
-  bool hasIndoorHumidity{false};
-  // Sound
-  bool hasBuzzer{false};
-  // adjusting the direction of horizontal air flow
-  bool hasHorizontalWind{false};
-  // adjusting the direction of vertical air flow
-  bool hasVerticalWind{false};
-  bool isTwins{false};
-  bool isFourDirection{false};
   bool hasJetCool{false};
   bool hasFreshAir{false};
   bool isJetCoolEnable{false};

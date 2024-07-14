@@ -46,11 +46,11 @@ class PropertyQuery : public FrameData {
     /**
      * @brief Constructor from `PropertyQuery`. Skip `ID`, `NUM` and `CRC` fields.
      *
-     * @param query reference to `PropertyQuery`.
-     * @param hdr_size header size.
+     * @param src reference to `PropertyQuery`.
+     * @param headerLength header length.
      */
-    explicit PropertiesReader(const PropertyQuery &query, size_t hdr_size)
-        : m_data{&query.m_data[3 + hdr_size]}, m_hdr_size{hdr_size}, m_end{&query.m_data.back()} {}
+    explicit PropertiesReader(const PropertyQuery &src, size_t headerLength)
+        : m_data{&src.m_data[3 + headerLength]}, m_end{&src.m_data.back()}, m_headerLength{headerLength} {}
 
     /**
      * @brief Size of properties data.
@@ -65,7 +65,7 @@ class PropertyQuery : public FrameData {
      * @param idx byte index.
      * @return property byte.
      */
-    uint8_t operator[](int idx) const { return this->m_data[idx]; }
+    const uint8_t &operator[](int idx) const { return this->m_data[idx]; }
 
     /**
      * @brief Available bytes for read.
@@ -87,7 +87,7 @@ class PropertyQuery : public FrameData {
      * @return UUID.
      */
     PropertyUUID uuid() const {
-      auto it = this->m_data - this->m_hdr_size;
+      auto it = this->m_data - this->m_headerLength;
       return it[1] * 256 + it[0];
     }
 
@@ -95,12 +95,12 @@ class PropertyQuery : public FrameData {
      * @brief Advance reader to next property.
      *
      */
-    void advance() { this->m_data += this->size() + this->m_hdr_size; }
+    void advance() { this->m_data += this->size() + this->m_headerLength; }
 
    private:
     const uint8_t *m_data;
-    size_t const m_hdr_size;
     const uint8_t *const m_end;
+    const size_t m_headerLength;
   };
 
   /**

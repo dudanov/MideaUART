@@ -50,7 +50,7 @@ class PropertyQuery : public FrameData {
      * @param headerLength header length.
      */
     explicit PropertiesReader(const PropertyQuery &src, size_t headerLength)
-        : m_data{&src.m_data[3 + headerLength]}, m_end{&src.m_data.back()}, m_headerLength{headerLength} {}
+        : m_data{&src.m_data[2 + headerLength]}, m_end{&src.m_data.back()}, m_headerLength{headerLength} {}
 
     /**
      * @brief Size of properties data.

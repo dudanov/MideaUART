@@ -50,7 +50,7 @@ class PropertyQuery : public FrameData {
      * @param hdr_size header size.
      */
     explicit PropertiesReader(const PropertyQuery &query, size_t hdr_size)
-        : m_data{&query.m_data[3 + hdr_size]}, m_end{&query.m_data.back()}, m_hdr_size{hdr_size} {}
+        : m_data{&query.m_data[3 + hdr_size]}, m_hdr_size{hdr_size}, m_end{&query.m_data.back()} {}
 
     /**
      * @brief Size of properties data.

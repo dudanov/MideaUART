@@ -37,14 +37,27 @@ class PropertyQuery : public FrameData {
     this->append(static_cast<uint8_t>(sizeof...(Args)), static_cast<uint8_t>(data)...);
   }
 
-  class PropertiesReaderInternal {
+  /**
+   * @brief Properties data reader.
+   *
+   */
+  class PropertiesReader {
    public:
+    /**
+     * @brief Constructor from `PropertyQuery`. Skip `ID`, `NUM` and `CRC` fields.
+     *
+     * @param query reference to `PropertyQuery`.
+     * @param hdr_size header size.
+     */
+    explicit PropertiesReader(const PropertyQuery &query, size_t hdr_size)
+        : m_data{&query.m_data[3 + hdr_size]}, m_end{&query.m_data.back()}, m_hdr_size{hdr_size} {}
+
     /**
      * @brief Size of properties data.
      *
      * @return size of properties data.
      */
-    int size() const { return this->m_it[-1]; }
+    int size() const { return this->m_data[-1]; }
 
     /**
      * @brief Property data access `operator[]`.
@@ -52,44 +65,21 @@ class PropertyQuery : public FrameData {
      * @param idx byte index.
      * @return property byte.
      */
-    uint8_t operator[](int idx) const { return this->m_it[idx]; }
+    uint8_t operator[](int idx) const { return this->m_data[idx]; }
 
     /**
      * @brief Available bytes for read.
      *
      * @return int Available bytes for read.
      */
-    int available() const { return std::distance(this->m_it, this->m_end); }
+    int available() const { return std::distance(this->m_data + this->size(), this->m_end); }
 
     /**
      * @brief Current property is valid.
      *
      * @return property validation result.
      */
-    bool valid() const {
-      const auto available = this->available();
-      return available > 0 && available >= this->size();
-    }
-
-   protected:
-    PropertiesReaderInternal(const uint8_t *begin, const uint8_t *end) : m_it{begin}, m_end{end} {}
-    const uint8_t *m_it;
-    const uint8_t *const m_end;
-  };
-
-  /**
-   * @brief Properties data reader.
-   *
-   */
-  template<int HEADER_SIZE> class PropertiesReader : public PropertiesReaderInternal {
-   public:
-    /**
-     * @brief Constructor from `PropertyQuery`. Skip `ID`, `NUM` and `CRC` fields.
-     *
-     * @param data reference to `PropertyQuery`.
-     */
-    explicit PropertiesReader(const PropertyQuery &query)
-        : PropertiesReaderInternal{&query.m_data[3 + HEADER_SIZE], &query.m_data.back()} {}
+    bool valid() const { return this->available() >= 0; }
 
     /**
      * @brief Property UUID.
@@ -97,7 +87,7 @@ class PropertyQuery : public FrameData {
      * @return UUID.
      */
     PropertyUUID uuid() const {
-      auto it = this->m_it - HEADER_SIZE;
+      auto it = this->m_data - this->m_hdr_size;
       return it[1] * 256 + it[0];
     }
 
@@ -105,7 +95,12 @@ class PropertyQuery : public FrameData {
      * @brief Advance reader to next property.
      *
      */
-    void advance() { this->m_it += this->size() + HEADER_SIZE; }
+    void advance() { this->m_data += this->size() + this->m_hdr_size; }
+
+   private:
+    const uint8_t *m_data;
+    size_t const m_hdr_size;
+    const uint8_t *const m_end;
   };
 
   /**
@@ -113,8 +108,13 @@ class PropertyQuery : public FrameData {
    *
    * @return `PropertiesReader` instance.
    */
-  template<int HEADER_SIZE> PropertiesReader<HEADER_SIZE> getReader() const {
-    return PropertiesReader<HEADER_SIZE>(*this);
+  PropertiesReader getReader() const {
+    size_t hdr_size = 3;
+
+    if (this->hasID(0xB1))
+      hdr_size = 4;
+
+    return PropertiesReader(*this, hdr_size);
   }
 };
 

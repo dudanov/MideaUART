@@ -50,7 +50,15 @@ class PropertyQuery : public FrameData {
      * @param headerLength header length.
      */
     explicit PropertiesReader(const PropertyQuery &src, size_t headerLength)
-        : m_data{&src.m_data[2 + headerLength]}, m_end{&src.m_data.back()}, m_headerLength{headerLength} {}
+        : m_header{&src.m_data[2]}, m_data{m_header + headerLength}, m_end{&src.m_data.back()} {}
+
+    /**
+     * @brief
+     *
+     *
+     * @return
+     */
+    size_t headerLength() const { return std::distance(this->m_header, this->m_data); }
 
     /**
      * @brief Size of properties data.
@@ -86,21 +94,22 @@ class PropertyQuery : public FrameData {
      *
      * @return UUID.
      */
-    PropertyUUID uuid() const {
-      auto it = this->m_data - this->m_headerLength;
-      return it[1] * 256 + it[0];
-    }
+    PropertyUUID uuid() const { return this->m_header[1] * 256 + this->m_header[0]; }
 
     /**
      * @brief Advance reader to next property.
      *
      */
-    void advance() { this->m_data += this->size() + this->m_headerLength; }
+    void advance() {
+      auto offset = this->size() + this->headerLength();
+      this->m_header += offset;
+      this->m_data += offset;
+    }
 
    private:
+    const uint8_t *m_header;
     const uint8_t *m_data;
     const uint8_t *const m_end;
-    const size_t m_headerLength;
   };
 
   /**

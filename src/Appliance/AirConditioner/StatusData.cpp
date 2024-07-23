@@ -5,6 +5,15 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
+bool inRange(float d) { return d > 17 && d < 30; }
+
+bool isSpecialValue(float d) {
+  if (d == 2.5f || d == 7.5f || d == 12.5f) {
+    return true;
+  }
+  return (d >= 15.5f && d <= 17.5f) || d == 32.5f || d == 37.5f || d == 42.5f || d == 47.5f;
+}
+
 uint8_t get_louver_position(uint8_t position) {
   if (position == 0)
     return 1;

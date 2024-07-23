@@ -39,8 +39,8 @@ enum Mode : uint8_t {
   MODE_HEAT,
   /// The Midea device is manually set to fan only mode
   MODE_FAN_ONLY,
-  /// The Midea device is manually set to custom dry mode
-  MODE_DRY_CUSTOM,
+  /// The Midea device is manually set to smart dry mode
+  MODE_DRY_SMART,
 };
 
 /**
@@ -67,6 +67,7 @@ enum Mode : uint8_t {
  * | FAN_MEDIUM   |    60 | 60 (50) |
  * | FAN_HIGH     |    80 | 80      |
  * | FAN_TURBO    |   100 | 100     |
+ * | FAN_FIXED    |   101 | 101     |
  * | FAN_AUTO     |   102 | 102     |
  *
  */
@@ -76,6 +77,7 @@ enum FanSpeed : uint8_t {
   FAN_MEDIUM = 60,
   FAN_HIGH = 80,
   FAN_TURBO = 100,
+  FAN_FIXED = 101,
   FAN_AUTO = 102,
 };
 

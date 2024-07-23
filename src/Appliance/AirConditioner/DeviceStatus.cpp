@@ -1,18 +1,19 @@
 #include "Appliance/AirConditioner/DeviceStatus.h"
+#include "Appliance/AirConditioner/StatusData.h"
 
 namespace dudanov {
 namespace midea {
 namespace ac {
 
-static int celsius_to_fahrenheits(float value) { return static_cast<int>(value * 1.8F) + 32; }
-static float fahrenheits_to_celsius(int value) { return static_cast<float>(value - 32) / 1.8F; }
+static int celsius_to_fahrenheits(float value) { return static_cast<int>(value * 1.8f) + 32; }
+static float fahrenheits_to_celsius(int value) { return static_cast<float>(value - 32) / 1.8f; }
 
 static float get_temperature(int integer, int decimal, bool fahrenheits) {
   integer -= 50;
   if (!fahrenheits && decimal > 0)
-    return static_cast<float>(integer / 2) + static_cast<float>(decimal) * ((integer >= 0) ? 0.1F : -0.1F);
+    return static_cast<float>(integer / 2) + static_cast<float>(decimal) * ((integer >= 0) ? 0.1f : -0.1f);
   if (decimal >= 5)
-    return static_cast<float>(integer / 2) + ((integer >= 0) ? 0.5F : -0.5F);
+    return static_cast<float>(integer / 2) + ((integer >= 0) ? 0.5f : -0.5f);
   return static_cast<float>(integer) * 0.5F;
 }
 
@@ -110,7 +111,7 @@ void DeviceStatus::updateFromA1(const FrameData &data) {
 
 void DeviceStatus::updateFromC0(const FrameData &data) {
   this->powerStatus = data[1] & 1;
-  this->imodeResume = data[1] & 4;
+  this->imodeResume = (data[1] & 4) >> 2;
   this->timerMode = data[1] & 16;
   this->test2 = data[1] & 32;
   this->errMark = data[1] & 128;
@@ -198,13 +199,13 @@ FrameData DeviceStatus::to40Command() const {
     lturbo = false;
   }
 
-  if (this->mode == 5) {
+  if (this->mode == MODE_FAN_ONLY) {
     leco = false;
     lturbo = false;
   }
 
-  if (this->mode != 3 && lfanSpeed == 101)
-    lfanSpeed = 102;
+  if (this->mode != MODE_DRY && lfanSpeed == FAN_FIXED)
+    lfanSpeed = FAN_AUTO;
 
   data[1] = 64 | this->test2 * 32 | this->timerMode * 16 | this->childSleepMode * 8 | this->imodeResume * 4 | 2 |
             this->powerStatus * 1;

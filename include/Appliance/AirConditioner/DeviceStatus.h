@@ -67,7 +67,7 @@ class DeviceStatus {
   /// Timing start/minute
   uint8_t timer_on_min;
   /// strong
-  bool tubro;
+  bool turbo;
   /// up and down
   bool updownFan;
 

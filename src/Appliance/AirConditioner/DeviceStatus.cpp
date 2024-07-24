@@ -56,15 +56,24 @@ DeviceStatus::DeviceStatus(const DeviceStatus &deviceStatus) {
 DeviceStatus FrameStatusData::updateFromA0() {
   DeviceStatus status{};
 
+  // Byte #1
   status.powerStatus = this->m_getBit(1, 0);
   status.setTemperature = this->m_getValue(1, 31, 1) + 12;
   status.setTemperature_dot = this->m_getBit(1, 6);
   status.errMark = this->m_getBit(1, 7);
+
+  // Byte #2
   status.mode = this->m_getValue(2, 7, 5);
+
+  // Byte #3
   status.fanSpeed = this->m_getValue(3, 127);
+
+  // Byte #4,6
   status.timer_on_hour = this->m_getValue(4, 31, 2);
   status.timer_on_min = this->m_getValue(4, 3) | this->m_getValue(6, 15, 4);
   status.timer_on = this->m_getBit(4, 7);
+
+  // Byte #5,6
   status.timer_off_hour = this->m_getValue(5, 31, 2);
   status.timer_off_min = this->m_getValue(5, 3) | this->m_getValue(6, 15);
   status.timer_off = this->m_getBit(5, 7);
@@ -79,19 +88,26 @@ DeviceStatus FrameStatusData::updateFromA0() {
     status.timer_on_hour = 0;
   }
 
+  // Byte #7
   status.updownFan = this->m_getValue(7, 3, 2);
   status.leftRightFan = this->m_getValue(7, 3);
+
+  // Byte #8
   status.cosySleep = this->m_getValue(8, 3);
   status.save = this->m_getBit(8, 3);
   status.lowFerqFan = this->m_getBit(8, 4);
   status.turbo = this->m_getBit(8, 5);
   status.feelOwn = this->m_getBit(8, 7);
+
+  // Byte #9
   status.exchangeAir = this->m_getBit(9, 1);
   status.dryClean = this->m_getBit(9, 2);
   status.ptcAssis = this->m_getBit(9, 3);
   status.eco = this->m_getBit(9, 4);
   status.cleanUp = this->m_getBit(9, 5);
   status.tempUnit = this->m_getBit(9, 7);
+
+  // Byte #10
   status.sleepFunc = this->m_getBit(10, 0);
 
   if (!status.turbo)
@@ -101,13 +117,21 @@ DeviceStatus FrameStatusData::updateFromA0() {
   status.nightLight = this->m_getBit(10, 4);
   status.peakElec = this->m_getBit(10, 5);
   status.naturalFan = this->m_getBit(10, 6);
+
+  // Byte #11
   status.pwmMode = this->m_getValue(11, 15);
   status.light = this->m_getValue(11, 7, 4);
+
+  // Byte #12
   status.setExpand_dot = this->m_getBit(12, 0);
   status.setExpand = this->m_getValue(12, 31) + 12;
   status.double_temp = this->m_getBit(12, 6);
   status.Eight_Hot = this->m_getBit(12, 7);
+
+  // Byte #13
   status.humidity = this->m_getValue(13, 127);
+
+  // Byte #14
   status.hasNoWindFeel = this->m_getBit(14, 3);
 
   if (status.tempUnit)
@@ -132,7 +156,7 @@ DeviceStatus FrameStatusData::updateFromC0() {
   status.errMark = this->m_getBit(1, 7);
 
   // Byte #2
-  status.setTemperature = static_cast<float>(this->m_getValue(2, 15) + 16);
+  status.setTemperature = this->m_getValue(2, 15) + 16;
   status.setTemperature_dot = this->m_getBit(2, 4);
   status.mode = this->m_getValue(2, 7, 5);
 
@@ -197,10 +221,10 @@ DeviceStatus FrameStatusData::updateFromC0() {
   status.coolFan = this->m_getBit(10, 7);
 
   // Byte #11
-  int indoor_temp_ = this->m_getValue(11);
+  auto indoor_temp = this->m_getValue(11);
 
   // Byte #12
-  int outdoor_temp_ = this->m_getValue(12, 127);
+  auto outdoor_temp = this->m_getValue(12, 127);
   status.Eight_Hot = this->m_getBit(12, 7);
 
   // Byte #13
@@ -208,7 +232,7 @@ DeviceStatus FrameStatusData::updateFromC0() {
   status.dusFull = this->m_getBit(13, 5);
 
   if (new_temp) {
-    status.setNewTemperature = static_cast<float>(new_temp + 12);
+    status.setNewTemperature = new_temp + 12;
     status.setTemperature = status.setNewTemperature;
   }
 
@@ -220,8 +244,8 @@ DeviceStatus FrameStatusData::updateFromC0() {
   status.T1_dot = this->m_getValue(15, 15);
   status.T4_dot = this->m_getValue(15, 15, 4);
 
-  status.indoor_temp = s_get_temperature(indoor_temp_, status.T1_dot, status.tempUnit);
-  status.outdoor_temp = s_get_temperature(outdoor_temp_, status.T4_dot, status.tempUnit);
+  status.indoor_temp = s_get_temperature(indoor_temp, status.T1_dot, status.tempUnit);
+  status.outdoor_temp = s_get_temperature(outdoor_temp, status.T4_dot, status.tempUnit);
 
   // Byte #16
   status.errInfo = this->m_getValue(16);
@@ -253,46 +277,40 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
   this->m_data = {0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-  uint8_t fan_speed_ = s.fanSpeed;
+  auto fan_speed = s.fanSpeed;
+  auto turbo = s.turbo;
+  auto eco = s.eco;
 
-  bool turbo_ = s.turbo;
-  bool eco_ = s.eco;
-
-  if (!s.powerStatus) {
-    eco_ = false;
-    turbo_ = false;
+  if (!s.powerStatus || s.mode == MODE_FAN_ONLY) {
+    eco = false;
+    turbo = false;
   }
 
-  if (s.mode == MODE_FAN_ONLY) {
-    eco_ = false;
-    turbo_ = false;
-  }
-
-  if (s.mode != MODE_DRY && fan_speed_ == FAN_FIXED)
-    fan_speed_ = FAN_AUTO;
+  if (s.mode != MODE_DRY && fan_speed == FAN_FIXED)
+    fan_speed = FAN_AUTO;
 
   this->m_data[1] =
       64 | s.test2 * 32 | s.timerMode * 16 | s.childSleepMode * 8 | s.imodeResume * 4 | 2 | s.powerStatus * 1;
 
-  int temp_ = static_cast<int>(s.setTemperature);
-  bool temp_dot_ = s.setTemperature_dot;
+  auto set_temp = s.setTemperature;
+  bool set_temp_dot = s.setTemperature_dot;
 
-  if (temp_ >= 50) {
-    int tmp = static_cast<int>(fahrenheits_to_celsius(temp_) * 2.0f + 0.5f);
+  if (set_temp >= 50) {
+    auto tmp = static_cast<uint8_t>(fahrenheits_to_celsius(set_temp) * 2.0f + 0.5f);
 
-    temp_ = tmp / 2;
-    temp_dot_ = tmp % 2;
+    set_temp = tmp / 2;
+    set_temp_dot = tmp % 2;
   }
 
-  int set_temp_new_ = (temp_ - 12) % 32;
+  auto set_temp_new = (set_temp - 12) % 32;
 
-  temp_ -= 16;
+  set_temp -= 16;
 
-  if (temp_ < 1 || temp_ > 14)
-    temp_ = 1;
+  if (set_temp < 1 || set_temp > 14)
+    set_temp = 1;
 
-  this->m_data[2] = s.mode * 32 | temp_dot_ * 16 | temp_ * 1;
-  this->m_data[3] = s.timerEffe * 128 | fan_speed_ % 128 * 1;
+  this->m_data[2] = s.mode * 32 | set_temp_dot * 16 | set_temp * 1;
+  this->m_data[3] = s.timerEffe * 128 | fan_speed % 128 * 1;
 
   // Setting timers. Initialized off. Therefore, we process only if enabled.
 
@@ -307,14 +325,14 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
   }
 
   this->m_data[7] = 48 | s.updownFan * 12 | s.leftRightFan * 3;
-  this->m_data[8] = s.feelOwn * 128 | s.powerSaver * 64 | turbo_ * 32 | s.lowFerqFan * 16 | s.save * 8 |
+  this->m_data[8] = s.feelOwn * 128 | s.powerSaver * 64 | turbo * 32 | s.lowFerqFan * 16 | s.save * 8 |
                     s.alarmSleep * 4 | s.cosySleep % 4 * 1;
-  this->m_data[9] = eco_ * 128 | s.changeCosySleep * 64 | s.cleanUp * 32 | s.ptcButton * 16 | s.ptcAssis * 8 |
+  this->m_data[9] = eco * 128 | s.changeCosySleep * 64 | s.cleanUp * 32 | s.ptcButton * 16 | s.ptcAssis * 8 |
                     s.dryClean * 4 | s.exchangeAir * 2 | s.wiseEye * 1;
   this->m_data[10] = s.cleanFanTime * 128 | s.dusFull * 64 | s.peakElec * 32 | s.nightLight * 16 | s.catchCold * 8 |
-                     s.tempUnit * 4 | turbo_ * 2 | s.sleepFunc * 1;
+                     s.tempUnit * 4 | turbo * 2 | s.sleepFunc * 1;
   this->m_data[15] = s.naturalFan * 64;
-  this->m_data[18] = set_temp_new_;
+  this->m_data[18] = set_temp_new;
   this->m_data[19] = s.humidity;
   this->m_data[21] = s.Eight_Hot * 128 | s.double_temp * 64 | s.setExpand % 32 * 2 | s.setExpand_dot * 1;
   this->m_data[23] = this->m_getID();

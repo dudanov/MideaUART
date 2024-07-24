@@ -297,6 +297,22 @@ void FrameStatusData::to40Command(const DeviceStatus &s, bool beeper) {
   appendCRC();
 }
 
+float DeviceStatus::getTargetTemperature() const {
+  auto temp = static_cast<float>(setTemperature);
+
+  if (setTemperature_dot)
+    temp += 0.5f;
+
+  return temp;
+}
+
+void DeviceStatus::setTargetTemperature(float value) {
+  const auto val = static_cast<unsigned>(value * 2.0f);
+
+  setTemperature = val / 2;
+  setTemperature_dot = val % 2;
+}
+
 }  // namespace ac
 }  // namespace midea
 }  // namespace dudanov

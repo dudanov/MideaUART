@@ -10,6 +10,10 @@ class DeviceStatus {
  public:
   DeviceStatus() = default;
   DeviceStatus(const DeviceStatus &deviceStatus);
+
+  float getTargetTemperature() const;
+  void setTargetTemperature(float value);
+
   /// 8 degrees heating
   bool Eight_Hot;
   // int atwDhwSetTemperature;

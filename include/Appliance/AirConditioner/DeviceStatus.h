@@ -44,8 +44,6 @@ class DeviceStatus {
   bool ptcAssis;
   /// 39 Self-cleaning
   bool selfClean;
-  /// 18-Temperature
-  uint8_t setNewTemperature;
   /// set temperature
   uint8_t setTemperature{26};
   /// Whether the temperature has a decimal point (only for Celsius)

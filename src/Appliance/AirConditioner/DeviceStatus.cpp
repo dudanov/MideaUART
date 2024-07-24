@@ -38,7 +38,6 @@ DeviceStatus::DeviceStatus(const DeviceStatus &deviceStatus) {
   sleepFunc = deviceStatus.sleepFunc;
   catchCold = deviceStatus.catchCold;
   humidity = deviceStatus.humidity;
-  setNewTemperature = deviceStatus.setNewTemperature;
   hasNoWindFeel = deviceStatus.hasNoWindFeel;
   selfClean = deviceStatus.selfClean;
   noWindOnMe = deviceStatus.noWindOnMe;
@@ -199,10 +198,8 @@ void FrameStatusData::updateFromC0(DeviceStatus &s) {
   auto new_temp = m_getValue(13, 31);
   s.dusFull = m_getBit(13, 5);
 
-  if (new_temp) {
-    s.setNewTemperature = new_temp + 12;
-    s.setTemperature = s.setNewTemperature;
-  }
+  if (new_temp)
+    s.setTemperature = new_temp + 12;
 
   // Byte #14
   s.pwmMode = m_getValue(14, 15);

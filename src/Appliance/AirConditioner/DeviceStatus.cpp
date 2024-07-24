@@ -290,7 +290,7 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
     fan_speed = FAN_AUTO;
 
   this->m_data[1] =
-      64 | s.test2 * 32 | s.timerMode * 16 | s.childSleepMode * 8 | s.imodeResume * 4 | 2 | s.powerStatus * 1;
+      0x42 + s.test2 * 0x20 + s.timerMode * 0x10 + s.childSleepMode * 0x08 + s.imodeResume * 0x04 + s.powerStatus;
 
   auto set_temp = s.setTemperature;
   bool set_temp_dot = s.setTemperature_dot;
@@ -309,32 +309,32 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
   if (set_temp < 1 || set_temp > 14)
     set_temp = 1;
 
-  this->m_data[2] = s.mode * 32 | set_temp_dot * 16 | set_temp * 1;
-  this->m_data[3] = s.timerEffe * 128 | fan_speed % 128 * 1;
+  this->m_data[2] = s.mode * 0x20 + set_temp_dot * 0x10 + set_temp;
+  this->m_data[3] = s.timerEffe * 0x80 + fan_speed % 128;
 
   // Setting timers. Initialized off. Therefore, we process only if enabled.
 
   if (s.timer_off) {
-    this->m_data[5] = 128 | s.timer_off_hour * 4 | s.timer_off_min / 15;
-    this->m_data[6] |= s.timer_off_min % 15;
+    this->m_data[5] = 0x80 + s.timer_off_hour * 0x04 + s.timer_off_min / 15;
+    this->m_data[6] = s.timer_off_min % 15;
   }
 
   if (s.timer_on) {
-    this->m_data[4] = 128 | s.timer_on_hour * 4 | s.timer_on_min / 15;
-    this->m_data[6] = s.timer_on_min % 15 * 16;
+    this->m_data[4] = 0x80 + s.timer_on_hour * 0x04 + s.timer_on_min / 15;
+    this->m_data[6] |= s.timer_on_min % 15 * 0x10;
   }
 
-  this->m_data[7] = 48 | s.updownFan * 12 | s.leftRightFan * 3;
-  this->m_data[8] = s.feelOwn * 128 | s.powerSaver * 64 | turbo * 32 | s.lowFerqFan * 16 | s.save * 8 |
-                    s.alarmSleep * 4 | s.cosySleep % 4 * 1;
-  this->m_data[9] = eco * 128 | s.changeCosySleep * 64 | s.cleanUp * 32 | s.ptcButton * 16 | s.ptcAssis * 8 |
-                    s.dryClean * 4 | s.exchangeAir * 2 | s.wiseEye * 1;
-  this->m_data[10] = s.cleanFanTime * 128 | s.dusFull * 64 | s.peakElec * 32 | s.nightLight * 16 | s.catchCold * 8 |
-                     s.tempUnit * 4 | turbo * 2 | s.sleepFunc * 1;
-  this->m_data[15] = s.naturalFan * 64;
+  this->m_data[7] = 0x30 + s.updownFan * 0x0C + s.leftRightFan * 0x03;
+  this->m_data[8] = s.feelOwn * 0x80 + s.powerSaver * 0x40 + turbo * 0x20 + s.lowFerqFan * 0x10 + s.save * 0x08 +
+                    s.alarmSleep * 0x04 + s.cosySleep % 4;
+  this->m_data[9] = eco * 0x80 + s.changeCosySleep * 0x40 + s.cleanUp * 0x20 + s.ptcButton * 0x10 + s.ptcAssis * 0x08 +
+                    s.dryClean * 0x04 + s.exchangeAir * 0x02 + s.wiseEye;
+  this->m_data[10] = s.cleanFanTime * 0x80 + s.dusFull * 0x40 + s.peakElec * 0x20 + s.nightLight * 0x10 +
+                     s.catchCold * 0x08 + s.tempUnit * 0x04 + turbo * 0x02 + s.sleepFunc;
+  this->m_data[15] = s.naturalFan * 0x40;
   this->m_data[18] = set_temp_new;
   this->m_data[19] = s.humidity;
-  this->m_data[21] = s.Eight_Hot * 128 | s.double_temp * 64 | s.setExpand % 32 * 2 | s.setExpand_dot * 1;
+  this->m_data[21] = s.Eight_Hot * 0x80 + s.double_temp * 0x40 + s.setExpand % 32 * 0x02 + s.setExpand_dot;
   this->m_data[23] = this->m_getID();
 
   this->appendCRC();

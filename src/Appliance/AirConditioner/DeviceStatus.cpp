@@ -209,8 +209,7 @@ DeviceStatus FrameStatusData::updateFromC0() {
   auto indoor_temp = m_getValue(11);
 
   // Byte #12
-  auto outdoor_temp = m_getValue(12, 127);
-  s.Eight_Hot = m_getBit(12, 7);
+  auto outdoor_temp = m_getValue(12);
 
   // Byte #13
   auto new_temp = m_getValue(13, 31);

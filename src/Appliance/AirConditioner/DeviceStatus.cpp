@@ -5,9 +5,6 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
-static int celsius_to_fahrenheits(float value) { return static_cast<int>(value * 1.8f) + 32; }
-static float fahrenheits_to_celsius(int value) { return static_cast<float>(value - 32) / 1.8f; }
-
 static float s_get_temperature(int integer, int decimal, bool fahrenheits) {
   integer -= 50;
 
@@ -122,17 +119,14 @@ DeviceStatus FrameStatusData::updateFromA0() {
   // Byte #14
   s.hasNoWindFeel = m_getBit(14, 3);
 
-  if (s.tempUnit)
-    s.convertUnits();
-
   return s;
 }
 
 DeviceStatus FrameStatusData::updateFromA1() {
   DeviceStatus s{};
 
-  s.indoor_temp = static_cast<float>(m_getValue(13) - 50) * 0.5f;
-  s.outdoor_temp = static_cast<float>(static_cast<int8_t>(m_getValue(14)) - 50) * 0.5f;
+  s.indoor_temp = static_cast<float>(static_cast<int>(m_getValue(13)) - 50) * 0.5f;
+  s.outdoor_temp = static_cast<float>(static_cast<int>(m_getValue(14)) - 50) * 0.5f;
   s.humidity = m_getValue(17, 127);
 
   return s;
@@ -225,11 +219,8 @@ DeviceStatus FrameStatusData::updateFromC0() {
   s.light = m_getValue(14, 7, 4);
 
   // Byte #15
-  s.T1_dot = m_getValue(15, 15);
-  s.T4_dot = m_getValue(15, 15, 4);
-
-  s.indoor_temp = s_get_temperature(indoor_temp, s.T1_dot, s.tempUnit);
-  s.outdoor_temp = s_get_temperature(outdoor_temp, s.T4_dot, s.tempUnit);
+  s.indoor_temp = s_get_temperature(indoor_temp, m_getValue(15, 15), s.tempUnit);
+  s.outdoor_temp = s_get_temperature(outdoor_temp, m_getValue(15, 15, 4), s.tempUnit);
 
   // Byte #16
   s.errInfo = m_getValue(16);
@@ -250,9 +241,6 @@ DeviceStatus FrameStatusData::updateFromC0() {
   // Byte #22
   if (size() >= 23)
     s.hasNoWindFeel = m_getBit(22, 3);
-
-  if (s.tempUnit)
-    s.convertUnits();
 
   return s;
 }
@@ -278,14 +266,6 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
 
   auto set_temp = s.setTemperature;
   bool set_temp_dot = s.setTemperature_dot;
-
-  if (set_temp >= 50) {
-    auto tmp = static_cast<uint8_t>(fahrenheits_to_celsius(set_temp) * 2.0f + 0.5f);
-
-    set_temp = tmp / 2;
-    set_temp_dot = tmp % 2;
-  }
-
   auto set_temp_new = (set_temp - 12) % 32;
 
   set_temp -= 16;
@@ -331,12 +311,6 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
   m_data[23] = m_getID();
 
   appendCRC();
-}
-
-void DeviceStatus::convertUnits() {
-  indoor_temp = celsius_to_fahrenheits(indoor_temp);
-  outdoor_temp = celsius_to_fahrenheits(outdoor_temp);
-  setTemperature = celsius_to_fahrenheits(setTemperature + setTemperature_dot * 0.5f);
 }
 
 }  // namespace ac

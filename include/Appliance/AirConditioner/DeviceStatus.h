@@ -10,10 +10,6 @@ class DeviceStatus {
  public:
   DeviceStatus() = default;
   DeviceStatus(const DeviceStatus &deviceStatus);
-  void updateFromA0(const FrameData &data);
-  void updateFromA1(const FrameData &data);
-  void updateFromC0(const FrameData &data);
-  FrameData to40Command() const;
   /// 8 degrees heating
   bool Eight_Hot;
   // int atwDhwSetTemperature;
@@ -53,7 +49,7 @@ class DeviceStatus {
   /// 18-Temperature
   int setNewTemperature;
   /// set temperature
-  float setTemperature{26.0F};
+  uint8_t setTemperature{26};
   /// Whether the temperature has a decimal point (only for Celsius)
   bool setTemperature_dot;
   /// sleep function
@@ -75,7 +71,6 @@ class DeviceStatus {
   /// up and down
   bool updownFan;
 
- protected:
   void convertUnits();
   uint8_t T1_dot;
   uint8_t T4_dot;
@@ -145,6 +140,14 @@ struct B1Status {
   bool isCombineBreezeOn{false};
   bool isSmartEyeOn{false};
   bool DehumLight{false};
+};
+
+class FrameStatusData : public FrameData {
+ public:
+  DeviceStatus updateFromA0();
+  DeviceStatus updateFromA1();
+  DeviceStatus updateFromC0();
+  void to40Command(const DeviceStatus &status);
 };
 
 }  // namespace ac

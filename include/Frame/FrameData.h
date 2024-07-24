@@ -90,9 +90,9 @@ class FrameData {
   std::vector<uint8_t> m_data;
 
   /**
-   * @brief Static function for generate message ID from a cyclic sequence from 4 to 254.
+   * @brief Static function for generate message ID.
    *
-   * @return ID from 4 to 254.
+   * @return Message ID.
    */
   static uint8_t m_getID();
 
@@ -114,6 +114,8 @@ class FrameData {
   uint8_t m_getValue(uint8_t idx, uint8_t mask = 255, uint8_t rshift = 0) const {
     return (this->m_data[idx] >> rshift) & mask;
   }
+
+  bool m_getBit(uint8_t idx, uint8_t bit) const { return (this->m_data[idx] >> bit) & 1; }
 
   /**
    * @brief Set value to data body.

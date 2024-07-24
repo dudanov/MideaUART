@@ -50,220 +50,242 @@ DeviceStatus::DeviceStatus(const DeviceStatus &deviceStatus) {
   this->avoidPeople = deviceStatus.avoidPeople;
 }
 
-void DeviceStatus::updateFromA0(const FrameData &data) {
-  this->powerStatus = data[1] & 1;
-  this->setTemperature = static_cast<float>(((data[1] >> 1) & 31) + 12);
-  this->setTemperature_dot = data[1] & 64;
-  this->errMark = data[1] & 128;
-  this->mode = data[2] >> 5;
-  this->fanSpeed = data[3] & 127;
-  this->timer_on_hour = (data[4] >> 2) & 31;
-  this->timer_on_min = (data[4] & 3) | (data[6] >> 4);
-  this->timer_on = data[4] & 128;
-  this->timer_off_hour = (data[5] >> 2) & 31;
-  this->timer_off_min = (data[5] & 3) | (data[6] & 15);
-  this->timer_off = data[5] & 128;
-  if (!this->timer_off) {
-    this->timer_off_min = 0;
-    this->timer_off_hour = 0;
+DeviceStatus FrameStatusData::updateFromA0() {
+  DeviceStatus status{};
+
+  status.powerStatus = this->m_getBit(1, 0);
+  status.setTemperature = this->m_getValue(1, 31, 1) + 12;
+  status.setTemperature_dot = this->m_getBit(1, 6);
+  status.errMark = this->m_getBit(1, 7);
+  status.mode = this->m_getValue(2, 7, 5);
+  status.fanSpeed = this->m_getValue(3, 127);
+  status.timer_on_hour = this->m_getValue(4, 31, 2);
+  status.timer_on_min = this->m_getValue(4, 3) | this->m_getValue(6, 15, 4);
+  status.timer_on = this->m_getBit(4, 7);
+  status.timer_off_hour = this->m_getValue(5, 31, 2);
+  status.timer_off_min = this->m_getValue(5, 3) | this->m_getValue(6, 15);
+  status.timer_off = this->m_getBit(5, 7);
+
+  if (!status.timer_off) {
+    status.timer_off_min = 0;
+    status.timer_off_hour = 0;
   }
-  if (!this->timer_on) {
-    this->timer_on_min = 0;
-    this->timer_on_hour = 0;
+
+  if (!status.timer_on) {
+    status.timer_on_min = 0;
+    status.timer_on_hour = 0;
   }
-  this->updownFan = data[7] & 12;
-  this->leftRightFan = data[7] & 3;
-  this->cosySleep = data[8] & 3;
-  this->save = data[8] & 8;
-  this->lowFerqFan = data[8] & 16;
-  this->tubro = data[8] & 32;
-  this->feelOwn = data[8] & 128;
-  this->exchangeAir = data[9] & 2;
-  this->dryClean = data[9] & 4;
-  this->ptcAssis = data[9] & 8;
-  this->eco = data[9] & 16;
-  this->cleanUp = data[9] & 32;
-  this->tempUnit = data[9] & 128;
-  this->sleepFunc = data[10] & 1;
-  if (!this->tubro)
-    this->tubro = data[10] & 2;
-  this->catchCold = data[10] & 8;
-  this->nightLight = data[10] & 16;
-  this->peakElec = data[10] & 32;
-  this->naturalFan = data[10] & 64;
-  this->pwmMode = data[11] & 15;
-  this->light = (data[11] >> 4) & 7;
-  this->setExpand_dot = data[12] & 1;
-  this->setExpand = (data[12] & 31) + 12;
-  this->double_temp = data[12] & 64;
-  this->Eight_Hot = data[12] & 128;
-  this->humidity = data[13] & 127;
-  this->hasNoWindFeel = data[14] & 8;
-  if (this->tempUnit)
-    this->convertUnits();
+
+  status.updownFan = this->m_getValue(7, 3, 2);
+  status.leftRightFan = this->m_getValue(7, 3);
+  status.cosySleep = this->m_getValue(8, 3);
+  status.save = this->m_getBit(8, 3);
+  status.lowFerqFan = this->m_getBit(8, 4);
+  status.tubro = this->m_getBit(8, 5);
+  status.feelOwn = this->m_getBit(8, 7);
+  status.exchangeAir = this->m_getBit(9, 1);
+  status.dryClean = this->m_getBit(9, 2);
+  status.ptcAssis = this->m_getBit(9, 3);
+  status.eco = this->m_getBit(9, 4);
+  status.cleanUp = this->m_getBit(9, 5);
+  status.tempUnit = this->m_getBit(9, 7);
+  status.sleepFunc = this->m_getBit(10, 0);
+  if (!status.tubro)
+    status.tubro = this->m_getBit(10, 1);
+  status.catchCold = this->m_getBit(10, 3);
+  status.nightLight = this->m_getBit(10, 4);
+  status.peakElec = this->m_getBit(10, 5);
+  status.naturalFan = this->m_getBit(10, 6);
+  status.pwmMode = this->m_getValue(11, 15);
+  status.light = this->m_getValue(11, 7, 4);
+  status.setExpand_dot = this->m_getBit(12, 0);
+  status.setExpand = this->m_getValue(12, 31) + 12;
+  status.double_temp = this->m_getBit(12, 6);
+  status.Eight_Hot = this->m_getBit(12, 7);
+  status.humidity = this->m_getValue(13, 127);
+  status.hasNoWindFeel = this->m_getBit(14, 3);
+  if (status.tempUnit)
+    status.convertUnits();
 }
 
-void DeviceStatus::updateFromA1(const FrameData &data) {
-  this->indoor_temp = static_cast<float>(data[13] - 50) * 0.5F;
-  this->outdoor_temp = static_cast<float>(data[14] - 50) * 0.5F;
-  this->humidity = data[17] & 127;
+DeviceStatus FrameStatusData::updateFromA1() {
+  DeviceStatus status{};
+  status.indoor_temp = static_cast<float>(this->m_getValue(13) - 50) * 0.5f;
+  status.outdoor_temp = static_cast<float>(static_cast<int8_t>(this->m_getValue(14)) - 50) * 0.5f;
+  status.humidity = this->m_getValue(17, 127);
 }
 
-void DeviceStatus::updateFromC0(const FrameData &data) {
-  this->powerStatus = data[1] & 1;
-  this->imodeResume = (data[1] & 4) >> 2;
-  this->timerMode = data[1] & 16;
-  this->test2 = data[1] & 32;
-  this->errMark = data[1] & 128;
-  this->setTemperature = static_cast<float>(data[2] & 15 + 16);
-  this->setTemperature_dot = data[2] & 16;
-  this->mode = data[2] >> 5;
-  this->fanSpeed = data[3] & 127;
-  if (this->fanSpeed == 101)
-    this->fanSpeed = 102;
-  this->timer_on_hour = (data[4] >> 2) & 31;
-  this->timer_on_min = (data[4] & 3) | (data[6] >> 4);
-  this->timer_on = data[4] & 128;
-  this->timer_off_hour = (data[5] & 124) >> 2;
-  this->timer_off_min = (data[5] & 3) | (data[6] & 15);
-  this->timer_off = data[5] & 128;
-  if (!this->timer_off) {
-    this->timer_off_min = 0;
-    this->timer_off_hour = 0;
+DeviceStatus FrameStatusData::updateFromC0() {
+  DeviceStatus status{};
+
+  status.powerStatus = this->m_getBit(1, 0);
+  status.imodeResume = this->m_getBit(1, 2);
+  status.timerMode = this->m_getBit(1, 4);
+  status.test2 = this->m_getBit(1, 5);
+  status.errMark = this->m_getBit(1, 7);
+  status.setTemperature = static_cast<float>(this->m_getValue(2, 15) + 16);
+  status.setTemperature_dot = this->m_getBit(2, 4);
+  status.mode = this->m_getValue(2, 7, 5);
+  status.fanSpeed = this->m_getValue(3, 127);
+
+  if (status.fanSpeed == FAN_FIXED)
+    status.fanSpeed = FAN_AUTO;
+
+  status.timer_on_hour = this->m_getValue(4, 31, 2);
+  status.timer_on_min = this->m_getValue(4, 3) | this->m_getValue(6, 15, 4);
+  status.timer_on = this->m_getBit(4, 7);
+  status.timer_off_hour = this->m_getValue(5, 31, 2);
+  status.timer_off_min = this->m_getValue(5, 3) | this->m_getValue(6, 15);
+  status.timer_off = this->m_getBit(5, 7);
+
+  if (!status.timer_off) {
+    status.timer_off_min = 0;
+    status.timer_off_hour = 0;
   }
-  if (!this->timer_on) {
-    this->timer_on_min = 0;
-    this->timer_on_hour = 0;
+
+  if (!status.timer_on) {
+    status.timer_on_min = 0;
+    status.timer_on_hour = 0;
   }
-  this->updownFan = data[7] & 12;
-  this->leftRightFan = data[7] & 3;
-  this->cosySleep = data[8] & 3;
-  this->save = data[8] & 8;
-  this->lowFerqFan = data[8] & 16;
-  this->tubro = data[8] & 32;
-  this->feelOwn = data[8] & 128;
-  this->childSleepMode = data[9] & 1;
-  this->naturalFan = data[9] & 2;
-  this->dryClean = data[9] & 4;
-  this->ptcAssis = data[9] & 8;
-  this->eco = data[9] & 16;
-  this->cleanUp = data[9] & 32;
-  this->sleepFunc = data[9] & 64;
-  this->selfFeelOwn = data[9] & 128;
-  this->sleepFunc = data[10] & 1;
-  if (!this->tubro)
-    this->tubro = data[10] & 2;
-  this->tempUnit = data[10] & 4;
-  this->exchangeAir = data[10] & 8;
-  this->nightLight = data[10] & 16;
-  this->catchCold = data[10] & 32;
-  this->peakElec = data[10] & 64;
-  this->coolFan = data[10] & 128;
-  this->Eight_Hot = data[12] & 128;
-  this->dusFull = data[13] & 32;
-  this->pwmMode = data[14] & 15;
-  this->light = (data[14] >> 4) & 7;
-  this->T1_dot = data[15] & 15;
-  this->T4_dot = data[15] >> 4;
-  this->indoor_temp = get_temperature(data[11], this->T1_dot, this->tempUnit);
-  this->outdoor_temp = get_temperature(data[12], this->T4_dot, this->tempUnit);
-  this->errInfo = data[16];
-  if (data[13] & 31) {
-    this->setNewTemperature = static_cast<float>((data[13] & 31) + 12);
-    this->setTemperature = this->setNewTemperature;
+
+  status.updownFan = this->m_getValue(7, 3, 2);
+  status.leftRightFan = this->m_getValue(7, 3);
+  status.cosySleep = this->m_getValue(8, 3);
+  status.save = this->m_getBit(8, 3);
+  status.lowFerqFan = this->m_getBit(8, 4);
+  status.tubro = this->m_getBit(8, 5);
+  status.feelOwn = this->m_getBit(8, 7);
+  status.childSleepMode = this->m_getBit(9, 0);
+  status.naturalFan = this->m_getBit(9, 1);
+  status.dryClean = this->m_getBit(9, 2);
+  status.ptcAssis = this->m_getBit(9, 3);
+  status.eco = this->m_getBit(9, 4);
+  status.cleanUp = this->m_getBit(9, 5);
+  status.sleepFunc = this->m_getBit(9, 6);
+  status.selfFeelOwn = this->m_getBit(9, 7);
+  status.sleepFunc = this->m_getBit(10, 0);
+
+  if (!status.tubro)
+    status.tubro = this->m_getBit(10, 1);
+
+  status.tempUnit = this->m_getBit(10, 2);
+  status.exchangeAir = this->m_getBit(10, 3);
+  status.nightLight = this->m_getBit(10, 4);
+  status.catchCold = this->m_getBit(10, 5);
+  status.peakElec = this->m_getBit(10, 6);
+  status.coolFan = this->m_getBit(10, 7);
+  status.Eight_Hot = this->m_getBit(12, 7);
+  status.dusFull = this->m_getBit(13, 5);
+  status.pwmMode = this->m_getValue(14, 15);
+  status.light = this->m_getValue(14, 7, 4);
+  status.T1_dot = this->m_getValue(15, 15);
+  status.T4_dot = this->m_getValue(15, 15, 4);
+  status.indoor_temp = get_temperature(this->m_getValue(11), status.T1_dot, status.tempUnit);
+  status.outdoor_temp = get_temperature(this->m_getValue(12), status.T4_dot, status.tempUnit);
+  status.errInfo = this->m_getValue(16);
+
+  auto new_temp = this->m_getValue(13, 31);
+
+  if (new_temp) {
+    status.setNewTemperature = static_cast<float>(new_temp + 12);
+    status.setTemperature = status.setNewTemperature;
   }
-  this->humidity = data[19] & 127;
-  if (data.size() >= 23)
-    this->hasNoWindFeel = data[22] & 8;
-  if (data.size() >= 24) {
-    this->double_temp = data[21] & 64;
-    this->Eight_Hot = data[21] & 128;
+
+  status.humidity = this->m_getValue(19, 127);
+
+  if (this->size() >= 23)
+    status.hasNoWindFeel = this->m_getBit(22, 3);
+
+  if (this->size() >= 24) {
+    status.double_temp = this->m_getBit(21, 6);
+    status.Eight_Hot = this->m_getBit(21, 7);
   } else {
-    this->double_temp = 0;
-    this->Eight_Hot = 0;
+    status.double_temp = 0;
+    status.Eight_Hot = 0;
   }
-  if (this->tempUnit)
-    this->convertUnits();
+
+  if (status.tempUnit)
+    status.convertUnits();
+
+  return status;
 }
 
-FrameData DeviceStatus::to40Command() const {
-  FrameData data{{0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+void FrameStatusData::to40Command(const DeviceStatus &s) {
+  this->m_data = {0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-  uint8_t lfanSpeed = this->fanSpeed;
-  bool lturbo = this->tubro;
-  bool leco = this->eco;
+  uint8_t fan_speed_ = s.fanSpeed;
 
-  if (!this->powerStatus) {
-    leco = false;
-    lturbo = false;
+  bool turbo_ = s.tubro;
+  bool eco_ = s.eco;
+
+  if (!s.powerStatus) {
+    eco_ = false;
+    turbo_ = false;
   }
 
-  if (this->mode == MODE_FAN_ONLY) {
-    leco = false;
-    lturbo = false;
+  if (s.mode == MODE_FAN_ONLY) {
+    eco_ = false;
+    turbo_ = false;
   }
 
-  if (this->mode != MODE_DRY && lfanSpeed == FAN_FIXED)
-    lfanSpeed = FAN_AUTO;
+  if (s.mode != MODE_DRY && fan_speed_ == FAN_FIXED)
+    fan_speed_ = FAN_AUTO;
 
-  data[1] = 64 | this->test2 * 32 | this->timerMode * 16 | this->childSleepMode * 8 | this->imodeResume * 4 | 2 |
-            this->powerStatus * 1;
+  this->m_data[1] =
+      64 | s.test2 * 32 | s.timerMode * 16 | s.childSleepMode * 8 | s.imodeResume * 4 | 2 | s.powerStatus * 1;
 
-  int lsetTemp = static_cast<int>(this->setTemperature);
-  bool lsetTemp_dot = this->setTemperature_dot;
+  int temp_ = static_cast<int>(s.setTemperature);
+  bool temp_dot_ = s.setTemperature_dot;
 
-  if (lsetTemp >= 50) {
-    int tmp = static_cast<int>(fahrenheits_to_celsius(lsetTemp) * 2.0F + 0.5F);
-    lsetTemp = tmp / 2;
-    lsetTemp_dot = tmp % 2;
+  if (temp_ >= 50) {
+    int tmp = static_cast<int>(fahrenheits_to_celsius(temp_) * 2.0f + 0.5f);
+    temp_ = tmp / 2;
+    temp_dot_ = tmp % 2;
   }
 
-  int lsetTempNew = (lsetTemp - 12) % 32;
-  lsetTemp -= 16;
-  if (lsetTemp < 1 || lsetTemp > 14)
-    lsetTemp = 1;
+  int set_temp_new_ = (temp_ - 12) % 32;
 
-  data[2] = this->mode * 32 | lsetTemp_dot * 16 | lsetTemp * 1;
-  data[3] = this->timerEffe * 128 | lfanSpeed % 128 * 1;
+  temp_ -= 16;
 
-  /* Setting timers. Initialized off. Therefore, we process only if enabled. */
+  if (temp_ < 1 || temp_ > 14)
+    temp_ = 1;
 
-  if (this->timer_on) {
-    data[4] = 128 | this->timer_on_hour * 4 | this->timer_on_min / 15;
-    data[6] = this->timer_on_min % 15 * 16;
+  this->m_data[2] = s.mode * 32 | temp_dot_ * 16 | temp_ * 1;
+  this->m_data[3] = s.timerEffe * 128 | fan_speed_ % 128 * 1;
+
+  // Setting timers. Initialized off. Therefore, we process only if enabled.
+
+  if (s.timer_off) {
+    this->m_data[5] = 128 | s.timer_off_hour * 4 | s.timer_off_min / 15;
+    this->m_data[6] |= s.timer_off_min % 15;
   }
 
-  if (this->timer_off) {
-    data[5] = 128 | this->timer_off_hour * 4 | this->timer_off_min / 15;
-    data[6] |= this->timer_off_min % 15;
+  if (s.timer_on) {
+    this->m_data[4] = 128 | s.timer_on_hour * 4 | s.timer_on_min / 15;
+    this->m_data[6] = s.timer_on_min % 15 * 16;
   }
 
-  data[7] = 48 | this->updownFan * 12 | this->leftRightFan * 3;
-  data[8] = this->feelOwn * 128 | this->powerSaver * 64 | lturbo * 32 | this->lowFerqFan * 16 | this->save * 8 |
-            this->alarmSleep * 4 | this->cosySleep % 4 * 1;
-  data[9] = leco * 128 | this->changeCosySleep * 64 | this->cleanUp * 32 | this->ptcButton * 16 | this->ptcAssis * 8 |
-            this->dryClean * 4 | this->exchangeAir * 2 | this->wiseEye * 1;
-  data[10] = this->cleanFanTime * 128 | this->dusFull * 64 | this->peakElec * 32 | this->nightLight * 16 |
-             this->catchCold * 8 | this->tempUnit * 4 | lturbo * 2 | this->sleepFunc * 1;
-  data[15] = this->naturalFan * 64;
-  data[18] = lsetTempNew;
-  data[19] = this->humidity;
-  data[21] = this->Eight_Hot * 128 | this->double_temp * 64 | this->setExpand % 32 * 2 | this->setExpand_dot * 1;
+  this->m_data[7] = 48 | s.updownFan * 12 | s.leftRightFan * 3;
+  this->m_data[8] = s.feelOwn * 128 | s.powerSaver * 64 | turbo_ * 32 | s.lowFerqFan * 16 | s.save * 8 |
+                    s.alarmSleep * 4 | s.cosySleep % 4 * 1;
+  this->m_data[9] = eco_ * 128 | s.changeCosySleep * 64 | s.cleanUp * 32 | s.ptcButton * 16 | s.ptcAssis * 8 |
+                    s.dryClean * 4 | s.exchangeAir * 2 | s.wiseEye * 1;
+  this->m_data[10] = s.cleanFanTime * 128 | s.dusFull * 64 | s.peakElec * 32 | s.nightLight * 16 | s.catchCold * 8 |
+                     s.tempUnit * 4 | turbo_ * 2 | s.sleepFunc * 1;
+  this->m_data[15] = s.naturalFan * 64;
+  this->m_data[18] = set_temp_new_;
+  this->m_data[19] = s.humidity;
+  this->m_data[21] = s.Eight_Hot * 128 | s.double_temp * 64 | s.setExpand % 32 * 2 | s.setExpand_dot * 1;
+  this->m_data[23] = this->m_getID();
 
-  static uint8_t id = 4;
-  if (++id < 4 || id >= 255)
-    id = 4;
-  data[23] = id;
-
-  data.appendCRC();
-  return data;
+  this->appendCRC();
 }
 
 void DeviceStatus::convertUnits() {
   this->indoor_temp = celsius_to_fahrenheits(this->indoor_temp);
   this->outdoor_temp = celsius_to_fahrenheits(this->outdoor_temp);
-  this->setTemperature = celsius_to_fahrenheits(this->setTemperature + this->setTemperature_dot * 0.5F);
+  this->setTemperature = celsius_to_fahrenheits(this->setTemperature + this->setTemperature_dot * 0.5f);
 }
 
 }  // namespace ac

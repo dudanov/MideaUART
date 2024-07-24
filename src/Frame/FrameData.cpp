@@ -10,15 +10,10 @@
 namespace dudanov {
 namespace midea {
 
-// com.midea.api.command.DataBodyDevOld class
 // Message ID generator
 uint8_t FrameData::m_getID() {
-  static uint8_t id = 4;
-
-  if (++id == 255)
-    id = 4;
-
-  return id;
+  static uint8_t id = 0;
+  return ++id;
 }
 
 uint8_t FrameData::m_calcCRC() const {

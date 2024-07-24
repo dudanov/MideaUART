@@ -74,7 +74,7 @@ class DeviceStatus {
   bool exchangeAir;
   bool feelOwn;
   bool imodeResume;
-  bool lowFerqFan;
+  bool lowFreqFan;
   bool naturalFan;
   bool nightLight;
   bool peakElec;
@@ -86,7 +86,6 @@ class DeviceStatus {
   uint8_t setExpand;
   bool setExpand_dot;
   bool test2;
-  uint8_t timerEffe;
   bool timerMode;
   bool wiseEye;
 };
@@ -115,7 +114,7 @@ class FrameStatusData : public FrameData {
   void updateFromA0(DeviceStatus &s);
   void updateFromA1(DeviceStatus &s);
   void updateFromC0(DeviceStatus &s);
-  void to40Command(const DeviceStatus &s);
+  void to40Command(const DeviceStatus &s, bool beeper);
 };
 
 }  // namespace ac

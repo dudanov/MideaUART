@@ -77,7 +77,7 @@ void FrameStatusData::updateFromA0(DeviceStatus &s) {
   // Byte #8
   s.cosySleep = m_getValue(8, 3);
   s.save = m_getBit(8, 3);
-  s.lowFerqFan = m_getBit(8, 4);
+  s.lowFreqFan = m_getBit(8, 4);
   s.turbo = m_getBit(8, 5);
   s.feelOwn = m_getBit(8, 7);
 
@@ -161,7 +161,7 @@ void FrameStatusData::updateFromC0(DeviceStatus &s) {
   // Byte #8
   s.cosySleep = m_getValue(8, 3);
   s.save = m_getBit(8, 3);
-  s.lowFerqFan = m_getBit(8, 4);
+  s.lowFreqFan = m_getBit(8, 4);
   s.turbo = m_getBit(8, 5);
   s.feelOwn = m_getBit(8, 7);
 
@@ -230,7 +230,7 @@ void FrameStatusData::updateFromC0(DeviceStatus &s) {
     s.hasNoWindFeel = m_getBit(22, 3);
 }
 
-void FrameStatusData::to40Command(const DeviceStatus &s) {
+void FrameStatusData::to40Command(const DeviceStatus &s, bool beeper) {
   m_data = {0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
@@ -246,8 +246,8 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
   if (s.mode != MODE_DRY && fan_speed == FAN_FIXED)
     fan_speed = FAN_AUTO;
 
-  m_data[1] =
-      0x42 + s.test2 * 0x20 + s.timerMode * 0x10 + s.childSleepMode * 0x08 + s.imodeResume * 0x04 + s.powerStatus;
+  m_data[1] = beeper * 0x40 + s.test2 * 0x20 + s.timerMode * 0x10 + s.childSleepMode * 0x08 + s.imodeResume * 0x04 +
+              0x02 + s.powerStatus;
 
   auto set_temp = s.setTemperature;
   bool set_temp_dot = s.setTemperature_dot;
@@ -259,8 +259,7 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
     set_temp = 1;
 
   m_data[2] = s.mode * 0x20 + set_temp_dot * 0x10 + set_temp;
-
-  m_data[3] = s.timerEffe * 0x80 + fan_speed % 128;
+  m_data[3] = fan_speed % 128;
 
   // Setting timers. Initialized off. Therefore, we process only if enabled.
 
@@ -276,7 +275,7 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
 
   m_data[7] = 0x30 + s.updownFan * SWING_VERTICAL + s.leftRightFan * SWING_HORIZONTAL;
 
-  m_data[8] = s.feelOwn * 0x80 + s.powerSaver * 0x40 + turbo * 0x20 + s.lowFerqFan * 0x10 + s.save * 0x08 +
+  m_data[8] = s.feelOwn * 0x80 + s.powerSaver * 0x40 + turbo * 0x20 + s.lowFreqFan * 0x10 + s.save * 0x08 +
               s.alarmSleep * 0x04 + s.cosySleep % 4;
 
   m_data[9] = eco * 0x80 + s.changeCosySleep * 0x40 + s.cleanUp * 0x20 + s.ptcButton * 0x10 + s.ptcAssis * 0x08 +

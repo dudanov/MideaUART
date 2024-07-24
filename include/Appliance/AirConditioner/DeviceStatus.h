@@ -56,16 +56,10 @@ class DeviceStatus {
   bool sleepFunc;
   /// temperature unit
   bool tempUnit;
-  bool timer_off;
-  /// time off/hour
-  uint8_t timer_off_hour;
-  /// time off/min
-  uint8_t timer_off_min;
-  bool timer_on;
-  /// timed start/hour
-  uint8_t timer_on_hour;
-  /// Timing start/minute
-  uint8_t timer_on_min;
+  /// On Timer (minutes)
+  uint16_t timer_on;
+  /// Off Timer (minutes)
+  uint16_t timer_off;
   /// strong
   bool turbo;
   /// up and down

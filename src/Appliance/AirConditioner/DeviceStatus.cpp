@@ -26,12 +26,8 @@ DeviceStatus::DeviceStatus(const DeviceStatus &deviceStatus) {
   this->setTemperature_dot = deviceStatus.setTemperature_dot;
   this->mode = deviceStatus.mode;
   this->fanSpeed = deviceStatus.fanSpeed;
-  this->timer_on_hour = deviceStatus.timer_on_hour;
   this->timer_on = deviceStatus.timer_on;
-  this->timer_off_hour = deviceStatus.timer_off_hour;
   this->timer_off = deviceStatus.timer_off;
-  this->timer_off_min = deviceStatus.timer_off_min;
-  this->timer_on_min = deviceStatus.timer_on_min;
   this->updownFan = deviceStatus.updownFan;
   this->leftRightFan = deviceStatus.leftRightFan;
   this->eco = deviceStatus.eco;
@@ -69,24 +65,16 @@ DeviceStatus FrameStatusData::updateFromA0() {
   s.fanSpeed = this->m_getValue(3, 127);
 
   // Bytes #4,6
-  s.timer_on_hour = 0;
-  s.timer_on_min = 0;
-  s.timer_on = this->m_getBit(4, 7);
+  s.timer_on = 0;
 
-  if (s.timer_on) {
-    s.timer_on_hour = this->m_getValue(4, 31, 2);
-    s.timer_on_min = this->m_getValue(4, 3) * 15 + this->m_getValue(6, 15, 4);
-  }
+  if (this->m_getBit(4, 7))
+    s.timer_on = this->m_getValue(4, 127) * 15 + this->m_getValue(6, 15, 4);
 
   // Bytes #5,6
-  s.timer_off_hour = 0;
-  s.timer_off_min = 0;
-  s.timer_off = this->m_getBit(5, 7);
+  s.timer_off = 0;
 
-  if (s.timer_off) {
-    s.timer_off_hour = this->m_getValue(5, 31, 2);
-    s.timer_off_min = this->m_getValue(5, 3) * 15 + this->m_getValue(6, 15);
-  }
+  if (this->m_getBit(5, 7))
+    s.timer_off = this->m_getValue(5, 127) * 15 + this->m_getValue(6, 15);
 
   // Byte #7
   s.updownFan = this->m_getValue(7, 3, 2);
@@ -168,24 +156,16 @@ DeviceStatus FrameStatusData::updateFromC0() {
     s.fanSpeed = FAN_AUTO;
 
   // Bytes #4,6
-  s.timer_on_hour = 0;
-  s.timer_on_min = 0;
-  s.timer_on = this->m_getBit(4, 7);
+  s.timer_on = 0;
 
-  if (s.timer_on) {
-    s.timer_on_hour = this->m_getValue(4, 31, 2);
-    s.timer_on_min = this->m_getValue(4, 3) * 15 + this->m_getValue(6, 15, 4);
-  }
+  if (this->m_getBit(4, 7))
+    s.timer_on = this->m_getValue(4, 127) * 15 + this->m_getValue(6, 15, 4);
 
   // Bytes #5,6
-  s.timer_off_hour = 0;
-  s.timer_off_min = 0;
-  s.timer_off = this->m_getBit(5, 7);
+  s.timer_off = 0;
 
-  if (s.timer_off) {
-    s.timer_off_hour = this->m_getValue(5, 31, 2);
-    s.timer_off_min = this->m_getValue(5, 3) * 15 + this->m_getValue(6, 15);
-  }
+  if (this->m_getBit(5, 7))
+    s.timer_off = this->m_getValue(5, 127) * 15 + this->m_getValue(6, 15);
 
   // Byte #7
   s.updownFan = this->m_getValue(7, 3, 2);
@@ -317,13 +297,13 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
   // Setting timers. Initialized off. Therefore, we process only if enabled.
 
   if (s.timer_off) {
-    this->m_data[5] = 0x80 + s.timer_off_hour * 0x04 + s.timer_off_min / 15;
-    this->m_data[6] = s.timer_off_min % 15;
+    this->m_data[5] = 0x80 | s.timer_off / 15;
+    this->m_data[6] = s.timer_off % 15;
   }
 
   if (s.timer_on) {
-    this->m_data[4] = 0x80 + s.timer_on_hour * 0x04 + s.timer_on_min / 15;
-    this->m_data[6] |= s.timer_on_min % 15 * 0x10;
+    this->m_data[4] = 0x80 | s.timer_on / 15;
+    this->m_data[6] |= s.timer_on % 15 * 0x10;
   }
 
   this->m_data[7] = 0x30 + s.updownFan * 0x0C + s.leftRightFan * 0x03;

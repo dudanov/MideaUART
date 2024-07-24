@@ -298,12 +298,12 @@ void FrameStatusData::to40Command(const DeviceStatus &s, bool beeper) {
 }
 
 float DeviceStatus::getTargetTemperature() const {
-  auto temp = static_cast<float>(setTemperature);
+  auto val = static_cast<float>(setTemperature);
 
   if (setTemperature_dot)
-    temp += 0.5f;
+    val += 0.5f;
 
-  return temp;
+  return val;
 }
 
 void DeviceStatus::setTargetTemperature(float value) {

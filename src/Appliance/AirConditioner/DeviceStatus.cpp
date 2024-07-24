@@ -124,6 +124,8 @@ DeviceStatus FrameStatusData::updateFromA0() {
 
   if (s.tempUnit)
     s.convertUnits();
+
+  return s;
 }
 
 DeviceStatus FrameStatusData::updateFromA1() {
@@ -132,6 +134,8 @@ DeviceStatus FrameStatusData::updateFromA1() {
   s.indoor_temp = static_cast<float>(this->m_getValue(13) - 50) * 0.5f;
   s.outdoor_temp = static_cast<float>(static_cast<int8_t>(this->m_getValue(14)) - 50) * 0.5f;
   s.humidity = this->m_getValue(17, 127);
+
+  return s;
 }
 
 DeviceStatus FrameStatusData::updateFromC0() {
@@ -296,17 +300,17 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
 
   // Setting timers. Initialized off. Therefore, we process only if enabled.
 
-  if (s.timer_off) {
-    this->m_data[5] = 0x80 | s.timer_off / 15;
-    this->m_data[6] = s.timer_off % 15;
-  }
-
   if (s.timer_on) {
     this->m_data[4] = 0x80 | s.timer_on / 15;
-    this->m_data[6] |= s.timer_on % 15 * 0x10;
+    this->m_data[6] = s.timer_on % 15 * 0x10;
   }
 
-  this->m_data[7] = 0x30 + s.updownFan * 0x0C + s.leftRightFan * 0x03;
+  if (s.timer_off) {
+    this->m_data[5] = 0x80 | s.timer_off / 15;
+    this->m_data[6] |= s.timer_off % 15;
+  }
+
+  this->m_data[7] = 0x30 + s.updownFan * SWING_VERTICAL + s.leftRightFan * SWING_HORIZONTAL;
 
   this->m_data[8] = s.feelOwn * 0x80 + s.powerSaver * 0x40 + turbo * 0x20 + s.lowFerqFan * 0x10 + s.save * 0x08 +
                     s.alarmSleep * 0x04 + s.cosySleep % 4;

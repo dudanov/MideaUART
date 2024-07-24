@@ -46,9 +46,7 @@ DeviceStatus::DeviceStatus(const DeviceStatus &deviceStatus) {
   avoidPeople = deviceStatus.avoidPeople;
 }
 
-DeviceStatus FrameStatusData::updateFromA0() {
-  DeviceStatus s{};
-
+void FrameStatusData::updateFromA0(DeviceStatus &s) {
   // Byte #1
   s.powerStatus = m_getBit(1, 0);
   s.setTemperature = m_getValue(1, 31, 1) + 12;
@@ -118,23 +116,15 @@ DeviceStatus FrameStatusData::updateFromA0() {
 
   // Byte #14
   s.hasNoWindFeel = m_getBit(14, 3);
-
-  return s;
 }
 
-DeviceStatus FrameStatusData::updateFromA1() {
-  DeviceStatus s{};
-
+void FrameStatusData::updateFromA1(DeviceStatus &s) {
   s.indoor_temp = static_cast<float>(static_cast<int>(m_getValue(13)) - 50) * 0.5f;
   s.outdoor_temp = static_cast<float>(static_cast<int>(m_getValue(14)) - 50) * 0.5f;
   s.humidity = m_getValue(17, 127);
-
-  return s;
 }
 
-DeviceStatus FrameStatusData::updateFromC0() {
-  DeviceStatus s{};
-
+void FrameStatusData::updateFromC0(DeviceStatus &s) {
   // Byte #1
   s.powerStatus = m_getBit(1, 0);
   s.imodeResume = m_getBit(1, 2);
@@ -241,8 +231,6 @@ DeviceStatus FrameStatusData::updateFromC0() {
   // Byte #22
   if (size() >= 23)
     s.hasNoWindFeel = m_getBit(22, 3);
-
-  return s;
 }
 
 void FrameStatusData::to40Command(const DeviceStatus &s) {

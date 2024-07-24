@@ -114,10 +114,10 @@ struct B1Status {
 
 class FrameStatusData : public FrameData {
  public:
-  DeviceStatus updateFromA0();
-  DeviceStatus updateFromA1();
-  DeviceStatus updateFromC0();
-  void to40Command(const DeviceStatus &status);
+  void updateFromA0(DeviceStatus &s);
+  void updateFromA1(DeviceStatus &s);
+  void updateFromC0(DeviceStatus &s);
+  void to40Command(const DeviceStatus &s);
 };
 
 }  // namespace ac

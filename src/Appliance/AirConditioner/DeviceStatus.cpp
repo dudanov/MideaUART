@@ -307,7 +307,7 @@ float DeviceStatus::getTargetTemperature() const {
 }
 
 void DeviceStatus::setTargetTemperature(float value) {
-  const auto val = static_cast<unsigned>(value * 2.0f);
+  const auto val = static_cast<unsigned>(value * 2.0f + 0.5f);
 
   setTemperature = val / 2;
   setTemperature_dot = val % 2;

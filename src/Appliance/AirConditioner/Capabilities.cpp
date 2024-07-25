@@ -397,8 +397,10 @@ void CmdB5::dump() const {
   }
   if (this->dry) {
     LOG_CONFIG(TAG, "  [x] Dry Mode");
+    //
     LOG_CAPABILITY("      - Auto", this->hasAutoClearHumidity);
-    LOG_CAPABILITY("      - Custom", this->hasHandClearHumidity);  // .humidity in command
+    // MODE_DRY_SMART supported. .humidity in command is setpoint
+    LOG_CAPABILITY("      - Smart", this->hasHandClearHumidity);
   }
   LOG_CAPABILITY("  [x] Fan Mode", this->wind);
   LOG_CONFIG(TAG, "  [x] Wind Speed: %d", this->hasWindSpeed);

@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include "Frame/FrameData.h"
+#include "StatusData.h"
 
 namespace dudanov {
 namespace midea {
@@ -13,6 +14,9 @@ class DeviceStatus {
 
   float getTargetTemperature() const;
   void setTargetTemperature(float value);
+  FanSpeed getFanMode() const;
+  void setFanSpeed(FanSpeed value) { fanSpeed = value; }
+  void setFanSpeed(uint8_t value) { fanSpeed = value; }
 
   /// 8 degrees heating
   bool Eight_Hot;

@@ -172,7 +172,6 @@ void FrameStatusData::updateFromC0(DeviceStatus &s) {
   s.ptcAssis = m_getBit(9, 3);
   s.eco = m_getBit(9, 4);
   s.cleanUp = m_getBit(9, 5);
-  s.sleepFunc = m_getBit(9, 6);
   s.selfFeelOwn = m_getBit(9, 7);
 
   // Byte #10
@@ -311,6 +310,18 @@ void DeviceStatus::setTargetTemperature(float value) {
 
   setTemperature = val / 2;
   setTemperature_dot = val % 2;
+}
+
+FanSpeed DeviceStatus::getFanMode() const {
+  const auto speed = static_cast<FanSpeed>(fanSpeed);
+
+  if (speed <= FanSpeed::FAN_LOW)
+    return FanSpeed::FAN_LOW;
+
+  if (speed <= FanSpeed::FAN_MEDIUM)
+    return FanSpeed::FAN_MEDIUM;
+
+  return speed;
 }
 
 }  // namespace ac

@@ -39,7 +39,7 @@ enum Mode : uint8_t {
   MODE_HEAT,
   /// The Midea device is manually set to fan only mode
   MODE_FAN_ONLY,
-  /// The Midea device is manually set to smart dry mode
+  /// The Midea device is manually set to smart dry mode (in .humidity must be setpoint)
   MODE_DRY_SMART,
 };
 

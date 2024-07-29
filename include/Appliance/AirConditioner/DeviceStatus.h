@@ -10,7 +10,7 @@ namespace ac {
 class DeviceStatus {
  public:
   DeviceStatus() = default;
-  DeviceStatus(const DeviceStatus &deviceStatus);
+  DeviceStatus(const DeviceStatus &deviceStatus) = default;
 
   float getTargetTemperature() const;
   void setTargetTemperature(float value);
@@ -18,56 +18,64 @@ class DeviceStatus {
   void setFanSpeed(FanSpeed value) { fanSpeed = value; }
   void setFanSpeed(uint8_t value) { fanSpeed = value; }
 
-  /// 8 degrees heating
+  /// Beeper Feedback. Only in Command.
+  bool beeper;
+  /// Frost Protection mode (8 Degrees Heating).
   bool Eight_Hot;
-  // int atwDhwSetTemperature;
+
+  /// Wind Off Me. Only in `COOL` and `HEAT`. Turn OFF all Swing.
   bool avoidPeople;
+  /// Wind On Me. Only in `COOL` and `HEAT`. Turn ON all Swing.
   bool blowingPeople;
-  /// clear dust
-  bool cleanFanTime;
-  /// full of dust
-  bool dusFull;
-  /// ECO
-  bool eco;
-  uint8_t errInfo;
-  /// wind speed
-  uint8_t fanSpeed{102};
-  // "Silky Cool" preset
-  bool hasNoWindFeel;
-  /// humidity
-  uint8_t humidity;
-  /// indoor
-  float indoor_temp;
-  /// left and right wind
-  bool leftRightFan;
-  uint8_t light;
-  /// mode
-  uint8_t mode{2};
+  /// Breeze Away.
   bool noWindOnMe;
-  /// outdoor
-  float outdoor_temp;
-  /// Device Status: On/Off
+
+  /// Reset Air Filter Maintenance Timer. Only in Command.
+  bool cleanFanTime;
+  /// Air Filter Maintenance.
+  bool dusFull;
+  /// ECO mode.
+  bool eco;
+  /// Error Code. Known: 0x26 - Water Full.
+  uint8_t errInfo;
+  /// Fan Speed.
+  uint8_t fanSpeed{FAN_AUTO};
+  // Silky Cool.
+  bool hasNoWindFeel;
+  /// Set Target Humidity in Smart Dry Mode. Fan Speed must be AUTO.
+  uint8_t humidity;
+  ///
+  uint8_t light;
+  /// Mode.
+  uint8_t mode{MODE_COOL};
+  /// Device Status: On/Off.
   bool powerStatus{true};
-  /// Electric auxiliary heater
+  /// Electric Auxiliary Heater
   bool ptcAssis;
-  /// 39 Self-cleaning
+  /// 39 Self Cleaning.
   bool selfClean;
-  /// set temperature
+  /// Target Temperature. Always in Celsius.
   uint8_t setTemperature{26};
-  /// Whether the temperature has a decimal point (only for Celsius)
+  /// Target Temperature +0.5.
   bool setTemperature_dot;
-  /// sleep function
+  /// Sleep Preset.
   bool sleepFunc;
-  /// temperature unit
+  /// Display Temperature in Fahrenheits.
   bool tempUnit;
-  /// On Timer (minutes)
+  /// Current `On Timer` minutes.
   uint16_t timer_on;
-  /// Off Timer (minutes)
+  /// Current `Off Timer` minutes.
   uint16_t timer_off;
-  /// strong
+  /// Turbo Preset.
   bool turbo;
-  /// up and down
-  bool updownFan;
+
+  /// Swing Mode.
+  SwingMode swing;
+
+  /// Indoor Temperature. Only in Status. Always in Celsius.
+  float indoor_temp;
+  /// Outdoor Temperature. Only in Status. Always in Celsius.
+  float outdoor_temp;
 
   bool alarmSleep;
   bool catchCold;
@@ -122,7 +130,7 @@ class FrameStatusData : public FrameData {
   void updateFromA0(DeviceStatus &s);
   void updateFromA1(DeviceStatus &s);
   void updateFromC0(DeviceStatus &s);
-  void to40Command(const DeviceStatus &s, bool beeper);
+  void to40Command(const DeviceStatus &s);
 };
 
 }  // namespace ac

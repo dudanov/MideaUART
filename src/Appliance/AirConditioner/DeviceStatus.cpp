@@ -17,34 +17,6 @@ static float s_get_temperature(int integer, int decimal, bool fahrenheits) {
   return static_cast<float>(integer) * 0.5f;
 }
 
-DeviceStatus::DeviceStatus(const DeviceStatus &deviceStatus) {
-  powerStatus = deviceStatus.powerStatus;
-  setTemperature = deviceStatus.setTemperature;
-  setTemperature_dot = deviceStatus.setTemperature_dot;
-  mode = deviceStatus.mode;
-  fanSpeed = deviceStatus.fanSpeed;
-  timer_on = deviceStatus.timer_on;
-  timer_off = deviceStatus.timer_off;
-  updownFan = deviceStatus.updownFan;
-  leftRightFan = deviceStatus.leftRightFan;
-  eco = deviceStatus.eco;
-  tempUnit = deviceStatus.tempUnit;
-  turbo = deviceStatus.turbo;
-  cleanFanTime = deviceStatus.cleanFanTime;
-  dusFull = deviceStatus.dusFull;
-  Eight_Hot = deviceStatus.Eight_Hot;
-  indoor_temp = deviceStatus.indoor_temp;
-  outdoor_temp = deviceStatus.outdoor_temp;
-  sleepFunc = deviceStatus.sleepFunc;
-  catchCold = deviceStatus.catchCold;
-  humidity = deviceStatus.humidity;
-  hasNoWindFeel = deviceStatus.hasNoWindFeel;
-  selfClean = deviceStatus.selfClean;
-  noWindOnMe = deviceStatus.noWindOnMe;
-  blowingPeople = deviceStatus.blowingPeople;
-  avoidPeople = deviceStatus.avoidPeople;
-}
-
 void FrameStatusData::updateFromA0(DeviceStatus &s) {
   // Byte #1
   s.powerStatus = m_getBit(1, 0);
@@ -71,8 +43,7 @@ void FrameStatusData::updateFromA0(DeviceStatus &s) {
     s.timer_off = m_getValue(5, 127) * 15 + m_getValue(6, 15);
 
   // Byte #7
-  s.updownFan = m_getValue(7, 3, 2);
-  s.leftRightFan = m_getValue(7, 3);
+  s.swing = static_cast<SwingMode>(m_getValue(7, 15));
 
   // Byte #8
   s.cosySleep = m_getValue(8, 3);
@@ -155,8 +126,7 @@ void FrameStatusData::updateFromC0(DeviceStatus &s) {
     s.timer_off = m_getValue(5, 127) * 15 + m_getValue(6, 15);
 
   // Byte #7
-  s.updownFan = m_getValue(7, 3, 2);
-  s.leftRightFan = m_getValue(7, 3);
+  s.swing = static_cast<SwingMode>(m_getValue(7, 15));
 
   // Byte #8
   s.cosySleep = m_getValue(8, 3);
@@ -229,7 +199,7 @@ void FrameStatusData::updateFromC0(DeviceStatus &s) {
     s.hasNoWindFeel = m_getBit(22, 3);
 }
 
-void FrameStatusData::to40Command(const DeviceStatus &s, bool beeper) {
+void FrameStatusData::to40Command(const DeviceStatus &s) {
   m_data = {0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
@@ -245,7 +215,7 @@ void FrameStatusData::to40Command(const DeviceStatus &s, bool beeper) {
   if (s.mode != MODE_DRY && fan_speed == FAN_FIXED)
     fan_speed = FAN_AUTO;
 
-  m_data[1] = beeper * 0x40 + s.test2 * 0x20 + s.timerMode * 0x10 + s.childSleepMode * 0x08 + s.imodeResume * 0x04 +
+  m_data[1] = s.beeper * 0x40 + s.test2 * 0x20 + s.timerMode * 0x10 + s.childSleepMode * 0x08 + s.imodeResume * 0x04 +
               0x02 + s.powerStatus;
 
   auto set_temp = s.setTemperature;
@@ -272,7 +242,7 @@ void FrameStatusData::to40Command(const DeviceStatus &s, bool beeper) {
     m_data[6] |= s.timer_off % 15;
   }
 
-  m_data[7] = 0x30 + s.updownFan * SWING_VERTICAL + s.leftRightFan * SWING_HORIZONTAL;
+  m_data[7] = 0x30 + s.swing;
 
   m_data[8] = s.feelOwn * 0x80 + s.powerSaver * 0x40 + turbo * 0x20 + s.lowFreqFan * 0x10 + s.save * 0x08 +
               s.alarmSleep * 0x04 + s.cosySleep % 4;

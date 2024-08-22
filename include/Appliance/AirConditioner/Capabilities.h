@@ -110,9 +110,9 @@ class CmdB5 {
   bool hasHorizontalWind{false};
   /// Vertical Wind Direction supported.
   bool hasVerticalWind{false};
-  ///
+  /// Multi Split.
   bool isTwins{false};
-  ///
+  /// Cassette Four Direction.
   bool isFourDirection{false};
   /// Fahrenheits units supported.
   bool unitChangeable{true};
@@ -159,11 +159,11 @@ class CmdB5 {
   /// Decimal Point supported.
   bool isHavePoint{false};
   /// Fan Speed in percents.
-  bool hasNoWindSpeed;
+  bool hasNoWindSpeed{false};
   /// Fan Speeds coded data.
-  uint8_t hasWindSpeed;
+  uint8_t hasWindSpeed{0};
   /// Base features.
-  uint8_t hotcold;
+  uint8_t hotcold{0};
   /// Supported Maximum Temperature in Cool Mode.
   uint8_t cool_adjust_up_temp{30};
   /// Supported Minimal Temperature in Cool Mode.
@@ -176,7 +176,7 @@ class CmdB5 {
   uint8_t hot_adjust_up_temp{30};
   /// Supported Minimal Temperature in Heat Mode.
   uint8_t hot_adjust_down_temp{17};
-  /// LED type.
+  /// LED Light. Values: 0 (Off), 7 (On).
   uint8_t lightType{0};
 };
 

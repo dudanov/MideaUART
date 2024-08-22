@@ -1,5 +1,5 @@
 #include "Appliance/AirConditioner/Capabilities.h"
-#include "Frame/FrameData.h"
+#include "Frame/PropertyQuery.h"
 #include "Helpers/Helpers.h"
 #include "Helpers/Log.h"
 
@@ -26,7 +26,6 @@ CmdB5 &CmdB5::setBaseFunc() {
   this->dry = true;
   this->auto1 = true;
   this->wind = true;
-  this->mutilTemp = true;
   this->powerCal = false;
   this->strongCool = true;
   this->strongHot = false;
@@ -90,25 +89,10 @@ CmdB5 &CmdB5::toAllEnable() {
   return *this;
 }
 
-class B5Reader {
- public:
-  // Constructor from FrameData. Skip ID, NUM and CRC bytes.
-  explicit B5Reader(const FrameData &data) : m_it(data.data() + 2), m_end(data.data() + data.size() - 1) {}
-  Feature getFunction() const { return static_cast<Feature>(ByteHelpers::getLE<uint16_t>(this->m_it)); }
-  size_t available() const { return std::distance(this->m_it, this->m_end); }
-  size_t size() const { return this->m_it[2]; }
-  uint8_t operator[](size_t idx) const { return this->m_it[idx + 3]; }
-  void advance() { this->m_it += this->size() + 3; }
-
- private:
-  const uint8_t *m_it;
-  const uint8_t *const m_end;
-};
-
-static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
+static void setFuncEnable(CmdB5 &dst, const PropertyQuery::PropertiesReader &data) {
   const uint8_t b0 = data[0];
 
-  switch (data.getFunction()) {
+  switch (data.uuid()) {
     case Feature::V_WIND_DIRECTION:
       dst.hasVerticalWind = b0 == 1;
       break;
@@ -131,16 +115,6 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
 
     case Feature::ACTIVE_CLEAN:
       dst.hasSelfClean = b0 == 1;
-      break;
-
-    case Feature::FRESH_AIR:
-      dst.hasFreshAir = true;
-      dst.isFreshAirEnable = b0 == 1;
-      break;
-
-    case Feature::JET_COOL:
-      dst.hasJetCool = true;
-      dst.isJetCoolEnable = b0 == 1;
       break;
 
     case Feature::WIND_ON_ME:
@@ -312,27 +286,14 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
       if (b0 < 2) {
         dst.powerCal = false;
         dst.powerCalSetting = false;
-        dst.powerCalBCD = true;
 
       } else if (b0 == 2) {
         dst.powerCal = true;
         dst.powerCalSetting = false;
-        dst.powerCalBCD = true;
 
       } else if (b0 == 3) {
         dst.powerCal = true;
         dst.powerCalSetting = true;
-        dst.powerCalBCD = true;
-
-      } else if (b0 == 4) {
-        dst.powerCal = true;
-        dst.powerCalSetting = false;
-        dst.powerCalBCD = false;
-
-      } else if (b0 == 5) {
-        dst.powerCal = true;
-        dst.powerCalSetting = true;
-        dst.powerCalBCD = false;
       }
 
       break;
@@ -363,8 +324,8 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
   }
 }
 
-uint8_t CmdB5::read(const FrameData &data) {
-  B5Reader b5(data);
+uint8_t CmdB5::read(const PropertyQuery &data) {
+  auto b5 = data.getReader();
 
   for (; b5.available() > 3; b5.advance())
     setFuncEnable(*this, b5);
@@ -407,8 +368,6 @@ void CmdB5::dump() const {
   LOG_CAPABILITY("  [x] Indoor Humidity", this->hasIndoorHumidity);  // Indoor humidity in B1 response
   LOG_CAPABILITY("  [x] Decimal Point", this->isHavePoint);
   LOG_CAPABILITY("  [x] Unit Changeable", this->unitChangeable);
-  LOG_CAPABILITY("  [x] Fresh Air", this->hasFreshAir);
-  LOG_CAPABILITY("  [x] Cool Flash", this->hasJetCool);
   LOG_CAPABILITY("  [x] Breezeless", this->hasBreeze);  // Only in `COOL` mode. Valid values are: 1, 2, 3, 4.
   LOG_CAPABILITY("  [x] Vertical Direction", this->hasVerticalWind);
   LOG_CAPABILITY("  [x] Horizontal Direction", this->hasHorizontalWind);
@@ -433,7 +392,6 @@ void CmdB5::dump() const {
   LOG_CAPABILITY("  [x] Air Filter Cleaning Reminder", this->nestCheck);
   LOG_CAPABILITY("  [x] Air Filter Replacement Reminder", this->nestNeedChange);
   LOG_CAPABILITY("  [x] Power Report", this->powerCal);
-  LOG_CAPABILITY("  [x] Power Report in BCD", this->powerCalBCD);
   LOG_CAPABILITY("  [x] Power Limit", this->powerCalSetting);
 }
 

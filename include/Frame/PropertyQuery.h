@@ -15,6 +15,8 @@ using PropertyUUID = uint16_t;
  */
 class PropertyQuery : public FrameData {
  public:
+  PropertyQuery(const FrameData &data) : FrameData(data) {}
+
   /**
    * @brief Initializes a new frame with type ID.
    * @param id frame type ID.

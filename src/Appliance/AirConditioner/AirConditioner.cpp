@@ -183,7 +183,7 @@ void AirConditioner::m_getCapabilities() {
         if (!data.hasID(0xB5))
           return RESPONSE_WRONG;
 
-        const uint8_t next = this->m_capabilities.read(data);
+        const uint8_t next = this->m_capabilities.read(data.to<PropertyQuery>());
 
         if (next == 0)
           return RESPONSE_OK;

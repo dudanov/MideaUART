@@ -164,12 +164,6 @@ GetFeatureStateQuery::GetFeatureStateQuery(const CmdB5 &b5) : PropertyQuery(0xB1
   if (b5.isFourDirection)
     this->appendUUID(2 * 256 + 48);
 
-  if (b5.hasJetCool)
-    this->appendUUID(Feature::JET_COOL);
-
-  if (b5.hasFreshAir)
-    this->appendUUID(Feature::FRESH_AIR);
-
   this->appendCRC();
 }
 

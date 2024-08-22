@@ -309,7 +309,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
       break;
 
     case Feature::POWER_FUNC:
-      if (b0 == 0 || b0 == 1) {
+      if (b0 < 2) {
         dst.powerCal = false;
         dst.powerCalSetting = false;
         dst.powerCalBCD = true;
@@ -342,7 +342,7 @@ static void setFuncEnable(CmdB5 &dst, const B5Reader &data) {
         dst.nestCheck = false;
         dst.nestNeedChange = false;
 
-      } else if (b0 == 1 || b0 == 2) {
+      } else if (b0 < 3) {
         dst.nestCheck = true;
         dst.nestNeedChange = false;
 
@@ -387,13 +387,13 @@ void CmdB5::dump() const {
     LOG_CONFIG(TAG, "  [x] Cool Mode");
     LOG_CONFIG(TAG, "      - Min: %d", this->cool_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->cool_adjust_up_temp);
-    LOG_CAPABILITY("      - Boost", this->strongCool);
+    LOG_CAPABILITY("      - Turbo", this->strongCool);
   }
   if (this->hot) {
     LOG_CONFIG(TAG, "  [x] Heat Mode");
     LOG_CONFIG(TAG, "      - Min: %d", this->hot_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->hot_adjust_up_temp);
-    LOG_CAPABILITY("      - Boost", this->strongHot);
+    LOG_CAPABILITY("      - Turbo", this->strongHot);
   }
   if (this->dry) {
     LOG_CONFIG(TAG, "  [x] Dry Mode");

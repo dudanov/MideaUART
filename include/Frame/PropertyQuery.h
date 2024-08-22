@@ -38,6 +38,17 @@ class PropertyQuery : public FrameData {
   }
 
   /**
+   * @brief Append property with specified byte array.
+   *
+   * @param uuid Property UUID.
+   * @param data bytes to set.
+   */
+  template<typename... Args> void appendProperty(PropertyUUID uuid, Args... data) {
+    this->appendUUID(uuid);
+    this->appendPascalArray(data...);
+  }
+
+  /**
    * @brief Properties data reader.
    *
    */

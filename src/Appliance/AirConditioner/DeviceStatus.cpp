@@ -18,7 +18,7 @@ static float s_get_temperature(int integer, int decimal, bool fahrenheits) {
 }
 
 bool FrameStatusData::updateStatus(DeviceStatus &s) {
-  switch (m_data[0]) {
+  switch (m_getValue(0)) {
     case 0xC0:
       m_statusC0(s);
       return true;
@@ -218,9 +218,9 @@ void FrameStatusData::m_statusA1(DeviceStatus &s) const {
 }
 
 void FrameStatusData::to40Command(const DeviceStatus &s) {
-  auto fan_speed = s.fanSpeed;
-  auto turbo = s.turbo;
-  auto eco = s.eco;
+  uint8_t fan_speed = s.fanSpeed;
+  bool turbo = s.turbo;
+  bool eco = s.eco;
 
   if (!s.powerStatus || s.mode == MODE_FAN_ONLY) {
     eco = false;
@@ -237,9 +237,9 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
   m_data[1] = s.beeper * 0x40 + s.test2 * 0x20 + s.timerMode * 0x10 + s.childSleepMode * 0x08 + s.imodeResume * 0x04 +
               0x02 + s.powerStatus;
 
-  auto set_temp = s.setTemperature;
   bool set_temp_dot = s.setTemperature_dot;
-  auto set_temp_new = (set_temp - 12) % 32;
+  uint8_t set_temp = s.setTemperature;
+  uint8_t set_temp_new = (set_temp - 12) % 32;
 
   set_temp -= 16;
 
@@ -290,7 +290,7 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
 }
 
 float DeviceStatus::getTargetTemperature() const {
-  auto val = static_cast<float>(setTemperature);
+  float val = static_cast<float>(setTemperature);
 
   if (setTemperature_dot)
     val += 0.5f;
@@ -298,21 +298,21 @@ float DeviceStatus::getTargetTemperature() const {
   return val;
 }
 
-void DeviceStatus::setTargetTemperature(float value) {
-  const auto val = static_cast<unsigned>(value * 2.0f + 0.5f);
+void DeviceStatus::setTargetTemperature(float temperature) {
+  const unsigned value = static_cast<unsigned>(temperature * 2.0f + 0.5f);
 
-  setTemperature = val / 2;
-  setTemperature_dot = val % 2;
+  setTemperature = value / 2;
+  setTemperature_dot = value % 2;
 }
 
 FanSpeed DeviceStatus::getFanMode() const {
-  const auto speed = static_cast<FanSpeed>(fanSpeed);
+  FanSpeed speed = static_cast<FanSpeed>(fanSpeed);
 
-  if (speed <= FanSpeed::FAN_LOW)
-    return FanSpeed::FAN_LOW;
-
-  if (speed <= FanSpeed::FAN_MEDIUM)
-    return FanSpeed::FAN_MEDIUM;
+  if (speed == 30) {
+    speed = FAN_LOW;
+  } else if (speed == 50) {
+    speed = FAN_MEDIUM;
+  }
 
   return speed;
 }

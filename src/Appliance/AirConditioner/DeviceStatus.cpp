@@ -200,9 +200,6 @@ void FrameStatusData::updateFromC0(DeviceStatus &s) {
 }
 
 void FrameStatusData::to40Command(const DeviceStatus &s) {
-  m_data = {0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
   auto fan_speed = s.fanSpeed;
   auto turbo = s.turbo;
   auto eco = s.eco;
@@ -215,6 +212,9 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
   if (s.mode != MODE_DRY && fan_speed == FAN_FIXED)
     fan_speed = FAN_AUTO;
 
+  m_data.assign(24, 0);
+
+  m_data[0] = 0x40;
   m_data[1] = s.beeper * 0x40 + s.test2 * 0x20 + s.timerMode * 0x10 + s.childSleepMode * 0x08 + s.imodeResume * 0x04 +
               0x02 + s.powerStatus;
 
@@ -232,10 +232,14 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
 
   // Setting timers. Initialized off. Therefore, we process only if enabled.
 
+  m_data[4] = 0x7F;
+
   if (s.timer_on) {
     m_data[4] = 0x80 | s.timer_on / 15;
     m_data[6] = s.timer_on % 15 * 0x10;
   }
+
+  m_data[5] = 0x7F;
 
   if (s.timer_off) {
     m_data[5] = 0x80 | s.timer_off / 15;

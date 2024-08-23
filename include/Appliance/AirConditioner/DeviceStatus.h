@@ -127,9 +127,12 @@ struct B1Status {
 
 class FrameStatusData : public FrameData {
  public:
-  void updateFromA0(DeviceStatus &s);
-  void updateFromA1(DeviceStatus &s);
-  void updateFromC0(DeviceStatus &s);
+  bool updateStatus(DeviceStatus &s);
+
+ protected:
+  void m_statusA0(DeviceStatus &s) const;
+  void m_statusA1(DeviceStatus &s) const;
+  void m_statusC0(DeviceStatus &s) const;
   void to40Command(const DeviceStatus &s);
 };
 

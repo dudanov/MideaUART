@@ -17,84 +17,25 @@ static float s_get_temperature(int integer, int decimal, bool fahrenheits) {
   return static_cast<float>(integer) * 0.5f;
 }
 
-void FrameStatusData::updateFromA0(DeviceStatus &s) {
-  // Byte #1
-  s.powerStatus = m_getBit(1, 0);
-  s.setTemperature = m_getValue(1, 31, 1) + 12;
-  s.setTemperature_dot = m_getBit(1, 6);
-  s.errMark = m_getBit(1, 7);
+bool FrameStatusData::updateStatus(DeviceStatus &s) {
+  switch (m_data[0]) {
+    case 0xC0:
+      m_statusC0(s);
+      return true;
 
-  // Byte #2
-  s.mode = m_getValue(2, 7, 5);
+    case 0xA0:
+      m_statusA0(s);
+      return true;
 
-  // Byte #3
-  s.fanSpeed = m_getValue(3, 127);
+    case 0xA1:
+      m_statusA1(s);
+      return true;
+  }
 
-  // Bytes #4,6
-  s.timer_on = 0;
-
-  if (m_getBit(4, 7))
-    s.timer_on = m_getValue(4, 127) * 15 + m_getValue(6, 15, 4);
-
-  // Bytes #5,6
-  s.timer_off = 0;
-
-  if (m_getBit(5, 7))
-    s.timer_off = m_getValue(5, 127) * 15 + m_getValue(6, 15);
-
-  // Byte #7
-  s.swing = static_cast<SwingMode>(m_getValue(7, 15));
-
-  // Byte #8
-  s.cosySleep = m_getValue(8, 3);
-  s.save = m_getBit(8, 3);
-  s.lowFreqFan = m_getBit(8, 4);
-  s.turbo = m_getBit(8, 5);
-  s.feelOwn = m_getBit(8, 7);
-
-  // Byte #9
-  s.exchangeAir = m_getBit(9, 1);
-  s.dryClean = m_getBit(9, 2);
-  s.ptcAssis = m_getBit(9, 3);
-  s.eco = m_getBit(9, 4);
-  s.cleanUp = m_getBit(9, 5);
-  s.tempUnit = m_getBit(9, 7);
-
-  // Byte #10
-  s.sleepFunc = m_getBit(10, 0);
-
-  if (!s.turbo)
-    s.turbo = m_getBit(10, 1);
-
-  s.catchCold = m_getBit(10, 3);
-  s.nightLight = m_getBit(10, 4);
-  s.peakElec = m_getBit(10, 5);
-  s.naturalFan = m_getBit(10, 6);
-
-  // Byte #11
-  s.pwmMode = m_getValue(11, 15);
-  s.light = m_getValue(11, 7, 4);
-
-  // Byte #12
-  s.setExpand_dot = m_getBit(12, 0);
-  s.setExpand = m_getValue(12, 31) + 12;
-  s.double_temp = m_getBit(12, 6);
-  s.Eight_Hot = m_getBit(12, 7);
-
-  // Byte #13
-  s.humidity = m_getValue(13, 127);
-
-  // Byte #14
-  s.hasNoWindFeel = m_getBit(14, 3);
+  return false;
 }
 
-void FrameStatusData::updateFromA1(DeviceStatus &s) {
-  s.indoor_temp = static_cast<float>(static_cast<int>(m_getValue(13)) - 50) * 0.5f;
-  s.outdoor_temp = static_cast<float>(static_cast<int>(m_getValue(14)) - 50) * 0.5f;
-  s.humidity = m_getValue(17, 127);
-}
-
-void FrameStatusData::updateFromC0(DeviceStatus &s) {
+void FrameStatusData::m_statusC0(DeviceStatus &s) const {
   // Byte #1
   s.powerStatus = m_getBit(1, 0);
   s.imodeResume = m_getBit(1, 2);
@@ -199,6 +140,83 @@ void FrameStatusData::updateFromC0(DeviceStatus &s) {
     s.hasNoWindFeel = m_getBit(22, 3);
 }
 
+void FrameStatusData::m_statusA0(DeviceStatus &s) const {
+  // Byte #1
+  s.powerStatus = m_getBit(1, 0);
+  s.setTemperature = m_getValue(1, 31, 1) + 12;
+  s.setTemperature_dot = m_getBit(1, 6);
+  s.errMark = m_getBit(1, 7);
+
+  // Byte #2
+  s.mode = m_getValue(2, 7, 5);
+
+  // Byte #3
+  s.fanSpeed = m_getValue(3, 127);
+
+  // Bytes #4,6
+  s.timer_on = 0;
+
+  if (m_getBit(4, 7))
+    s.timer_on = m_getValue(4, 127) * 15 + m_getValue(6, 15, 4);
+
+  // Bytes #5,6
+  s.timer_off = 0;
+
+  if (m_getBit(5, 7))
+    s.timer_off = m_getValue(5, 127) * 15 + m_getValue(6, 15);
+
+  // Byte #7
+  s.swing = static_cast<SwingMode>(m_getValue(7, 15));
+
+  // Byte #8
+  s.cosySleep = m_getValue(8, 3);
+  s.save = m_getBit(8, 3);
+  s.lowFreqFan = m_getBit(8, 4);
+  s.turbo = m_getBit(8, 5);
+  s.feelOwn = m_getBit(8, 7);
+
+  // Byte #9
+  s.exchangeAir = m_getBit(9, 1);
+  s.dryClean = m_getBit(9, 2);
+  s.ptcAssis = m_getBit(9, 3);
+  s.eco = m_getBit(9, 4);
+  s.cleanUp = m_getBit(9, 5);
+  s.tempUnit = m_getBit(9, 7);
+
+  // Byte #10
+  s.sleepFunc = m_getBit(10, 0);
+
+  if (!s.turbo)
+    s.turbo = m_getBit(10, 1);
+
+  s.catchCold = m_getBit(10, 3);
+  s.nightLight = m_getBit(10, 4);
+  s.peakElec = m_getBit(10, 5);
+  s.naturalFan = m_getBit(10, 6);
+
+  // Byte #11
+  s.pwmMode = m_getValue(11, 15);
+  s.light = m_getValue(11, 7, 4);
+
+  // Byte #12
+  s.setExpand_dot = m_getBit(12, 0);
+  s.setExpand = m_getValue(12, 31) + 12;
+  s.double_temp = m_getBit(12, 6);
+  s.Eight_Hot = m_getBit(12, 7);
+
+  // Byte #13
+  s.humidity = m_getValue(13, 127);
+
+  // Byte #14
+  s.hasNoWindFeel = m_getBit(14, 3);
+}
+
+void FrameStatusData::m_statusA1(DeviceStatus &s) const {
+  s.indoor_temp = static_cast<float>(static_cast<int>(m_getValue(13)) - 50) * 0.5f;
+  s.outdoor_temp = static_cast<float>(static_cast<int>(m_getValue(14)) - 50) * 0.5f;
+  s.humidity = m_getValue(17, 127);
+}
+
 void FrameStatusData::to40Command(const DeviceStatus &s) {
   auto fan_speed = s.fanSpeed;
   auto turbo = s.turbo;
@@ -212,6 +230,7 @@ void FrameStatusData::to40Command(const DeviceStatus &s) {
   if (s.mode != MODE_DRY && fan_speed == FAN_FIXED)
     fan_speed = FAN_AUTO;
 
+  m_data.reserve(25);
   m_data.assign(24, 0);
 
   m_data[0] = 0x40;

@@ -8,6 +8,8 @@ namespace midea {
 namespace ac {
 
 class DeviceStatus {
+  friend class FrameStatusData;
+
  public:
   DeviceStatus() = default;
   DeviceStatus(const DeviceStatus &deviceStatus) = default;
@@ -18,92 +20,93 @@ class DeviceStatus {
   void setFanSpeed(FanSpeed value) { fanSpeed = value; }
   void setFanSpeed(uint8_t value) { fanSpeed = value; }
 
-  /// Beeper Feedback. Only in Command.
-  bool beeper;
-  /// Frost Protection mode (8 Degrees Heating).
-  bool Eight_Hot;
-
+ protected:
   /// Wind Off Me. Only in `COOL` and `HEAT`. Turn OFF all Swing.
-  bool avoidPeople;
+  bool avoidPeople{};
   /// Wind On Me. Only in `COOL` and `HEAT`. Turn ON all Swing.
-  bool blowingPeople;
+  bool blowingPeople{};
   /// Breeze Away.
-  bool noWindOnMe;
+  bool noWindOnMe{};
+
+  /// Beeper Feedback. Only in Command.
+  bool beeper{};
+  /// Frost Protection mode (8 Degrees Heating).
+  bool Eight_Hot{};
 
   /// Reset Air Filter Maintenance Timer. Only in Command.
-  bool cleanFanTime;
+  bool cleanFanTime{};
   /// Air Filter Maintenance.
-  bool dusFull;
+  bool dusFull{};
   /// ECO mode.
-  bool eco;
+  bool eco{};
   /// Error Code. Known: 0x26 - Water Full.
-  uint8_t errInfo;
+  uint8_t errInfo{};
   /// Fan Speed.
   uint8_t fanSpeed{FAN_AUTO};
   // Silky Cool.
-  bool hasNoWindFeel;
+  bool hasNoWindFeel{};
   /// Set Target Humidity in Smart Dry Mode. Fan Speed must be AUTO.
-  uint8_t humidity;
+  uint8_t humidity{};
   ///
-  uint8_t light;
+  uint8_t light{};
   /// Mode.
   uint8_t mode{MODE_COOL};
   /// Device Status: On/Off.
   bool powerStatus{true};
   /// Electric Auxiliary Heater
-  bool ptcAssis;
+  bool ptcAssis{};
   /// 39 Self Cleaning.
-  bool selfClean;
+  bool selfClean{};
   /// Target Temperature. Always in Celsius.
   uint8_t setTemperature{26};
   /// Target Temperature +0.5.
-  bool setTemperature_dot;
+  bool setTemperature_dot{};
   /// Sleep Preset.
-  bool sleepFunc;
+  bool sleepFunc{};
   /// Display Temperature in Fahrenheits.
-  bool tempUnit;
+  bool tempUnit{};
   /// Current `On Timer` minutes.
-  uint16_t timer_on;
+  uint16_t timer_on{};
   /// Current `Off Timer` minutes.
-  uint16_t timer_off;
+  uint16_t timer_off{};
   /// Turbo Preset.
-  bool turbo;
+  bool turbo{};
 
   /// Swing Mode.
-  SwingMode swing;
+  SwingMode swing{};
 
   /// Indoor Temperature. Only in Status. Always in Celsius.
-  float indoor_temp;
+  float indoor_temp{};
   /// Outdoor Temperature. Only in Status. Always in Celsius.
-  float outdoor_temp;
+  float outdoor_temp{};
 
-  bool alarmSleep;
-  bool catchCold;
-  bool changeCosySleep;
-  bool childSleepMode;
-  bool cleanUp;
-  bool coolFan;
-  uint8_t cosySleep;
-  bool double_temp;
-  bool dryClean;
-  bool errMark;
-  bool exchangeAir;
-  bool feelOwn;
-  bool imodeResume;
-  bool lowFreqFan;
-  bool naturalFan;
-  bool nightLight;
-  bool peakElec;
-  bool powerSaver;
-  bool ptcButton;
-  uint8_t pwmMode;
-  bool save;
-  bool selfFeelOwn;
-  uint8_t setExpand;
-  bool setExpand_dot;
-  bool test2;
-  bool timerMode;
-  bool wiseEye;
+  bool alarmSleep{};
+  bool catchCold{};
+  bool changeCosySleep{};
+  bool childSleepMode{};
+  bool cleanUp{};
+  bool coolFan{};
+  uint8_t cosySleep{};
+  bool double_temp{};
+  bool dryClean{};
+  bool errMark{};
+  bool exchangeAir{};
+  bool feelOwn{};
+  bool imodeResume{};
+  bool lowFreqFan{};
+  bool naturalFan{};
+  bool nightLight{};
+  bool peakElec{};
+  bool powerSaver{};
+  bool ptcButton{};
+  uint8_t pwmMode{};
+  bool save{};
+  bool selfFeelOwn{};
+  uint8_t setExpand{};
+  bool setExpand_dot{};
+  bool test2{};
+  bool timerMode{};
+  bool wiseEye{};
 };
 
 struct B1Status {

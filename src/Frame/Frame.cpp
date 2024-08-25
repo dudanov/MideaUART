@@ -20,7 +20,7 @@ uint8_t Frame::m_calcCS() const {
   return cs;
 }
 
-bool Frame::deserialize(uint8_t data) {
+bool Frame::deserialize(const uint8_t &data) {
   const uint8_t length = m_data.size();
 
   if (length > OFFSET_DATA) {

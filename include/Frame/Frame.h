@@ -74,7 +74,7 @@ class Frame {
    * @param data byte to process.
    * @return `true` if frame deserializing is complete and it ready for handling.
    */
-  bool deserialize(uint8_t data);
+  bool deserialize(const uint8_t &data);
 
  protected:
   /**

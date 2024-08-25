@@ -23,27 +23,31 @@ uint8_t Frame::m_calcCS() const {
 bool Frame::deserialize(uint8_t data) {
   const uint8_t length = m_data.size();
 
-  m_data.push_back(data);
-
   if (length > OFFSET_DATA) {
+    if (length > m_len()) {
+      m_data.clear();
+
+      return this->deserialize(data);
+    }
+
+    m_data.push_back(data);
+
     if (length < m_len())
       return false;
 
-    if (length == m_len())
-      return this->isValid();
-
-    m_data.clear();
-
-    return this->deserialize(data);
+    return this->isValid();
   }
 
-  if (length == OFFSET_START && data == START_BYTE)
+  if (length == OFFSET_START && data != START_BYTE)
     return false;
 
-  if (length == OFFSET_LENGTH && data > OFFSET_DATA)
-    return false;
+  if (length == OFFSET_LENGTH && data <= OFFSET_DATA) {
+    m_data.clear();
 
-  m_data.clear();
+    return false;
+  }
+
+  m_data.push_back(data);
 
   return false;
 }

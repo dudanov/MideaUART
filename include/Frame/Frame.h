@@ -22,41 +22,89 @@ class Frame {
    *
    * @return Frame data body.
    */
-  FrameData getData() const {
-    return FrameData{this->m_data.begin() + OFFSET_DATA, this->m_data.begin() + this->m_len()};
-  }
+  FrameData getData() const { return FrameData{m_data.begin() + OFFSET_DATA, m_data.begin() + m_len()}; }
 
   void setData(const FrameData &data);
 
-  bool isValid() const { return !this->m_calcCS(); }
+  /**
+   * @brief Checks for valid frame.
+   *
+   * @return `true` if frame is valid.
+   */
+  bool isValid() const { return m_calcCS() == 0; }
 
-  const uint8_t *data() const { return this->m_data.data(); }
+  /**
+   * @brief Get frame raw data pointer.
+   *
+   * @return Raw data pointer.
+   */
+  const uint8_t *data() const { return m_data.data(); }
 
-  uint8_t size() const { return this->m_data.size(); }
+  /**
+   * @brief Get raw data size.
+   *
+   * @return Raw data size.
+   */
+  uint8_t size() const { return m_data.size(); }
 
-  void setType(uint8_t value) { this->m_data[OFFSET_TYPE] = value; }
+  /**
+   * @brief Set frame type.
+   *
+   * @param value frame type.
+   */
+  void setType(uint8_t value) { m_data[OFFSET_TYPE] = value; }
 
-  bool hasType(uint8_t value) const { return this->m_data[OFFSET_TYPE] == value; }
+  /**
+   * @brief Check frame type.
+   *
+   * @param value frame type.
+   * @return `true` if frame has specified type.
+   */
+  bool hasType(uint8_t value) const { return m_data[OFFSET_TYPE] == value; }
 
-  void setProtocol(uint8_t value) { this->m_data[OFFSET_PROTOCOL] = value; }
+  void setProtocol(uint8_t value) { m_data[OFFSET_PROTOCOL] = value; }
 
-  uint8_t getProtocol() const { return this->m_data[OFFSET_PROTOCOL]; }
+  uint8_t getProtocol() const { return m_data[OFFSET_PROTOCOL]; }
 
   std::string toString() const;
 
+  /**
+   * @brief Deserializes frame byte by byte.
+   *
+   * @param data byte to process.
+   * @return `true` if frame deserializing is complete and it ready for handling.
+   */
+  bool deserialize(uint8_t data);
+
  protected:
+  /**
+   * @brief Raw data vector.
+   */
   std::vector<uint8_t> m_data;
 
-  void m_trimData() { this->m_data.erase(this->m_data.begin() + OFFSET_DATA, this->m_data.end()); }
+  /**
+   * @brief Trim frame data body.
+   *
+   */
+  void m_trimData() { m_data.erase(m_data.begin() + OFFSET_DATA, m_data.end()); }
 
   void m_appendData(const FrameData &data) {
-    std::copy(data.data(), data.data() + data.size(), std::back_inserter(this->m_data));
+    std::copy(data.data(), data.data() + data.size(), std::back_inserter(m_data));
   }
 
-  uint8_t m_len() const { return this->m_data[OFFSET_LENGTH]; }
+  uint8_t m_len() const { return m_data[OFFSET_LENGTH]; }
 
-  void m_appendCS() { this->m_data.push_back(this->m_calcCS()); }
+  /**
+   * @brief Calculates checksum and finalize frame by appending it to the end.
+   *
+   */
+  void m_appendCS() { m_data.push_back(m_calcCS()); }
 
+  /**
+   * @brief Calculate checksum.
+   *
+   * @return Checksum.
+   */
   uint8_t m_calcCS() const;
 
   static const uint8_t START_BYTE = 0xAA;

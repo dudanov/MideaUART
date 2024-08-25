@@ -11,18 +11,41 @@ namespace midea {
  */
 class FrameData {
  public:
+  /**
+   * @brief Default constructor. Data vector is empty.
+   */
   FrameData() = default;
 
+  /**
+   * @brief Constructs data body from begin and end data iterators.
+   *
+   * @param begin begin iterator.
+   * @param end end iterator.
+   */
   FrameData(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end)
       : m_data(begin, end) {}
 
-  FrameData(const uint8_t *data, uint8_t size) : m_data(data, data + size) {}
-
+  /**
+   * @brief Init data with initializer list of bytes.
+   *
+   * @param list list of bytes.
+   */
   FrameData(std::initializer_list<uint8_t> list) : m_data(list) {}
 
+  /**
+   * @brief Init data with zero bytes.
+   *
+   * @param size number of zeroes.
+   */
   FrameData(uint8_t size) : m_data(size, 0) {}
 
-  template<typename T> T to() { return std::move(*this); }
+  /**
+   * @brief Move this object to derivied frame data object.
+   *
+   * @tparam T frame data class type.
+   * @return New data frame object.
+   */
+  template<typename T> T to() { return T{std::move(*this)}; }
 
   const uint8_t &operator[](size_t idx) const { return this->m_data[idx]; }
 
@@ -109,13 +132,20 @@ class FrameData {
    * @param idx byte index.
    * @param mask value mask (default: 0xFF).
    * @param rshift number of bits right shift (default: 0).
-   * @return value.
+   * @return Value.
    */
   uint8_t m_getValue(uint8_t idx, uint8_t mask = 255, uint8_t rshift = 0) const {
     return (this->m_data[idx] >> rshift) & mask;
   }
 
-  bool m_getBit(uint8_t idx, uint8_t bit) const { return (this->m_data[idx] >> bit) & 1; }
+  /**
+   * @brief Get bit value from data body.
+   *
+   * @param idx byte index.
+   * @param bit bit number.
+   * @return Bit state.
+   */
+  bool m_getBit(uint8_t idx, uint8_t bit) const { return this->m_getValue(idx, 1, bit); }
 
   /**
    * @brief Set value to data body.
@@ -138,6 +168,16 @@ class FrameData {
    * @param mask bitmask.
    */
   void m_setMask(uint8_t idx, bool state, uint8_t mask = 255) { this->m_setValue(idx, state ? mask : 0, mask); }
+
+  /**
+   * @brief Set bit state.
+   *
+   *
+   * @param idx byte index.
+   * @param bit bit number.
+   * @param state bit state.
+   */
+  void m_setBit(uint8_t idx, uint8_t bit, bool state) { this->m_setMask(idx, state, 1 << bit); }
 };
 
 }  // namespace midea

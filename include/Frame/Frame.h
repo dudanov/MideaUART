@@ -17,7 +17,14 @@ class Frame {
     this->setData(data);
   }
 
-  FrameData getData() const { return FrameData(this->m_data.data() + OFFSET_DATA, this->m_len() - OFFSET_DATA); }
+  /**
+   * @brief Extracts data body from frame. Frame MUST BE full and valid.
+   *
+   * @return Frame data body.
+   */
+  FrameData getData() const {
+    return FrameData{this->m_data.begin() + OFFSET_DATA, this->m_data.begin() + this->m_len()};
+  }
 
   void setData(const FrameData &data);
 

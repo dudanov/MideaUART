@@ -21,7 +21,7 @@ uint8_t Frame::m_calcCS() const {
 }
 
 bool Frame::deserialize(const uint8_t &data) {
-  const uint8_t length = m_data.size();
+  const size_t length = m_data.size();
 
   if (length > OFFSET_DATA) {
     if (length > m_len()) {

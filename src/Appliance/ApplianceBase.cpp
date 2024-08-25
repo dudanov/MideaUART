@@ -21,22 +21,10 @@ ResponseStatus ApplianceBase::Request::callHandler(const Frame &frame) {
   return this->onData(frame.getData());
 }
 
-bool ApplianceBase::FrameReceiver::read(Stream *stream) {
+static bool read_frame(Frame &frame, Stream *stream) {
   while (stream->available()) {
-    const uint8_t data = stream->read();
-    const uint8_t length = this->m_data.size();
-    if (length == OFFSET_START && data != START_BYTE)
-      continue;
-    if (length == OFFSET_LENGTH && data <= OFFSET_DATA) {
-      this->m_data.clear();
-      continue;
-    }
-    this->m_data.push_back(data);
-    if (length > OFFSET_DATA && length >= this->m_data[OFFSET_LENGTH]) {
-      if (this->isValid())
-        return true;
-      this->m_data.clear();
-    }
+    if (frame.deserialize(stream->read()))
+      return true;
   }
   return false;
 }
@@ -57,28 +45,36 @@ void ApplianceBase::setup() {
 void ApplianceBase::loop() {
   // Timers task
   m_timerManager.task();
+
   // Loop for appliances
   m_loop();
+
   // Frame receiving
-  while (this->m_receiver.read(this->m_stream)) {
+  while (read_frame(this->m_receiver, this->m_stream)) {
     this->m_protocol = this->m_receiver.getProtocol();
+
     LOG_D(TAG, "RX: %s", this->m_receiver.toString().c_str());
+
     this->m_handler(this->m_receiver);
-    this->m_receiver.clear();
   }
+
   if (this->m_isBusy || this->m_isWaitForResponse())
     return;
+
   if (this->m_queue.empty()) {
     this->m_onIdle();
     return;
   }
+
   this->m_request = this->m_queue.front();
   this->m_queue.pop_front();
   LOG_D(TAG, "Getting and sending a request from the queue...");
   this->m_sendRequest(this->m_request);
+
   if (this->m_request->onData != nullptr) {
     this->m_resetAttempts();
     this->m_resetTimeout();
+
   } else {
     this->m_destroyRequest();
   }

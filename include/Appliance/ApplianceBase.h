@@ -108,11 +108,6 @@ class ApplianceBase {
     FrameType requestType;
     ResponseStatus callHandler(const Frame &data);
   };
-  class FrameReceiver : public Frame {
-  public:
-    bool read(Stream *stream);
-    void clear() { this->m_data.clear(); }
-  };
   void m_sendNetworkNotify(FrameType msg_type = NETWORK_NOTIFY);
   void m_handler(const Frame &frame);
   bool m_isWaitForResponse() const { return this->m_request != nullptr; }
@@ -121,7 +116,7 @@ class ApplianceBase {
   void m_resetTimeout();
   void m_sendRequest(Request *request) { this->m_sendFrame(request->requestType, request->request); }
   // Frame receiver with dynamic buffer
-  FrameReceiver m_receiver{};
+  Frame m_receiver{};
   // Network status timer
   Timer m_networkTimer{};
   // Waiting response timer

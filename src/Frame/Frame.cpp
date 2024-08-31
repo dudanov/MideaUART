@@ -24,6 +24,7 @@ bool Frame::deserialize(const uint8_t &data) {
   const size_t len = m_data.size();
 
   if (len > OFFSET_DATA) {
+    // Header received. Reading data.
     const size_t elen = m_data[OFFSET_LENGTH];
 
     if (len > elen) {
@@ -38,8 +39,10 @@ bool Frame::deserialize(const uint8_t &data) {
       return false;
 
     // Frame received. Return validation result.
-    return this->isValid();
+    return m_calcCS() == 0;
   }
+
+  /* HEADER */
 
   if (len == OFFSET_START) {
     // Expected frame start byte.

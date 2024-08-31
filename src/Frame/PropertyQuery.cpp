@@ -5,7 +5,7 @@ namespace midea {
 
 void PropertyQuery::appendUUID(PropertyUUID uuid) {
   this->append(uuid);
-  this->m_data[1]++;  // increment number of UUIDs
+  m_data[1]++;  // increment number of UUIDs
 }
 
 }  // namespace midea

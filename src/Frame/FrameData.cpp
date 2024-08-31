@@ -36,7 +36,7 @@ uint8_t FrameData::m_calcCRC() const {
 
   uint8_t crc = 0;
 
-  for (uint8_t data : this->m_data)
+  for (uint8_t data : m_data)
     crc = pgm_read_byte(CRC8_854_TABLE + (crc ^ data));
 
   return crc;

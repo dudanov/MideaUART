@@ -22,22 +22,22 @@ class AirConditioner : public ApplianceBase {
  public:
   AirConditioner() : ApplianceBase(AIR_CONDITIONER) {}
   void m_setup() override;
-  void m_onIdle() override { this->m_getStatus(); }
+  void m_onIdle() override { m_getStatus(); }
   void control(const Control &control);
   void setPowerState(bool state);
-  bool getPowerState() const { return this->m_mode != Mode::MODE_OFF; }
-  void togglePowerState() { this->setPowerState(this->m_mode == Mode::MODE_OFF); }
-  float getTargetTemp() const { return this->m_targetTemp; }
-  float getIndoorTemp() const { return this->m_indoorTemp; }
-  float getOutdoorTemp() const { return this->m_outdoorTemp; }
-  float getIndoorHum() const { return this->m_indoorHumidity; }
-  float getPowerUsage() const { return this->m_powerUsage; }
-  Mode getMode() const { return this->m_mode; }
-  SwingMode getSwingMode() const { return this->m_swingMode; }
-  FanSpeed getFanMode() const { return this->m_fanMode; }
-  Preset getPreset() const { return this->m_preset; }
-  const CmdB5 &getCapabilities() const { return this->m_capabilities; }
-  void displayToggle() { this->m_displayToggle(); }
+  bool getPowerState() const { return m_mode != Mode::MODE_OFF; }
+  void togglePowerState() { this->setPowerState(m_mode == Mode::MODE_OFF); }
+  float getTargetTemp() const { return m_targetTemp; }
+  float getIndoorTemp() const { return m_indoorTemp; }
+  float getOutdoorTemp() const { return m_outdoorTemp; }
+  float getIndoorHum() const { return m_indoorHumidity; }
+  float getPowerUsage() const { return m_powerUsage; }
+  Mode getMode() const { return m_mode; }
+  SwingMode getSwingMode() const { return m_swingMode; }
+  FanSpeed getFanMode() const { return m_fanMode; }
+  Preset getPreset() const { return m_preset; }
+  const CmdB5 &getCapabilities() const { return m_capabilities; }
+  void displayToggle() { m_displayToggle(); }
 
  protected:
   void m_getPowerUsage();

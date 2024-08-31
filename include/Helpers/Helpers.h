@@ -17,14 +17,14 @@ template<typename T> class Optional {
  public:
   Optional() = default;
   Optional(const T &value) : m_value(value), m_hasValue(true) {}
-  void clear() { this->m_hasValue = false; }
-  bool hasValue() const { return this->m_hasValue; }
-  T &value() { return this->m_value; }
-  const T &value() const { return this->m_value; }
-  bool operator==(const T &value) const { return this->m_hasValue && this->m_value == value; }
-  bool operator!=(const T &value) const { return !this->m_hasValue || this->m_value != value; }
+  void clear() { m_hasValue = false; }
+  bool hasValue() const { return m_hasValue; }
+  T &value() { return m_value; }
+  const T &value() const { return m_value; }
+  bool operator==(const T &value) const { return m_hasValue && m_value == value; }
+  bool operator!=(const T &value) const { return !m_hasValue || m_value != value; }
   friend bool operator!=(const T &value, const Optional<T> &opt) { return !opt.m_hasValue || opt.m_value != value; }
-  bool hasUpdate(const T &value) const { return this->m_hasValue && this->m_value != value; }
+  bool hasUpdate(const T &value) const { return m_hasValue && m_value != value; }
 
  protected:
   T m_value{};

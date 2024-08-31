@@ -57,26 +57,26 @@ class ApplianceBase {
   /* ############################## */
 
   /// Set serial stream
-  void setStream(Stream *stream) { this->m_stream = stream; }
+  void setStream(Stream *stream) { m_stream = stream; }
   /// Set minimal period between requests
-  void setPeriod(uint32_t period) { this->m_period = period; }
-  uint32_t getPeriod() const { return this->m_period; }
+  void setPeriod(uint32_t period) { m_period = period; }
+  uint32_t getPeriod() const { return m_period; }
   /// Set waiting response timeout
-  void setTimeout(uint32_t timeout) { this->m_timeout = timeout; }
-  uint32_t getTimeout() const { return this->m_timeout; }
+  void setTimeout(uint32_t timeout) { m_timeout = timeout; }
+  uint32_t getTimeout() const { return m_timeout; }
   /// Set number of request attempts
-  void setNumAttempts(uint8_t numAttempts) { this->m_numAttempts = numAttempts; }
-  uint8_t getNumAttempts() const { return this->m_numAttempts; }
+  void setNumAttempts(uint8_t numAttempts) { m_numAttempts = numAttempts; }
+  uint8_t getNumAttempts() const { return m_numAttempts; }
   /// Set beeper feedback
   void setBeeper(bool value);
   /// Add listener for appliance state
-  void addOnStateCallback(OnStateCallback cb) { this->m_stateCallbacks.push_back(cb); }
+  void addOnStateCallback(OnStateCallback cb) { m_stateCallbacks.push_back(cb); }
   void sendUpdate() {
-    for (auto &cb : this->m_stateCallbacks)
+    for (auto &cb : m_stateCallbacks)
       cb();
   }
-  AutoconfStatus getAutoconfStatus() const { return this->m_autoconfStatus; }
-  void setAutoconf(bool state) { this->m_autoconfStatus = state ? AUTOCONF_PROGRESS : AUTOCONF_DISABLED; }
+  AutoconfStatus getAutoconfStatus() const { return m_autoconfStatus; }
+  void setAutoconf(bool state) { m_autoconfStatus = state ? AUTOCONF_PROGRESS : AUTOCONF_DISABLED; }
   static void setLogger(LoggerFn logger) { dudanov::setLogger(logger); }
 
  protected:
@@ -87,7 +87,7 @@ class ApplianceBase {
   // Beeper feedback flag
   bool m_beeper{};
 
-  void m_queueNotify(FrameType type, FrameData data) { this->m_queueRequest(type, std::move(data), nullptr); }
+  void m_queueNotify(FrameType type, FrameData data) { m_queueRequest(type, std::move(data), nullptr); }
   void m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess = nullptr, Handler onError = nullptr);
   void m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData = nullptr, Handler onSucess = nullptr, Handler onError = nullptr);
   void m_sendFrame(FrameType type, const FrameData &data);
@@ -110,11 +110,11 @@ class ApplianceBase {
   };
   void m_sendNetworkNotify(FrameType msg_type = NETWORK_NOTIFY);
   void m_handler(const Frame &frame);
-  bool m_isWaitForResponse() const { return this->m_request != nullptr; }
-  void m_resetAttempts() { this->m_remainAttempts = this->m_numAttempts; }
+  bool m_isWaitForResponse() const { return m_request != nullptr; }
+  void m_resetAttempts() { m_remainAttempts = m_numAttempts; }
   void m_destroyRequest();
   void m_resetTimeout();
-  void m_sendRequest(Request *request) { this->m_sendFrame(request->requestType, request->request); }
+  void m_sendRequest(Request *request) { m_sendFrame(request->requestType, request->request); }
   // Frame receiver with dynamic buffer
   Frame m_receiver{};
   // Network status timer

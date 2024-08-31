@@ -71,14 +71,14 @@ class PropertyQuery : public FrameData {
      *
      * @return
      */
-    size_t headerLength() const { return std::distance(this->m_header, this->m_data); }
+    size_t headerLength() const { return std::distance(m_header, m_data); }
 
     /**
      * @brief Size of properties data.
      *
      * @return size of properties data.
      */
-    int size() const { return this->m_data[-1]; }
+    int size() const { return m_data[-1]; }
 
     /**
      * @brief Property data access `operator[]`.
@@ -86,14 +86,14 @@ class PropertyQuery : public FrameData {
      * @param idx byte index.
      * @return property byte.
      */
-    const uint8_t &operator[](int idx) const { return this->m_data[idx]; }
+    const uint8_t &operator[](int idx) const { return m_data[idx]; }
 
     /**
      * @brief Available bytes for read.
      *
      * @return int Available bytes for read.
      */
-    int available() const { return std::distance(this->m_data + this->size(), this->m_end); }
+    int available() const { return std::distance(m_data + this->size(), m_end); }
 
     /**
      * @brief Current property is valid.
@@ -107,7 +107,7 @@ class PropertyQuery : public FrameData {
      *
      * @return UUID.
      */
-    PropertyUUID uuid() const { return this->m_header[1] * 256 + this->m_header[0]; }
+    PropertyUUID uuid() const { return m_header[1] * 256 + m_header[0]; }
 
     /**
      * @brief Advance reader to next property.
@@ -115,8 +115,8 @@ class PropertyQuery : public FrameData {
      */
     void advance() {
       auto offset = this->size() + this->headerLength();
-      this->m_header += offset;
-      this->m_data += offset;
+      m_header += offset;
+      m_data += offset;
     }
 
    private:

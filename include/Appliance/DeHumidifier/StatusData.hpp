@@ -115,24 +115,24 @@ class StatusData : public FrameData {
   StatusData(const FrameData &data) : FrameData(data) {}
 
   /// Copy status from another StatusData
-  void copyStatus(const StatusData &p) { memcpy(this->m_data.data() + 1, p.data() + 1, 10); }
+  void copyStatus(const StatusData &p) { memcpy(m_data.data() + 1, p.data() + 1, 10); }
 
   /* TARGET TEMPERATURE */
   float getTargetTemp() const;
   void setTargetTemp(float temp);
 
   /* MODE */
-  Mode getRawMode() const { return static_cast<Mode>(this->m_getValue(2, 7, 5)); }
+  Mode getRawMode() const { return static_cast<Mode>(m_getValue(2, 7, 5)); }
   Mode getMode() const;
   void setMode(Mode mode);
 
   /* FAN SPEED */
   FanSpeed getFanMode() const;
-  void setFanMode(FanSpeed mode) { this->m_setValue(3, mode); };
+  void setFanMode(FanSpeed mode) { m_setValue(3, mode); };
 
   /* SWING MODE */
-  SwingMode getSwingMode() const { return static_cast<SwingMode>(this->m_getValue(7, 15)); }
-  void setSwingMode(SwingMode mode) { this->m_setValue(7, 0x30 | mode); }
+  SwingMode getSwingMode() const { return static_cast<SwingMode>(m_getValue(7, 15)); }
+  void setSwingMode(SwingMode mode) { m_setValue(7, 0x30 | mode); }
 
   /* INDOOR TEMPERATURE */
   float getIndoorTemp() const;
@@ -151,29 +151,29 @@ class StatusData : public FrameData {
   float getPowerUsage() const;
 
   void setBeeper(bool state) {
-    this->m_setMask(1, true, 2);
-    this->m_setMask(1, state, 64);
+    m_setMask(1, true, 2);
+    m_setMask(1, state, 64);
   }
 
  protected:
   /* POWER */
-  bool m_getPower() const { return this->m_getValue(1, 1); }
-  void m_setPower(bool state) { this->m_setMask(1, state, 1); }
+  bool m_getPower() const { return m_getValue(1, 1); }
+  void m_setPower(bool state) { m_setMask(1, state, 1); }
   /* ECO MODE */
-  bool m_getEco() const { return this->m_getValue(9, 16); }
-  void m_setEco(bool state) { this->m_setMask(9, state, 128); }
+  bool m_getEco() const { return m_getValue(9, 16); }
+  void m_setEco(bool state) { m_setMask(9, state, 128); }
   /* TURBO MODE */
-  bool m_getTurbo() const { return this->m_getValue(8, 32) || this->m_getValue(10, 2); }
+  bool m_getTurbo() const { return m_getValue(8, 32) || m_getValue(10, 2); }
   void m_setTurbo(bool state) {
-    this->m_setMask(8, state, 32);
-    this->m_setMask(10, state, 2);
+    m_setMask(8, state, 32);
+    m_setMask(10, state, 2);
   }
   /* FREEZE PROTECTION */
-  bool m_getFreezeProtection() const { return this->m_getValue(21, 128); }
-  void m_setFreezeProtection(bool state) { this->m_setMask(21, state, 128); }
+  bool m_getFreezeProtection() const { return m_getValue(21, 128); }
+  void m_setFreezeProtection(bool state) { m_setMask(21, state, 128); }
   /* SLEEP MODE */
-  bool m_getSleep() const { return this->m_getValue(10, 1); }
-  void m_setSleep(bool state) { this->m_setMask(10, state, 1); }
+  bool m_getSleep() const { return m_getValue(10, 1); }
+  void m_setSleep(bool state) { m_setMask(10, state, 1); }
 };
 
 /// Specific DeviceStateQuery 0x41 frame
@@ -182,7 +182,7 @@ class FrameDataDevQuery41 : public FrameData {
   FrameDataDevQuery41()
       : FrameData({0x41, 0x21, 0x00, 0xFF, 0x03, 0x00, 0x00, 0x02, 0x00, 0x00,
                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) {
-    this->append(this->m_getID());
+    this->append(m_getID());
     this->appendCRC();
   }
 };

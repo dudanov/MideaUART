@@ -48,11 +48,11 @@ class FrameData {
    */
   template<typename T> T to() { return T(std::move(*this)); }
 
-  const uint8_t &operator[](size_t idx) const { return this->m_data[idx]; }
+  const uint8_t &operator[](size_t idx) const { return m_data[idx]; }
 
-  uint8_t &operator[](size_t idx) { return this->m_data[idx]; }
+  uint8_t &operator[](size_t idx) { return m_data[idx]; }
 
-  bool hasID(uint8_t value) const { return this->m_data[0] == value; }
+  bool hasID(uint8_t value) const { return m_data[0] == value; }
 
   bool hasStatus() const { return this->hasID(0xC0); }
 
@@ -62,14 +62,14 @@ class FrameData {
    * @brief Calculates and adds a checksum.
    *
    */
-  void appendCRC() { this->m_data.push_back(this->m_calcCRC()); }
+  void appendCRC() { m_data.push_back(m_calcCRC()); }
 
   /**
    * @brief Updates the checksum (last byte).
    *
    */
   void updateCRC() {
-    this->m_data.pop_back();
+    m_data.pop_back();
     this->appendCRC();
   }
 
@@ -78,7 +78,7 @@ class FrameData {
    *
    * @return `true` if checksum is correct.
    */
-  bool hasValidCRC() const { return this->m_calcCRC() == 0; }
+  bool hasValidCRC() const { return m_calcCRC() == 0; }
 
   /**
    * @brief Appends variadic number of integer arguments.
@@ -99,7 +99,7 @@ class FrameData {
    */
   template<typename T> void append(const T &data) {
     for (size_t i = 0; i < sizeof(T); ++i)
-      this->m_data.push_back(data >> (i * 8));
+      m_data.push_back(data >> (i * 8));
   }
 
  protected:
@@ -132,7 +132,7 @@ class FrameData {
    * @return Value.
    */
   uint8_t m_getValue(uint8_t idx, uint8_t mask = 255, uint8_t rshift = 0) const {
-    return (this->m_data[idx] >> rshift) & mask;
+    return (m_data[idx] >> rshift) & mask;
   }
 
   /**
@@ -142,7 +142,7 @@ class FrameData {
    * @param bit bit number.
    * @return Bit state.
    */
-  bool m_getBit(uint8_t idx, uint8_t bit) const { return this->m_getValue(idx, 1, bit); }
+  bool m_getBit(uint8_t idx, uint8_t bit) const { return m_getValue(idx, 1, bit); }
 
   /**
    * @brief Set value to data body.
@@ -153,8 +153,8 @@ class FrameData {
    * @param lshift number of bits to left shift value and mask.
    */
   void m_setValue(uint8_t idx, uint8_t value, uint8_t mask = 255, uint8_t lshift = 0) {
-    this->m_data[idx] &= ~(mask << lshift);
-    this->m_data[idx] |= (value << lshift);
+    m_data[idx] &= ~(mask << lshift);
+    m_data[idx] |= (value << lshift);
   }
 
   /**
@@ -164,7 +164,7 @@ class FrameData {
    * @param state if `true` bitmask is set, else clear.
    * @param mask bitmask.
    */
-  void m_setMask(uint8_t idx, bool state, uint8_t mask = 255) { this->m_setValue(idx, state ? mask : 0, mask); }
+  void m_setMask(uint8_t idx, bool state, uint8_t mask = 255) { m_setValue(idx, state ? mask : 0, mask); }
 
   /**
    * @brief Set bit state.
@@ -174,7 +174,7 @@ class FrameData {
    * @param bit bit number.
    * @param state bit state.
    */
-  void m_setBit(uint8_t idx, uint8_t bit, bool state) { this->m_setMask(idx, state, 1 << bit); }
+  void m_setBit(uint8_t idx, uint8_t bit, bool state) { m_setMask(idx, state, 1 << bit); }
 };
 
 }  // namespace midea

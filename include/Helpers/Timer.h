@@ -24,16 +24,16 @@ class TimerManager {
 class Timer {
  public:
   Timer();
-  bool isExpired() const { return TimerManager::ms() - this->m_last >= this->m_alarm; }
-  bool isEnabled() const { return this->m_alarm; }
+  bool isExpired() const { return TimerManager::ms() - m_last >= m_alarm; }
+  bool isEnabled() const { return m_alarm; }
   void start(TimerTick ms) {
-    this->m_alarm = ms;
+    m_alarm = ms;
     this->reset();
   }
-  void stop() { this->m_alarm = 0; }
-  void reset() { this->m_last = TimerManager::ms(); }
-  void setCallback(TimerCallback cb) { this->m_callback = cb; }
-  void call() { this->m_callback(this); }
+  void stop() { m_alarm = 0; }
+  void reset() { m_last = TimerManager::ms(); }
+  void setCallback(TimerCallback cb) { m_callback = cb; }
+  void call() { m_callback(this); }
  private:
   // Функция обратного вызова или лямбда
   TimerCallback m_callback;

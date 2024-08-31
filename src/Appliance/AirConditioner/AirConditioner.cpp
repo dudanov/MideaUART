@@ -9,17 +9,17 @@ namespace ac {
 static const char *TAG = "AirConditioner";
 
 void AirConditioner::m_setup() {
-  if (this->m_autoconfStatus != AUTOCONF_DISABLED)
-    this->m_getCapabilities();
+  if (m_autoconfStatus != AUTOCONF_DISABLED)
+    m_getCapabilities();
 
-  this->m_timerManager.registerTimer(this->m_powerUsageTimer);
+  m_timerManager.registerTimer(m_powerUsageTimer);
 
-  this->m_powerUsageTimer.setCallback([this](Timer *timer) {
+  m_powerUsageTimer.setCallback([this](Timer *timer) {
     timer->reset();
-    this->m_getPowerUsage();
+    m_getPowerUsage();
   });
 
-  this->m_powerUsageTimer.start(30000);
+  m_powerUsageTimer.start(30000);
 }
 
 static bool checkConstraints(const Mode &mode, const Preset &preset) {
@@ -48,12 +48,12 @@ static bool checkConstraints(const Mode &mode, const Preset &preset) {
 }
 
 void AirConditioner::control(const Control &control) {
-  if (this->m_sendControl)
+  if (m_sendControl)
     return;
 
-  StatusData status = this->m_status;
-  Mode mode = this->m_mode;
-  Preset preset = this->m_preset;
+  StatusData status = m_status;
+  Mode mode = m_mode;
+  Preset preset = m_preset;
   bool hasUpdate = false;
   bool isModeChanged = false;
 
@@ -62,8 +62,8 @@ void AirConditioner::control(const Control &control) {
     isModeChanged = true;
     mode = control.mode.value();
 
-    if (this->m_mode == Mode::MODE_OFF)
-      preset = this->m_lastPreset;
+    if (m_mode == Mode::MODE_OFF)
+      preset = m_lastPreset;
 
     else if (!checkConstraints(mode, preset))
       preset = Preset::PRESET_NONE;
@@ -76,48 +76,48 @@ void AirConditioner::control(const Control &control) {
 
   if (mode != Mode::MODE_OFF) {
     if (mode == Mode::MODE_AUTO || preset != Preset::PRESET_NONE) {
-      if (this->m_fanMode != FanSpeed::FAN_AUTO) {
+      if (m_fanMode != FanSpeed::FAN_AUTO) {
         hasUpdate = true;
         status.setFanMode(FanSpeed::FAN_AUTO);
       }
 
-    } else if (control.fanMode.hasUpdate(this->m_fanMode)) {
+    } else if (control.fanMode.hasUpdate(m_fanMode)) {
       hasUpdate = true;
       status.setFanMode(control.fanMode.value());
     }
 
-    if (control.swingMode.hasUpdate(this->m_swingMode)) {
+    if (control.swingMode.hasUpdate(m_swingMode)) {
       hasUpdate = true;
       status.setSwingMode(control.swingMode.value());
     }
   }
 
-  if (control.targetTemp.hasUpdate(this->m_targetTemp)) {
+  if (control.targetTemp.hasUpdate(m_targetTemp)) {
     hasUpdate = true;
     status.setTargetTemp(control.targetTemp.value());
   }
 
   if (hasUpdate) {
-    this->m_sendControl = true;
+    m_sendControl = true;
     status.setMode(mode);
     status.setPreset(preset);
-    status.setBeeper(this->m_beeper);
+    status.setBeeper(m_beeper);
     status.appendCRC();
 
     if (isModeChanged && preset != Preset::PRESET_NONE && preset != Preset::PRESET_SLEEP) {
       // Last command with preset
-      this->m_setStatus(status);
+      m_setStatus(status);
       status.setPreset(Preset::PRESET_NONE);
       status.setBeeper(false);
       status.updateCRC();
 
       // First command without preset
-      this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
+      m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
                                    // onData
                                    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 
     } else {
-      this->m_setStatus(std::move(status));
+      m_setStatus(std::move(status));
     }
   }
 }
@@ -125,23 +125,23 @@ void AirConditioner::control(const Control &control) {
 void AirConditioner::m_setStatus(StatusData status) {
   LOG_D(TAG, "Enqueuing a priority SET_STATUS(0x40) request...");
 
-  this->m_queueRequestPriority(
+  m_queueRequestPriority(
       FrameType::DEVICE_CONTROL, std::move(status),
       // onData
       std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1),
       // onSuccess
-      [this]() { this->m_sendControl = false; },
+      [this]() { m_sendControl = false; },
       // onError
       [this]() {
         LOG_W(TAG, "SET_STATUS(0x40) request failed...");
-        this->m_sendControl = false;
+        m_sendControl = false;
       });
 }
 
 void AirConditioner::setPowerState(bool state) {
   if (state != this->getPowerState()) {
     Control control;
-    control.mode = state ? this->m_status.getRawMode() : Mode::MODE_OFF;
+    control.mode = state ? m_status.getRawMode() : Mode::MODE_OFF;
     this->control(control);
   }
 }
@@ -150,7 +150,7 @@ void AirConditioner::m_getPowerUsage() {
   FrameDataQuery41 data{};
   LOG_D(TAG, "Enqueuing a GET_POWERUSAGE(0x41) request...");
 
-  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+  m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
                        // onData
                        [this](FrameData data) -> ResponseStatus {
                          const auto status = data.to<StatusData>();
@@ -158,8 +158,8 @@ void AirConditioner::m_getPowerUsage() {
                          if (!status.hasPowerInfo())
                            return ResponseStatus::RESPONSE_WRONG;
 
-                         if (this->m_powerUsage != status.getPowerUsage()) {
-                           this->m_powerUsage = status.getPowerUsage();
+                         if (m_powerUsage != status.getPowerUsage()) {
+                           m_powerUsage = status.getPowerUsage();
                            this->sendUpdate();
                          }
 
@@ -169,38 +169,38 @@ void AirConditioner::m_getPowerUsage() {
 
 //
 void AirConditioner::m_getCapabilities() {
-  if (this->m_autoconfStatus == AUTOCONF_PROGRESS)
+  if (m_autoconfStatus == AUTOCONF_PROGRESS)
     return;
 
   FrameDataB5Query b5data;
-  this->m_autoconfStatus = AUTOCONF_PROGRESS;
+  m_autoconfStatus = AUTOCONF_PROGRESS;
   LOG_D(TAG, "Enqueuing a priority GET_CAPABILITIES(0xB5) request...");
 
-  this->m_queueRequest(
+  m_queueRequest(
       FrameType::DEVICE_QUERY, std::move(b5data),
       // onData
       [this](FrameData data) -> ResponseStatus {
         if (!data.hasID(0xB5))
           return RESPONSE_WRONG;
 
-        const uint8_t next = this->m_capabilities.read(data.to<PropertyQuery>());
+        const uint8_t next = m_capabilities.read(data.to<PropertyQuery>());
 
         if (next == 0)
           return RESPONSE_OK;
 
         FrameDataSecondB5Query b5next(next);
-        this->m_sendFrame(FrameType::DEVICE_QUERY, b5next);
+        m_sendFrame(FrameType::DEVICE_QUERY, b5next);
 
         return RESPONSE_PARTIAL;
       },
 
       // onSuccess
-      [this]() { this->m_autoconfStatus = AUTOCONF_OK; },
+      [this]() { m_autoconfStatus = AUTOCONF_OK; },
 
       // onError
       [this]() {
         LOG_W(TAG, "Failed to get 0xB5 capabilities report.");
-        this->m_autoconfStatus = AUTOCONF_ERROR;
+        m_autoconfStatus = AUTOCONF_ERROR;
       });
 }
 
@@ -208,7 +208,7 @@ void AirConditioner::m_getStatus() {
   FrameDataDevQuery41 data;
   LOG_D(TAG, "Enqueuing a GET_STATUS(0x41) request...");
 
-  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+  m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
                        // onData
                        std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }
@@ -217,7 +217,7 @@ void AirConditioner::m_displayToggle() {
   FrameDataLight41 data;
   LOG_D(TAG, "Enqueuing a priority TOGGLE_LIGHT(0x41) request...");
 
-  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+  m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
                        // onData
                        std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }
@@ -237,22 +237,22 @@ ResponseStatus AirConditioner::m_readStatus(FrameData data) {
 
   bool hasUpdate = false;
   const StatusData newStatus = data.to<StatusData>();
-  this->m_status.copyStatus(newStatus);
+  m_status.copyStatus(newStatus);
 
-  if (this->m_mode != newStatus.getMode()) {
+  if (m_mode != newStatus.getMode()) {
     hasUpdate = true;
-    this->m_mode = newStatus.getMode();
+    m_mode = newStatus.getMode();
 
     if (newStatus.getMode() == Mode::MODE_OFF)
-      this->m_lastPreset = this->m_preset;
+      m_lastPreset = m_preset;
   }
-  setProperty(this->m_preset, newStatus.getPreset(), hasUpdate);
-  setProperty(this->m_fanMode, newStatus.getFanMode(), hasUpdate);
-  setProperty(this->m_swingMode, newStatus.getSwingMode(), hasUpdate);
-  setProperty(this->m_targetTemp, newStatus.getTargetTemp(), hasUpdate);
-  setProperty(this->m_indoorTemp, newStatus.getIndoorTemp(), hasUpdate);
-  setProperty(this->m_outdoorTemp, newStatus.getOutdoorTemp(), hasUpdate);
-  setProperty(this->m_indoorHumidity, newStatus.getHumiditySetpoint(), hasUpdate);
+  setProperty(m_preset, newStatus.getPreset(), hasUpdate);
+  setProperty(m_fanMode, newStatus.getFanMode(), hasUpdate);
+  setProperty(m_swingMode, newStatus.getSwingMode(), hasUpdate);
+  setProperty(m_targetTemp, newStatus.getTargetTemp(), hasUpdate);
+  setProperty(m_indoorTemp, newStatus.getIndoorTemp(), hasUpdate);
+  setProperty(m_outdoorTemp, newStatus.getOutdoorTemp(), hasUpdate);
+  setProperty(m_indoorHumidity, newStatus.getHumiditySetpoint(), hasUpdate);
 
   if (hasUpdate)
     this->sendUpdate();

@@ -114,13 +114,13 @@ class Frame {
   uint8_t m_calcCS() const;
 
   static const uint8_t START_BYTE = 0xAA;
-  static const size_t OFFSET_START = 0;
-  static const size_t OFFSET_LENGTH = 1;
-  static const size_t OFFSET_APPTYPE = 2;
-  static const size_t OFFSET_SYNC = 3;
-  static const size_t OFFSET_PROTOCOL = 8;
-  static const size_t OFFSET_TYPE = 9;
-  static const size_t OFFSET_DATA = 10;
+  static const uint8_t OFFSET_START = 0;
+  static const uint8_t OFFSET_LENGTH = 1;
+  static const uint8_t OFFSET_APPTYPE = 2;
+  static const uint8_t OFFSET_SYNC = 3;
+  static const uint8_t OFFSET_PROTOCOL = 8;
+  static const uint8_t OFFSET_TYPE = 9;
+  static const uint8_t OFFSET_DATA = 10;
 };
 
 }  // namespace midea

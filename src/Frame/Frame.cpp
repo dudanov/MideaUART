@@ -21,7 +21,7 @@ uint8_t Frame::m_calcCS() const {
 }
 
 bool Frame::deserialize(const uint8_t &data) {
-  const size_t idx = m_data.size();
+  const uint8_t idx = m_data.size();
 
   m_data.push_back(data);
 

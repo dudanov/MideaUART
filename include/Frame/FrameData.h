@@ -22,8 +22,7 @@ class FrameData {
    * @param begin begin iterator.
    * @param end end iterator.
    */
-  FrameData(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end)
-      : m_data(begin, end) {}
+  FrameData(const uint8_t *begin, const uint8_t *end) : m_data(begin, end) {}
 
   /**
    * @brief Init data with initializer list of bytes.

@@ -22,8 +22,13 @@ class Frame {
    *
    * @return Frame data body.
    */
-  FrameData getData() const { return FrameData{m_data.begin() + OFFSET_DATA, m_data.begin() + m_len()}; }
+  FrameData getData() const { return FrameData{&m_data[OFFSET_DATA], &m_data[m_len()]}; }
 
+  /**
+   * @brief
+   *
+   * @param data
+   */
   void setData(const FrameData &data);
 
   /**
@@ -38,7 +43,7 @@ class Frame {
    *
    * @return Raw data size.
    */
-  uint8_t size() const { return m_data.size(); }
+  size_t size() const { return m_data.size(); }
 
   /**
    * @brief Set frame type.

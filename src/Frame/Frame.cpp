@@ -39,9 +39,16 @@ bool Frame::deserialize(const uint8_t &data) {
     return false;
   }
 
-  if ((idx == OFFSET_START && data != START_BYTE) || (idx == OFFSET_LENGTH && data <= OFFSET_DATA))
-    m_data.clear();
+  if (idx > OFFSET_LENGTH)
+    return false;
 
+  if (idx == OFFSET_LENGTH && data > OFFSET_DATA)
+    return false;
+
+  if (data == START_BYTE)
+    return false;
+
+  m_data.clear();
   return false;
 }
 

@@ -8,9 +8,9 @@ namespace ac {
 bool inRange(float d) { return d > 17 && d < 30; }
 
 bool isSpecialValue(float d) {
-  if (d == 2.5f || d == 7.5f || d == 12.5f) {
+  if (d == 2.5f || d == 7.5f || d == 12.5f)
     return true;
-  }
+
   return (d >= 15.5f && d <= 17.5f) || d == 32.5f || d == 37.5f || d == 42.5f || d == 47.5f;
 }
 
@@ -25,35 +25,38 @@ uint8_t get_louver_position(uint8_t position) {
 }
 
 float StatusData::getTargetTemp() const {
-  float temp = static_cast<float>(this->m_getValue(2, 15) + 16);
-  if (this->m_getValue(2, 16))
+  float temp = static_cast<float>(m_getValue(2, 15) + 16);
+
+  if (m_getValue(2, 16))
     temp += 0.5f;
+
   return temp;
 }
 
 void StatusData::setTargetTemp(float temp) {
   uint8_t tmp = static_cast<uint8_t>(temp * 16.0f) + 4;
-  this->m_setValue(2, ((tmp & 8) << 1) | (tmp >> 4), 31);
+  m_setValue(2, ((tmp & 8) << 1) | (tmp >> 4), 31);
 }
 
 static float i16tof(int16_t in) { return static_cast<float>(in - 50) * 0.5f; }
-float StatusData::getIndoorTemp() const { return i16tof(this->m_getValue(11)); }
-float StatusData::getOutdoorTemp() const { return i16tof(this->m_getValue(12)); }
-float StatusData::getHumiditySetpoint() const { return static_cast<float>(this->m_getValue(19, 127)); }
+float StatusData::getIndoorTemp() const { return i16tof(m_getValue(11)); }
+float StatusData::getOutdoorTemp() const { return i16tof(m_getValue(12)); }
+float StatusData::getHumiditySetpoint() const { return static_cast<float>(m_getValue(19, 127)); }
 
-Mode StatusData::getMode() const { return this->m_getPower() ? this->getRawMode() : Mode::MODE_OFF; }
+Mode StatusData::getMode() const { return m_getPower() ? this->getRawMode() : Mode::MODE_OFF; }
 
 void StatusData::setMode(Mode mode) {
-  if (mode != Mode::MODE_OFF) {
-    this->m_setPower(true);
-    this->m_setValue(2, mode, 7, 5);
-  } else {
-    this->m_setPower(false);
+  if (mode == Mode::MODE_OFF) {
+    m_setPower(false);
+    return;
   }
+
+  m_setPower(true);
+  m_setValue(2, mode, 7, 5);
 }
 
 FanSpeed StatusData::getFanMode() const {
-  const auto speed = static_cast<FanSpeed>(this->m_getValue(3));
+  const auto speed = static_cast<FanSpeed>(m_getValue(3));
 
   if (speed <= FanSpeed::FAN_LOW)
     return FanSpeed::FAN_LOW;
@@ -65,51 +68,63 @@ FanSpeed StatusData::getFanMode() const {
 }
 
 Preset StatusData::getPreset() const {
-  if (this->m_getEco())
+  if (m_getEco())
     return Preset::PRESET_ECO;
-  if (this->m_getTurbo())
+
+  if (m_getTurbo())
     return Preset::PRESET_TURBO;
-  if (this->m_getSleep())
+
+  if (m_getSleep())
     return Preset::PRESET_SLEEP;
-  if (this->m_getFreezeProtection())
+
+  if (m_getFreezeProtection())
     return Preset::PRESET_FREEZE_PROTECTION;
+
   return Preset::PRESET_NONE;
 }
 
 void StatusData::setPreset(Preset preset) {
-  this->m_setEco(false);
-  this->m_setSleep(false);
-  this->m_setTurbo(false);
-  this->m_setFreezeProtection(false);
+  m_setEco(false);
+  m_setSleep(false);
+  m_setTurbo(false);
+  m_setFreezeProtection(false);
+
   switch (preset) {
     case Preset::PRESET_NONE:
       break;
+
     case Preset::PRESET_ECO:
-      this->m_setEco(true);
+      m_setEco(true);
       break;
+
     case Preset::PRESET_TURBO:
-      this->m_setTurbo(true);
+      m_setTurbo(true);
       break;
+
     case Preset::PRESET_SLEEP:
-      this->m_setSleep(true);
+      m_setSleep(true);
       break;
+
     case Preset::PRESET_FREEZE_PROTECTION:
-      this->m_setFreezeProtection(true);
+      m_setFreezeProtection(true);
       break;
+
     default:
       break;
   }
 }
 
-static uint8_t bcd2u8(uint8_t bcd) { return 10 * (bcd >> 4) + (bcd & 15); }
+static uint8_t bcd2u8(uint8_t bcd) { return bcd / 16 * 10 + bcd % 16; }
 
 float StatusData::getPowerUsage() const {
-  uint32_t power = 0;
-  const uint8_t *ptr = this->m_data.data() + 18;
-  for (uint32_t weight = 1;; weight *= 100, --ptr) {
-    power += weight * bcd2u8(*ptr);
+  uint32_t result = 0;
+  const uint8_t *it = &m_data[18];
+
+  for (uint32_t weight = 1;; weight *= 100, --it) {
+    result += weight * bcd2u8(*it);
+
     if (weight == 10000)
-      return static_cast<float>(power) * 0.1f;
+      return static_cast<float>(result) * 0.1f;
   }
 }
 

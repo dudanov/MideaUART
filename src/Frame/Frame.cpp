@@ -3,6 +3,8 @@
 namespace dudanov {
 namespace midea {
 
+FrameData Frame::getData() const { return FrameData(&m_data[OFFSET_DATA], &m_data[m_len()]); }
+
 void Frame::setData(const FrameData &data) {
   m_trimData();
   m_appendData(data);

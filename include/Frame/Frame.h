@@ -22,12 +22,12 @@ class Frame {
    *
    * @return Frame data body.
    */
-  FrameData getData() const { return FrameData(&m_data[OFFSET_DATA], &m_data[m_len()]); }
+  FrameData getData() const;
 
   /**
-   * @brief
+   * @brief Removes and replaces frame data body.
    *
-   * @param data
+   * @param data frame data body.
    */
   void setData(const FrameData &data);
 

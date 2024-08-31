@@ -27,19 +27,19 @@ bool Frame::deserialize(const uint8_t &data) {
     // Header received. Reading data.
     const size_t elen = m_data[OFFSET_LENGTH];
 
-    if (len > elen) {
-      // New frame receiving. Clear data and restart deserializer.
-      m_data.clear();
-      return this->deserialize(data);
+    if (len <= elen) {
+      m_data.push_back(data);
+
+      if (len < elen)
+        return false;
+
+      // Frame received. Return validation result.
+      return m_calcCS() == 0;
     }
 
-    m_data.push_back(data);
-
-    if (len < elen)
-      return false;
-
-    // Frame received. Return validation result.
-    return m_calcCS() == 0;
+    // New frame receiving. Clear data and restart deserializer.
+    m_data.clear();
+    return this->deserialize(data);
   }
 
   /* HEADER */

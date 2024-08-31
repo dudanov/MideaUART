@@ -56,6 +56,7 @@ void ApplianceBase::loop() {
     LOG_D(TAG, "RX: %s", this->m_receiver.toString().c_str());
 
     this->m_handler(this->m_receiver);
+    this->m_receiver.clear();
   }
 
   if (this->m_isBusy || this->m_isWaitForResponse())

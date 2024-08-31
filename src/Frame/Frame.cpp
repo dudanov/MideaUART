@@ -21,41 +21,27 @@ uint8_t Frame::m_calcCS() const {
 }
 
 bool Frame::deserialize(const uint8_t &data) {
-  const size_t len = m_data.size();
-
-  if (len > OFFSET_DATA) {
-    // Header received. Reading data.
-    const size_t elen = m_data[OFFSET_LENGTH];
-
-    if (len <= elen) {
-      m_data.push_back(data);
-
-      if (len < elen)
-        return false;
-
-      // Frame received. Return validation result.
-      return m_calcCS() == 0;
-    }
-
-    // New frame receiving. Clear data and restart deserializer.
-    m_data.clear();
-    return this->deserialize(data);
-  }
-
-  /* HEADER */
-
-  if (len == OFFSET_START && data != START_BYTE) {
-    // Expected frame start byte.
-    return false;
-  }
-
-  if (len == OFFSET_LENGTH && data <= OFFSET_DATA) {
-    // Length can't be less than header length. Clear frame.
-    m_data.clear();
-    return false;
-  }
+  const size_t idx = m_data.size();
 
   m_data.push_back(data);
+
+  if (idx > OFFSET_DATA) {
+    // Header received. Reading data.
+
+    if (idx < m_data[OFFSET_LENGTH])
+      return false;
+
+    // Frame received. Return validation result.
+    if (m_calcCS() == 0)
+      return true;
+
+    m_data.clear();
+    return false;
+  }
+
+  if ((idx == OFFSET_START && data != START_BYTE) || (idx == OFFSET_LENGTH && data <= OFFSET_DATA))
+    m_data.clear();
+
   return false;
 }
 

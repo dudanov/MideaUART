@@ -7,12 +7,12 @@ void Frame::setData(const FrameData &data) {
   m_trimData();
   m_appendData(data);
   m_data[OFFSET_LENGTH] = m_data.size();
-  m_data[OFFSET_SYNC] = m_data[OFFSET_LENGTH] ^ m_data[OFFSET_APPTYPE];
   m_appendCS();
 }
 
 uint8_t Frame::m_calcCS() const {
-  uint8_t cs = START_BYTE;  // start byte not included in checksum
+  // Start byte excluded from checksum.
+  uint8_t cs = START_BYTE;
 
   for (uint8_t data : m_data)
     cs -= data;
@@ -27,7 +27,7 @@ bool Frame::deserialize(const uint8_t &data) {
 
   if (idx > OFFSET_LENGTH) {
     // Frame length is known.
-    if (idx < m_data[OFFSET_LENGTH])
+    if (idx < m_len())
       return false;
 
     // Frame received. Return validation result.

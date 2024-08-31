@@ -27,13 +27,6 @@ class Frame {
   void setData(const FrameData &data);
 
   /**
-   * @brief Checks for valid frame.
-   *
-   * @return `true` if frame is valid.
-   */
-  bool isValid() const { return m_calcCS() == 0; }
-
-  /**
    * @brief Get frame raw data pointer.
    *
    * @return Raw data pointer.
@@ -66,6 +59,11 @@ class Frame {
 
   uint8_t getProtocol() const { return m_data[OFFSET_PROTOCOL]; }
 
+  /**
+   * @brief Print frame as hex string.
+   *
+   * @return Hex string.
+   */
   std::string toString() const;
 
   /**
@@ -98,7 +96,12 @@ class Frame {
     std::copy(data.data(), data.data() + data.size(), std::back_inserter(m_data));
   }
 
-  size_t m_len() const { return m_data[OFFSET_LENGTH]; }
+  /**
+   * @brief Length of frame (without checksum).
+   *
+   * @return Length.
+   */
+  uint8_t m_len() const { return m_data[OFFSET_LENGTH]; }
 
   /**
    * @brief Calculates checksum and finalize frame by appending it to the end.
@@ -117,7 +120,6 @@ class Frame {
   static const uint8_t OFFSET_START = 0;
   static const uint8_t OFFSET_LENGTH = 1;
   static const uint8_t OFFSET_APPTYPE = 2;
-  static const uint8_t OFFSET_SYNC = 3;
   static const uint8_t OFFSET_PROTOCOL = 8;
   static const uint8_t OFFSET_TYPE = 9;
   static const uint8_t OFFSET_DATA = 10;

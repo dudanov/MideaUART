@@ -25,17 +25,15 @@ bool Frame::deserialize(const uint8_t &data) {
 
   m_data.push_back(data);
 
-  if (idx > OFFSET_DATA) {
-    // Header received. Reading data.
-
+  if (idx > OFFSET_LENGTH) {
+    // Message length is known.
     if (idx < m_data[OFFSET_LENGTH])
       return false;
-
     // Frame received. Return validation result.
     if (m_calcCS() == 0)
       return true;
 
-  } else if (idx > OFFSET_LENGTH || (idx == OFFSET_LENGTH && data > OFFSET_DATA) || data == START_BYTE) {
+  } else if ((idx == OFFSET_LENGTH && data > OFFSET_DATA) || data == START_BYTE) {
     return false;
   }
 

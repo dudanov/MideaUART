@@ -10,11 +10,13 @@ namespace midea {
  *
  */
 class FrameData {
+  friend class Frame;
+
  public:
   /**
    * @brief Default constructor. Data vector is empty.
    */
-  FrameData() = default;
+  explicit FrameData() = default;
 
   /**
    * @brief Constructs data body from begin and end data iterators.
@@ -22,21 +24,21 @@ class FrameData {
    * @param begin begin iterator.
    * @param end end iterator.
    */
-  FrameData(const uint8_t *begin, const uint8_t *end) : m_data(begin, end) {}
+  explicit FrameData(const uint8_t *begin, const uint8_t *end) : m_data(begin, end) {}
 
   /**
    * @brief Init data with initializer list of bytes.
    *
    * @param list list of bytes.
    */
-  FrameData(std::initializer_list<uint8_t> list) : m_data(list) {}
+  explicit FrameData(std::initializer_list<uint8_t> list) : m_data(list) {}
 
   /**
    * @brief Init data with zero bytes.
    *
    * @param size number of zeroes.
    */
-  FrameData(uint8_t size) : m_data(size, 0) {}
+  explicit FrameData(uint8_t size) : m_data(size, 0) {}
 
   /**
    * @brief Move this object to derivied frame data object.
@@ -44,15 +46,11 @@ class FrameData {
    * @tparam T frame data class type.
    * @return New data frame object.
    */
-  template<typename T> T to() { return T{std::move(*this)}; }
+  template<typename T> T to() { return T(std::move(*this)); }
 
   const uint8_t &operator[](size_t idx) const { return this->m_data[idx]; }
 
   uint8_t &operator[](size_t idx) { return this->m_data[idx]; }
-
-  const uint8_t *data() const { return this->m_data.data(); }
-
-  uint8_t size() const { return this->m_data.size(); }
 
   bool hasID(uint8_t value) const { return this->m_data[0] == value; }
 

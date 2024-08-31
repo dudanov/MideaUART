@@ -10,9 +10,9 @@ namespace midea {
 
 class Frame {
  public:
-  Frame() = default;
+  explicit Frame() = default;
 
-  Frame(uint8_t appliance, uint8_t protocol, uint8_t type, const FrameData &data)
+  explicit Frame(uint8_t appliance, uint8_t protocol, uint8_t type, const FrameData &data)
       : m_data({START_BYTE, 0x00, appliance, 0x00, 0x00, 0x00, 0x00, 0x00, protocol, type}) {
     this->setData(data);
   }
@@ -22,7 +22,7 @@ class Frame {
    *
    * @return Frame data body.
    */
-  FrameData getData() const { return FrameData{&m_data[OFFSET_DATA], &m_data[m_len()]}; }
+  FrameData getData() const { return FrameData(&m_data[OFFSET_DATA], &m_data[m_len()]); }
 
   /**
    * @brief
@@ -98,7 +98,7 @@ class Frame {
   void m_trimData() { m_data.erase(m_data.begin() + OFFSET_DATA, m_data.end()); }
 
   void m_appendData(const FrameData &data) {
-    std::copy(data.data(), data.data() + data.size(), std::back_inserter(m_data));
+    std::copy(data.m_data.begin(), data.m_data.end(), std::back_inserter(m_data));
   }
 
   /**

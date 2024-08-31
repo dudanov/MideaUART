@@ -76,6 +76,12 @@ class Frame {
    */
   bool deserialize(const uint8_t &data);
 
+  /**
+   * @brief Clears whole frame.
+   *
+   */
+  void clear() { m_data.clear(); }
+
  protected:
   /**
    * @brief Raw data vector.

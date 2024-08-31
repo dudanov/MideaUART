@@ -30,16 +30,16 @@ static bool read_frame(Frame &frame, Stream *stream) {
 }
 
 void ApplianceBase::setup() {
-  this->m_timerManager.registerTimer(this->m_periodTimer);
-  this->m_timerManager.registerTimer(this->m_networkTimer);
-  this->m_timerManager.registerTimer(this->m_responseTimer);
-  this->m_networkTimer.setCallback([this](Timer *timer) {
-    this->m_sendNetworkNotify();
+  m_timerManager.registerTimer(m_periodTimer);
+  m_timerManager.registerTimer(m_networkTimer);
+  m_timerManager.registerTimer(m_responseTimer);
+  m_networkTimer.setCallback([this](Timer *timer) {
+    m_sendNetworkNotify();
     timer->reset();
   });
-  this->m_networkTimer.start(2 * 60 * 1000);
-  this->m_networkTimer.call();
-  this->m_setup();
+  m_networkTimer.start(2 * 60 * 1000);
+  m_networkTimer.call();
+  m_setup();
 }
 
 void ApplianceBase::loop() {
@@ -50,48 +50,48 @@ void ApplianceBase::loop() {
   m_loop();
 
   // Frame receiving
-  while (read_frame(this->m_receiver, this->m_stream)) {
-    this->m_protocol = this->m_receiver.getProtocol();
+  while (read_frame(m_receiver, m_stream)) {
+    m_protocol = m_receiver.getProtocol();
 
-    LOG_D(TAG, "RX: %s", this->m_receiver.toString().c_str());
+    LOG_D(TAG, "RX: %s", m_receiver.toString().c_str());
 
-    this->m_handler(this->m_receiver);
-    this->m_receiver.clear();
+    m_handler(m_receiver);
+    m_receiver.clear();
   }
 
-  if (this->m_isBusy || this->m_isWaitForResponse())
+  if (m_isBusy || m_isWaitForResponse())
     return;
 
-  if (this->m_queue.empty()) {
-    this->m_onIdle();
+  if (m_queue.empty()) {
+    m_onIdle();
     return;
   }
 
-  this->m_request = this->m_queue.front();
-  this->m_queue.pop_front();
+  m_request = m_queue.front();
+  m_queue.pop_front();
   LOG_D(TAG, "Getting and sending a request from the queue...");
-  this->m_sendRequest(this->m_request);
+  m_sendRequest(m_request);
 
-  if (this->m_request->onData != nullptr) {
-    this->m_resetAttempts();
-    this->m_resetTimeout();
+  if (m_request->onData != nullptr) {
+    m_resetAttempts();
+    m_resetTimeout();
 
   } else {
-    this->m_destroyRequest();
+    m_destroyRequest();
   }
 }
 
 void ApplianceBase::m_handler(const Frame &frame) {
-  if (this->m_isWaitForResponse()) {
-    auto result = this->m_request->callHandler(frame);
+  if (m_isWaitForResponse()) {
+    auto result = m_request->callHandler(frame);
     if (result != RESPONSE_WRONG) {
       if (result == RESPONSE_OK) {
-        if (this->m_request->onSuccess != nullptr)
-          this->m_request->onSuccess();
-        this->m_destroyRequest();
+        if (m_request->onSuccess != nullptr)
+          m_request->onSuccess();
+        m_destroyRequest();
       } else {
-        this->m_resetAttempts();
-        this->m_resetTimeout();
+        m_resetAttempts();
+        m_resetTimeout();
       }
       return;
     }
@@ -101,10 +101,10 @@ void ApplianceBase::m_handler(const Frame &frame) {
     return;
   /* HANDLE REQUESTS */
   if (frame.hasType(QUERY_NETWORK)) {
-    this->m_sendNetworkNotify(QUERY_NETWORK);
+    m_sendNetworkNotify(QUERY_NETWORK);
     return;
   }
-  this->m_onRequest(frame);
+  m_onRequest(frame);
 }
 
 static uint8_t getSignalStrength() {
@@ -126,65 +126,63 @@ void ApplianceBase::m_sendNetworkNotify(FrameType msgType) {
   notify.appendCRC();
   if (msgType == NETWORK_NOTIFY) {
     LOG_D(TAG, "Enqueuing a DEVICE_NETWORK(0x0D) notification...");
-    this->m_queueNotify(msgType, std::move(notify));
+    m_queueNotify(msgType, std::move(notify));
   } else {
     LOG_D(TAG, "Answer to QUERY_NETWORK(0x63) request...");
-    this->m_sendFrame(msgType, std::move(notify));
+    m_sendFrame(msgType, std::move(notify));
   }
 }
 
 void ApplianceBase::m_resetTimeout() {
-  this->m_responseTimer.setCallback([this](Timer *timer) {
+  m_responseTimer.setCallback([this](Timer *timer) {
     LOG_D(TAG, "Response timeout...");
-    if (!--this->m_remainAttempts) {
-      if (this->m_request->onError != nullptr)
-        this->m_request->onError();
-      this->m_destroyRequest();
+    if (!--m_remainAttempts) {
+      if (m_request->onError != nullptr)
+        m_request->onError();
+      m_destroyRequest();
       return;
     }
-    LOG_D(TAG, "Sending request again. Attempts left: %d...", this->m_remainAttempts);
-    this->m_sendRequest(this->m_request);
-    this->m_resetTimeout();
+    LOG_D(TAG, "Sending request again. Attempts left: %d...", m_remainAttempts);
+    m_sendRequest(m_request);
+    m_resetTimeout();
   });
-  this->m_responseTimer.start(this->m_timeout);
+  m_responseTimer.start(m_timeout);
 }
 
 void ApplianceBase::m_destroyRequest() {
   LOG_D(TAG, "Destroying the request...");
-  this->m_responseTimer.stop();
-  delete this->m_request;
-  this->m_request = nullptr;
+  m_responseTimer.stop();
+  delete m_request;
+  m_request = nullptr;
 }
 
 void ApplianceBase::m_sendFrame(FrameType type, const FrameData &data) {
-  Frame frame(this->m_appType, this->m_protocol, type, data);
+  Frame frame(m_appType, m_protocol, type, data);
   LOG_D(TAG, "TX: %s", frame.toString().c_str());
-  this->m_stream->write(frame.data(), frame.size());
-  this->m_isBusy = true;
-  this->m_periodTimer.setCallback([this](Timer *timer) {
-    this->m_isBusy = false;
+  m_stream->write(frame.data(), frame.size());
+  m_isBusy = true;
+  m_periodTimer.setCallback([this](Timer *timer) {
+    m_isBusy = false;
     timer->stop();
   });
-  this->m_periodTimer.start(this->m_period);
+  m_periodTimer.start(m_period);
 }
 
 void ApplianceBase::m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess,
                                    Handler onError) {
   LOG_D(TAG, "Enqueuing the request...");
-  this->m_queue.push_back(
-      new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
+  m_queue.push_back(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
 }
 
 void ApplianceBase::m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess,
                                            Handler onError) {
   LOG_D(TAG, "Priority request queuing...");
-  this->m_queue.push_front(
-      new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
+  m_queue.push_front(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
 }
 
 void ApplianceBase::setBeeper(bool value) {
   LOG_D(TAG, "Turning %s beeper feedback...", value ? "ON" : "OFF");
-  this->m_beeper = value;
+  m_beeper = value;
 }
 
 }  // namespace midea

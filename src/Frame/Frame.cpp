@@ -44,21 +44,15 @@ bool Frame::deserialize(const uint8_t &data) {
 
   /* HEADER */
 
-  if (len == OFFSET_START) {
+  if (len == OFFSET_START && data != START_BYTE) {
     // Expected frame start byte.
-    if (data != START_BYTE)
-      return false;
+    return false;
+  }
 
-  } else if (len == OFFSET_LENGTH) {
-    // Length received.
-
-    if (data <= OFFSET_DATA) {
-      // Length can't be less than header length. Clear frame.
-      m_data.clear();
-      return false;
-    }
-
-    m_data.reserve(data + 1);
+  if (len == OFFSET_LENGTH && data <= OFFSET_DATA) {
+    // Length can't be less than header length. Clear frame.
+    m_data.clear();
+    return false;
   }
 
   m_data.push_back(data);

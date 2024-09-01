@@ -1,4 +1,4 @@
-#include "Frame/PropertyQuery.h"
+#include "Frame/PropertiesData.h"
 
 namespace dudanov {
 namespace midea {

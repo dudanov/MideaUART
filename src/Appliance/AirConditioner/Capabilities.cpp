@@ -1,5 +1,5 @@
 #include "Appliance/AirConditioner/Capabilities.h"
-#include "Frame/PropertyQuery.h"
+#include "Frame/PropertiesData.h"
 #include "Helpers/Helpers.h"
 #include "Helpers/Log.h"
 

@@ -13,7 +13,7 @@
 #include <Arduino.h>
 
 #include "Frame/FrameData.h"
-#include "Frame/PropertyQuery.h"
+#include "Frame/PropertiesData.h"
 #include "Helpers/Helpers.h"
 
 namespace dudanov {

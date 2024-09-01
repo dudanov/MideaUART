@@ -51,7 +51,7 @@ void ApplianceBase::loop() {
 
   // Frame receiving
   while (read_frame(m_receiver, m_stream)) {
-    m_protocol = m_receiver.getProtocol();
+    m_protocolID = m_receiver.getProtocol();
 
     LOG_D(TAG, "RX: %s", m_receiver.toString().c_str());
 
@@ -157,7 +157,7 @@ void ApplianceBase::m_destroyRequest() {
 }
 
 void ApplianceBase::m_sendFrame(FrameType type, const FrameData &data) {
-  Frame frame(m_appType, m_protocol, type, data);
+  auto frame = Frame::make(m_applianceID, m_protocolID, type, data);
   LOG_D(TAG, "TX: %s", frame.toString().c_str());
   m_stream->write(frame.data(), frame.size());
   m_isBusy = true;

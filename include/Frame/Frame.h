@@ -12,9 +12,17 @@ class Frame {
  public:
   explicit Frame() = default;
 
-  explicit Frame(uint8_t appliance, uint8_t protocol, uint8_t type, const FrameData &data)
-      : m_data({START_BYTE, 0x00, appliance, 0x00, 0x00, 0x00, 0x00, 0x00, protocol, type}) {
-    this->setData(data);
+  /**
+   * @brief Makes `Frame` instance from parameters.
+   *
+   * @param applianceID appliance ID.
+   * @param protocolID protocol ID.
+   * @param typeID frame type ID.
+   * @param data frame data body.
+   * @return `Frame` instance.
+   */
+  static Frame make(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &data) {
+    return Frame{applianceID, protocolID, typeID, data};
   }
 
   /**
@@ -128,6 +136,8 @@ class Frame {
   static const uint8_t OFFSET_PROTOCOL = 8;
   static const uint8_t OFFSET_TYPE = 9;
   static const uint8_t OFFSET_DATA = 10;
+
+  explicit Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &data);
 };
 
 }  // namespace midea

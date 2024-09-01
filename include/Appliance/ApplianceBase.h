@@ -9,7 +9,7 @@
 namespace dudanov {
 namespace midea {
 
-enum ApplianceType : uint8_t {
+enum ApplianceID : uint8_t {
   DEHUMIDIFIER = 0xA1,
   AIR_CONDITIONER = 0xAC,
   AIR2WATER = 0xC3,
@@ -46,7 +46,7 @@ using OnStateCallback = std::function<void()>;
 
 class ApplianceBase {
  public:
-  ApplianceBase(ApplianceType type) : m_appType(type) {}
+  ApplianceBase(ApplianceID id) : m_applianceID{id} {}
   /// Setup
   void setup();
   /// Loop
@@ -56,49 +56,76 @@ class ApplianceBase {
   /* ### COMMUNICATION SETTINGS ### */
   /* ############################## */
 
-  /// Set serial stream
+  /// Set serial stream.
   void setStream(Stream *stream) { m_stream = stream; }
-  /// Set minimal period between requests
+
+  /// Set minimal period between requests.
   void setPeriod(uint32_t period) { m_period = period; }
+
   uint32_t getPeriod() const { return m_period; }
-  /// Set waiting response timeout
+
+  /// Set waiting response timeout.
   void setTimeout(uint32_t timeout) { m_timeout = timeout; }
+
   uint32_t getTimeout() const { return m_timeout; }
-  /// Set number of request attempts
+
+  /// Set number of request attempts.
   void setNumAttempts(uint8_t numAttempts) { m_numAttempts = numAttempts; }
+
   uint8_t getNumAttempts() const { return m_numAttempts; }
-  /// Set beeper feedback
+
+  /// Set beeper feedback.
   void setBeeper(bool value);
-  /// Add listener for appliance state
+
+  /// Add listener for appliance state.
   void addOnStateCallback(OnStateCallback cb) { m_stateCallbacks.push_back(cb); }
+
   void sendUpdate() {
     for (auto &cb : m_stateCallbacks)
       cb();
   }
+
   AutoconfStatus getAutoconfStatus() const { return m_autoconfStatus; }
+
   void setAutoconf(bool state) { m_autoconfStatus = state ? AUTOCONF_PROGRESS : AUTOCONF_DISABLED; }
+
   static void setLogger(LoggerFn logger) { dudanov::setLogger(logger); }
 
  protected:
+  /// Callbacks of state subscribers.
   std::vector<OnStateCallback> m_stateCallbacks;
-  // Timer manager
+
+  /// Timer manager.
   TimerManager m_timerManager{};
+
+  /// Status of autoconfig process.
   AutoconfStatus m_autoconfStatus{};
-  // Beeper feedback flag
+
+  // Beeper feedback flag.
   bool m_beeper{};
 
   void m_queueNotify(FrameType type, FrameData data) { m_queueRequest(type, std::move(data), nullptr); }
-  void m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess = nullptr, Handler onError = nullptr);
-  void m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData = nullptr, Handler onSucess = nullptr, Handler onError = nullptr);
+
+  void m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess = nullptr,
+                      Handler onError = nullptr);
+
+  void m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData = nullptr,
+                              Handler onSucess = nullptr, Handler onError = nullptr);
+
   void m_sendFrame(FrameType type, const FrameData &data);
-  // Setup for appliances
+
+  /// Setup for appliances.
   virtual void m_setup() {}
-  // Loop for appliances
+
+  /// Loop for appliances.
   virtual void m_loop() {}
-  /// Calling then ready for request
+
+  /// Calling then ready for request.
   virtual void m_onIdle() {}
-  /// Calling on receiving request
+
+  /// Calling on receiving request.
   virtual void m_onRequest(const Frame &frame) {}
+
  private:
   struct Request {
     FrameData request;
@@ -108,45 +135,65 @@ class ApplianceBase {
     FrameType requestType;
     ResponseStatus callHandler(const Frame &data);
   };
+
   void m_sendNetworkNotify(FrameType msg_type = NETWORK_NOTIFY);
+
   void m_handler(const Frame &frame);
+
   bool m_isWaitForResponse() const { return m_request != nullptr; }
+
   void m_resetAttempts() { m_remainAttempts = m_numAttempts; }
+
   void m_destroyRequest();
+
   void m_resetTimeout();
+
   void m_sendRequest(Request *request) { m_sendFrame(request->requestType, request->request); }
-  // Frame receiver with dynamic buffer
+
+  /// Frame receiver with dynamic buffer.
   Frame m_receiver{};
-  // Network status timer
+
+  /// Network status timer.
   Timer m_networkTimer{};
-  // Waiting response timer
+
+  /// Waiting response timer.
   Timer m_responseTimer{};
-  // Request period timer
+
+  /// Request period timer.
   Timer m_periodTimer{};
-  // Queue requests
+
+  /// Requests queue.
   std::deque<Request *> m_queue;
-  // Current request
+
+  /// Current request.
   Request *m_request{nullptr};
+
   // Remaining request attempts
   uint8_t m_remainAttempts{};
-  // Appliance type
-  ApplianceType m_appType;
-  // Appliance protocol
-  uint8_t m_protocol{};
-  // Period flag
+
+  /// Appliance ID.
+  ApplianceID m_applianceID;
+
+  /// Protocol ID.
+  uint8_t m_protocolID{};
+
+  /// Period flag
   bool m_isBusy{};
 
   /* ############################## */
   /* ### COMMUNICATION SETTINGS ### */
   /* ############################## */
-  
-  // Stream serial interface
-  Stream *m_stream;
-  // Minimal period between requests
+
+  /// Stream serial interface
+  Stream *m_stream{nullptr};
+
+  /// Minimal period between requests
   uint32_t m_period{1000};
-  // Waiting response timeout
+
+  /// Waiting response timeout
   uint32_t m_timeout{2000};
-  // Number of request attempts
+
+  /// Number of request attempts
   uint8_t m_numAttempts{3};
 };
 

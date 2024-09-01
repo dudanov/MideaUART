@@ -3,6 +3,11 @@
 namespace dudanov {
 namespace midea {
 
+Frame::Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &data)
+    : m_data({START_BYTE, 0x00, applianceID, 0x00, 0x00, 0x00, 0x00, 0x00, protocolID, typeID}) {
+  this->setData(data);
+}
+
 FrameData Frame::getData() const { return FrameData(&m_data[OFFSET_DATA], &m_data[m_len()]); }
 
 void Frame::setData(const FrameData &data) {

@@ -30,7 +30,7 @@ static int s_get_temperature(int val, unsigned dec) {
   val -= 50;
 
   if (dec >= 5)
-    val = (val & ~1) + (val >= 0) ? 1 : -1;
+    val = (val & ~1) + ((val >= 0) ? 1 : -1);
 
   return val;
 }

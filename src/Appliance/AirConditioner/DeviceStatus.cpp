@@ -271,7 +271,7 @@ void FrameStatusData::m_command40(const DeviceStatus &s) {
   m_data[7] = 0x30 + s.swing;
 
   m_data[8] = s.feelOwn * 0x80 + s.powerSaver * 0x40 + turbo * 0x20 + s.lowFreqFan * 0x10 + s.save * 0x08 +
-              s.alarmSleep * 0x04 + s.cosySleep % 4;
+              s.alarmSleep * 0x04 + s.cosySleep;
 
   m_data[9] = eco * 0x80 + s.changeCosySleep * 0x40 + s.cleanUp * 0x20 + s.ptcButton * 0x10 + s.ptcAssis * 0x08 +
               s.dryClean * 0x04 + s.exchangeAir * 0x02 + s.wiseEye;

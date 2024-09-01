@@ -21,92 +21,103 @@ class DeviceStatus {
   void setFanSpeed(uint8_t value) { fanSpeed = value; }
 
  protected:
-  /// Wind Off Me. Only in `COOL` and `HEAT`. Turn OFF all Swing.
-  bool avoidPeople{};
-  /// Wind On Me. Only in `COOL` and `HEAT`. Turn ON all Swing.
-  bool blowingPeople{};
-  /// Breeze Away.
-  bool noWindOnMe{};
+  /// Indoor Temperature. Only in Status. Always in Celsius.
+  float indoor_temp;
+  /// Outdoor Temperature. Only in Status. Always in Celsius.
+  float outdoor_temp;
 
-  /// Beeper Feedback. Only in Command.
-  bool beeper{};
-  /// Frost Protection mode (8 Degrees Heating).
-  bool Eight_Hot{};
-
-  /// Reset Air Filter Maintenance Timer. Only in Command.
-  bool cleanFanTime{};
-  /// Air Filter Maintenance.
-  bool dusFull{};
-  /// ECO mode.
-  bool eco{};
-  /// Error Code. Known: 0x26 - Water Full.
-  uint8_t errInfo{};
-  /// Fan Speed.
-  uint8_t fanSpeed{FAN_AUTO};
-  // Silky Cool.
-  bool hasNoWindFeel{};
-  /// Set Target Humidity in Smart Dry Mode. Fan Speed must be AUTO.
-  uint8_t humidity{};
-  ///
-  uint8_t light{};
-  /// Mode.
-  uint8_t mode{MODE_COOL};
-  /// Device Status: On/Off.
-  bool powerStatus{true};
-  /// Electric Auxiliary Heater
-  bool ptcAssis{};
-  /// 39 Self Cleaning.
-  bool selfClean{};
-  /// Target Temperature. Always in Celsius.
-  uint8_t setTemperature{26};
-  /// Target Temperature +0.5.
-  bool setTemperature_dot{};
-  /// Sleep Preset.
-  bool sleepFunc{};
-  /// Display Temperature in Fahrenheits.
-  bool tempUnit{};
   /// Current `On Timer` minutes.
-  uint16_t timer_on{};
+  uint16_t timer_on;
   /// Current `Off Timer` minutes.
-  uint16_t timer_off{};
-  /// Turbo Preset.
-  bool turbo{};
+  uint16_t timer_off;
+
+  /// Error Code. Known: 0x26 - Water Full.
+  uint8_t errInfo;
+
+  /// Mode.
+  uint8_t mode : 3;
+  /// Target Temperature. Always in Celsius.
+  uint8_t setTemperature : 5;
+
+  /// Fan Speed.
+  uint8_t fanSpeed : 7;
+  /// Beeper Feedback. Only in Command.
+  bool beeper : 1;
+
+  /// Humidity setpoint in Smart Dry Mode. Fan Speed must be AUTO.
+  uint8_t humidity : 7;
+  /// Frost Protection mode (8 Degrees Heating).
+  bool Eight_Hot : 1;
 
   /// Swing Mode.
-  SwingMode swing{};
+  SwingMode swing : 4;
+  /// LED Light.
+  uint8_t light : 3;
+  /// ECO mode.
+  bool eco : 1;
 
-  /// Indoor Temperature. Only in Status. Always in Celsius.
-  float indoor_temp{};
-  /// Outdoor Temperature. Only in Status. Always in Celsius.
-  float outdoor_temp{};
+  /// Device Status: On/Off.
+  bool powerStatus : 1;
+  uint8_t cosySleep : 2;
+  uint8_t setExpand : 5;
 
-  bool alarmSleep{};
-  bool catchCold{};
-  bool changeCosySleep{};
-  bool childSleepMode{};
-  bool cleanUp{};
-  bool coolFan{};
-  uint8_t cosySleep{};
-  bool double_temp{};
-  bool dryClean{};
-  bool errMark{};
-  bool exchangeAir{};
-  bool feelOwn{};
-  bool imodeResume{};
-  bool lowFreqFan{};
-  bool naturalFan{};
-  bool nightLight{};
-  bool peakElec{};
-  bool powerSaver{};
-  bool ptcButton{};
-  uint8_t pwmMode{};
-  bool save{};
-  bool selfFeelOwn{};
-  uint8_t setExpand{};
-  bool setExpand_dot{};
-  bool test2{};
-  bool timerMode{};
-  bool wiseEye{};
+  /// Wind Off Me. Only in `COOL` and `HEAT`. Turn OFF all Swing.
+  // bool avoidPeople : 1;
+  /// Wind On Me. Only in `COOL` and `HEAT`. Turn ON all Swing.
+  // bool blowingPeople : 1;
+  /// Breeze Away.
+  // bool noWindOnMe : 1;
+  /// 39 Self Cleaning.
+  // bool selfClean : 1;
+
+  uint8_t pwmMode : 4;
+
+  /// Air Filter Maintenance.
+  bool dusFull : 1;
+  /// Electric Auxiliary Heater
+  bool ptcAssis : 1;
+  /// Target Temperature +0.5.
+  bool setTemperature_dot : 1;
+  /// Sleep Preset.
+  bool sleepFunc : 1;
+  /// Display Temperature in Fahrenheits.
+  bool tempUnit : 1;
+  /// Turbo Preset.
+  bool turbo : 1;
+  bool catchCold : 1;
+  bool childSleepMode : 1;
+  bool cleanUp : 1;
+  bool double_temp : 1;
+  bool dryClean : 1;
+  bool exchangeAir : 1;
+  bool feelOwn : 1;
+  bool imodeResume : 1;
+  bool lowFreqFan : 1;
+  bool naturalFan : 1;
+  bool nightLight : 1;
+  bool peakElec : 1;
+  bool save : 1;
+  bool setExpand_dot : 1;
+  bool test2 : 1;
+  bool timerMode : 1;
+
+  /* COMMAND ONLY */
+
+  /// Reset Air Filter Maintenance Timer. Only in Command.
+  bool cleanFanTime : 1;
+  bool alarmSleep : 1;
+  bool changeCosySleep : 1;
+  bool powerSaver : 1;
+  bool ptcButton : 1;
+  bool wiseEye : 1;
+
+  /* STATUS ONLY */
+
+  /// Silky Cool.
+  bool hasNoWindFeel : 1;
+  bool coolFan : 1;
+  bool errMark : 1;
+  bool selfFeelOwn : 1;
 };
 
 struct B1Status {
@@ -156,6 +167,7 @@ class FrameStatusData : public FrameData {
   void m_statusC0(DeviceStatus &s) const;
   void m_statusA0(DeviceStatus &s) const;
   void m_statusA1(DeviceStatus &s) const;
+  size_t dsasd() { return sizeof(DeviceStatus); }
 };
 
 }  // namespace ac

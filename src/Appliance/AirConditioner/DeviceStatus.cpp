@@ -26,13 +26,13 @@ void FrameStatusData::readStatus(DeviceStatus &s) const {
     return m_statusA1(s);
 }
 
-static int8_t s_get_temperature(int8_t value, uint8_t decimal) {
-  value -= 50;
+static int s_get_temperature(int val, unsigned dec) {
+  val -= 50;
 
-  if (decimal >= 5)
-    value |= 0x01;
+  if (dec >= 5)
+    val = (val & ~1) + (val >= 0) ? 1 : -1;
 
-  return value;
+  return val;
 }
 
 void FrameStatusData::m_statusC0(DeviceStatus &s) const {

@@ -166,7 +166,6 @@ class FrameStatusData : public FrameData {
   void m_statusC0(DeviceStatus &s) const;
   void m_statusA0(DeviceStatus &s) const;
   void m_statusA1(DeviceStatus &s) const;
-  size_t dsasd() { return sizeof(DeviceStatus); }
 };
 
 }  // namespace ac

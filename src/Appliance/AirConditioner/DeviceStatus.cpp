@@ -5,18 +5,6 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
-static float s_get_temperature(int integer, int decimal, bool fahrenheits) {
-  integer -= 50;
-
-  if (!fahrenheits && decimal > 0)
-    return static_cast<float>(integer / 2) + decimal * ((integer >= 0) ? 0.1f : -0.1f);
-
-  if (decimal >= 5)
-    return static_cast<float>(integer / 2) + ((integer >= 0) ? 0.5f : -0.5f);
-
-  return static_cast<float>(integer) * 0.5f;
-}
-
 FrameData FrameStatusData::writeStatus(const DeviceStatus &s) {
   FrameStatusData data;
   data.m_command40(s);
@@ -36,6 +24,15 @@ void FrameStatusData::readStatus(DeviceStatus &s) const {
 
   if (hasID(0xA1))
     return m_statusA1(s);
+}
+
+static int8_t s_get_temperature(int8_t value, uint8_t decimal) {
+  value -= 50;
+
+  if (decimal >= 5)
+    value |= 0x01;
+
+  return value;
 }
 
 void FrameStatusData::m_statusC0(DeviceStatus &s) const {
@@ -119,8 +116,8 @@ void FrameStatusData::m_statusC0(DeviceStatus &s) const {
   s.light = m_getValue(14, 7, 4);
 
   // Byte #15
-  s.indoor_temp = s_get_temperature(indoor_temp, m_getValue(15, 15), s.tempUnit);
-  s.outdoor_temp = s_get_temperature(outdoor_temp, m_getValue(15, 15, 4), s.tempUnit);
+  s.indoor_temp = s_get_temperature(indoor_temp, m_getValue(15, 15));
+  s.outdoor_temp = s_get_temperature(outdoor_temp, m_getValue(15, 15, 4));
 
   // Byte #16
   s.errInfo = m_getValue(16);
@@ -215,8 +212,8 @@ void FrameStatusData::m_statusA0(DeviceStatus &s) const {
 }
 
 void FrameStatusData::m_statusA1(DeviceStatus &s) const {
-  s.indoor_temp = static_cast<float>(static_cast<int>(m_getValue(13)) - 50) * 0.5f;
-  s.outdoor_temp = static_cast<float>(static_cast<int>(m_getValue(14)) - 50) * 0.5f;
+  s.indoor_temp = m_getValue(13) - 50;
+  s.outdoor_temp = m_getValue(14) - 50;
   s.humidity = m_getValue(17, 127);
 }
 

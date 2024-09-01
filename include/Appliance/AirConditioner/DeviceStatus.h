@@ -21,16 +21,15 @@ class DeviceStatus {
   void setFanSpeed(uint8_t value) { fanSpeed = value; }
 
  protected:
-  /// Indoor Temperature. Only in Status. Always in Celsius.
-  float indoor_temp;
-  /// Outdoor Temperature. Only in Status. Always in Celsius.
-  float outdoor_temp;
-
   /// Current `On Timer` minutes.
   uint16_t timer_on;
   /// Current `Off Timer` minutes.
   uint16_t timer_off;
 
+  /// Indoor Temperature. Units: 0.5. Only in Status. Always in Celsius.
+  int8_t indoor_temp;
+  /// Outdoor Temperature. Units: 0.5. Only in Status. Always in Celsius.
+  int8_t outdoor_temp;
   /// Error Code. Known: 0x26 - Water Full.
   uint8_t errInfo;
 

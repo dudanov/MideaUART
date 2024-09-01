@@ -7,6 +7,10 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
+/**
+ * @brief Device Status.
+ *
+ */
 class DeviceStatus {
   friend class FrameStatusData;
 
@@ -40,8 +44,8 @@ class DeviceStatus {
 
   /// Fan Speed.
   uint8_t fanSpeed : 7;
-  /// Beeper Feedback. Only in Command.
-  bool beeper : 1;
+  /// Air Filter Maintenance.
+  bool dusFull : 1;
 
   /// Humidity setpoint in Smart Dry Mode. Fan Speed must be AUTO.
   uint8_t humidity : 7;
@@ -60,19 +64,8 @@ class DeviceStatus {
   uint8_t cosySleep : 2;
   uint8_t setExpand : 5;
 
-  /// Wind Off Me. Only in `COOL` and `HEAT`. Turn OFF all Swing.
-  // bool avoidPeople : 1;
-  /// Wind On Me. Only in `COOL` and `HEAT`. Turn ON all Swing.
-  // bool blowingPeople : 1;
-  /// Breeze Away.
-  // bool noWindOnMe : 1;
-  /// 39 Self Cleaning.
-  // bool selfClean : 1;
-
   uint8_t pwmMode : 4;
 
-  /// Air Filter Maintenance.
-  bool dusFull : 1;
   /// Electric Auxiliary Heater
   bool ptcAssis : 1;
   /// Target Temperature +0.5.
@@ -102,6 +95,8 @@ class DeviceStatus {
 
   /* COMMAND ONLY */
 
+  /// Beeper Feedback. Only in Command.
+  bool beeper : 1;
   /// Reset Air Filter Maintenance Timer. Only in Command.
   bool cleanFanTime : 1;
   bool alarmSleep : 1;
@@ -125,12 +120,16 @@ struct B1Status {
   uint8_t indoorHumidity{};
   std::vector<uint8_t> mMasterValues{};
   std::vector<uint8_t> mSlaveValues{};
+  /// 39 Self Cleaning.
   bool isSelfCleanOn{};
   uint8_t breezeType{1};
   bool isBuzzerOn{true};
+  /// Breeze Away.
   bool isNoWindFeelOn{false};
   bool isSoundOn{false};
+  /// Wind On Me. Only in `COOL` and `HEAT`. Turn ON all Swing.
   bool isBlowingPeopleOn{false};
+  /// Wind Off Me. Only in `COOL` and `HEAT`. Turn OFF all Swing.
   bool isAvoidPeopleOn{false};
   bool isOneKeyNoWindOnMeOn{false};
   bool isCombineBreezeOn{false};

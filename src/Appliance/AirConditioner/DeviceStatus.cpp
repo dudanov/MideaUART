@@ -22,15 +22,14 @@ bool FrameStatusData::hasStatusData(const FrameData &data) {
 }
 
 void FrameStatusData::updateStatus(DeviceStatus &s) {
-  if (hasID(0xC0)) {
-    m_statusC0(s);
+  if (hasID(0xC0))
+    return m_statusC0(s);
 
-  } else if (hasID(0xA0)) {
-    m_statusA0(s);
+  if (hasID(0xA0))
+    return m_statusA0(s);
 
-  } else if (hasID(0xA1)) {
-    m_statusA1(s);
-  }
+  if (hasID(0xA1))
+    return m_statusA1(s);
 }
 
 void FrameStatusData::m_statusC0(DeviceStatus &s) const {

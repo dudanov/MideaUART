@@ -98,8 +98,8 @@ class FrameData {
    * @param data data to append.
    */
   template<typename T> void append(const T &data) {
-    for (size_t i = 0; i < sizeof(T); ++i)
-      m_data.push_back(data >> (i * 8));
+    for (size_t n = 0; n != sizeof(T); ++n)
+      m_data.push_back(data >> (n * 8));
   }
 
  protected:
@@ -131,7 +131,7 @@ class FrameData {
    * @param rshift number of bits right shift (default: 0).
    * @return Value.
    */
-  uint8_t m_getValue(uint8_t idx, uint8_t mask = 255, uint8_t rshift = 0) const {
+  uint8_t m_getValue(size_t idx, uint8_t mask = 255, uint8_t rshift = 0) const {
     return (m_data[idx] >> rshift) & mask;
   }
 
@@ -142,7 +142,7 @@ class FrameData {
    * @param bit bit number.
    * @return Bit state.
    */
-  bool m_getBit(uint8_t idx, uint8_t bit) const { return m_getValue(idx, 1, bit); }
+  bool m_getBit(size_t idx, uint8_t bit) const { return m_getValue(idx, 1, bit); }
 
   /**
    * @brief Set value to data body.
@@ -152,7 +152,7 @@ class FrameData {
    * @param mask value mask without bits shift (default: 0xFF). Used to clear destination bits.
    * @param lshift number of bits to left shift value and mask.
    */
-  void m_setValue(uint8_t idx, uint8_t value, uint8_t mask = 255, uint8_t lshift = 0) {
+  void m_setValue(size_t idx, uint8_t value, uint8_t mask = 255, uint8_t lshift = 0) {
     m_data[idx] &= ~(mask << lshift);
     m_data[idx] |= (value << lshift);
   }
@@ -164,7 +164,7 @@ class FrameData {
    * @param state if `true` bitmask is set, else clear.
    * @param mask bitmask.
    */
-  void m_setMask(uint8_t idx, bool state, uint8_t mask = 255) { m_setValue(idx, state ? mask : 0, mask); }
+  void m_setMask(size_t idx, bool state, uint8_t mask = 255) { m_setValue(idx, state ? mask : 0, mask); }
 
   /**
    * @brief Set bit state.
@@ -174,7 +174,7 @@ class FrameData {
    * @param bit bit number.
    * @param state bit state.
    */
-  void m_setBit(uint8_t idx, uint8_t bit, bool state) { m_setMask(idx, state, 1 << bit); }
+  void m_setBit(size_t idx, uint8_t bit, bool state) { m_setMask(idx, state, 1 << bit); }
 };
 
 }  // namespace midea

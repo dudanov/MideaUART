@@ -217,7 +217,7 @@ class FrameDataSecondB5Query : public FrameData {
   explicit FrameDataSecondB5Query(uint8_t idx) : FrameData({0xB5, 0x01, 0x01, idx}) { this->appendCRC(); }
 };
 
-class GetFeatureStateQuery : public PropertyQuery {
+class GetFeatureStateQuery : public PropertiesData {
  public:
   // DataBodyQueryB1
   GetFeatureStateQuery();

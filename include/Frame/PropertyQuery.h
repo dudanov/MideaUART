@@ -13,15 +13,23 @@ using PropertyUUID = uint16_t;
  * @brief FrameData for new commands 0xB0 (set), 0xB1 (get).
  *
  */
-class PropertyQuery : public FrameData {
+class PropertiesData : public FrameData {
  public:
-  PropertyQuery(const FrameData &data) : FrameData(data) {}
+  /**
+   * @brief Makes `PropertiesData` instance from `FrameData` using `move semantics`.
+   *
+   * @param data source frame data.
+   * @return `PropertiesData` instance.
+   */
+  static PropertiesData fromData(FrameData &data) { return PropertiesData{std::move(data)}; }
 
   /**
-   * @brief Initializes a new frame with type ID.
-   * @param id frame type ID.
+   * @brief Makes `PropertiesData` instance of specified type ID.
+   *
+   * @param id type ID.
+   * @return `PropertiesData` instance.
    */
-  PropertyQuery(uint8_t id) : FrameData{{id, 0}} {}
+  static PropertiesData fromID(uint8_t id) { return PropertiesData{id}; }
 
   /**
    * @brief Append `appendUUID` command (used in 0xB1 GET queries).
@@ -57,12 +65,12 @@ class PropertyQuery : public FrameData {
   class PropertiesReader {
    public:
     /**
-     * @brief Constructor from `PropertyQuery`. Skip `ID`, `NUM` and `CRC` fields.
+     * @brief Constructor from `PropertiesData`. Skip `ID`, `NUM` and `CRC` fields.
      *
-     * @param src reference to `PropertyQuery`.
+     * @param src reference to `PropertiesData`.
      * @param headerLength header length.
      */
-    explicit PropertiesReader(const PropertyQuery &src, size_t headerLength)
+    explicit PropertiesReader(const PropertiesData &src, size_t headerLength)
         : m_header{&src.m_data[2]}, m_data{m_header + headerLength}, m_end{&src.m_data.back()} {}
 
     /**
@@ -138,6 +146,10 @@ class PropertyQuery : public FrameData {
 
     return PropertiesReader(*this, hdr_size);
   }
+
+ protected:
+  explicit PropertiesData(uint8_t id) : FrameData{{id, 0}} {}
+  explicit PropertiesData(FrameData &&data) : FrameData{std::move(data)} {}
 };
 
 }  // namespace midea

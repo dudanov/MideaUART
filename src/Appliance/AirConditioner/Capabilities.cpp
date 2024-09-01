@@ -89,7 +89,7 @@ CmdB5 &CmdB5::toAllEnable() {
   return *this;
 }
 
-static void setFuncEnable(CmdB5 &dst, const PropertyQuery::PropertiesReader &data) {
+static void setFuncEnable(CmdB5 &dst, const PropertiesData::PropertiesReader &data) {
   const uint8_t b0 = data[0];
 
   switch (data.uuid()) {
@@ -324,7 +324,7 @@ static void setFuncEnable(CmdB5 &dst, const PropertyQuery::PropertiesReader &dat
   }
 }
 
-uint8_t CmdB5::read(const PropertyQuery &data) {
+uint8_t CmdB5::read(const PropertiesData &data) {
   auto b5 = data.getReader();
 
   for (; b5.available() > 3; b5.advance())

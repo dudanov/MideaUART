@@ -130,7 +130,7 @@ float StatusData::getPowerUsage() const {
 
 /* GetFeatureStateQuery */
 
-GetFeatureStateQuery::GetFeatureStateQuery() : PropertyQuery(0xB1) {
+GetFeatureStateQuery::GetFeatureStateQuery() : PropertiesData(0xB1) {
   this->appendUUID(INDOOR_HUMIDITY);
   this->appendUUID(SILKY_COOL);
   this->appendUUID(0x1A);
@@ -142,7 +142,7 @@ GetFeatureStateQuery::GetFeatureStateQuery() : PropertyQuery(0xB1) {
   this->appendCRC();
 }
 
-GetFeatureStateQuery::GetFeatureStateQuery(const CmdB5 &b5) : PropertyQuery(0xB1) {
+GetFeatureStateQuery::GetFeatureStateQuery(const CmdB5 &b5) : PropertiesData(0xB1) {
   if (b5.hasBlowingPeople)
     this->appendUUID(Feature::WIND_ON_ME);
 

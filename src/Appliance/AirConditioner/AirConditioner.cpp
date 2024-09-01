@@ -113,8 +113,8 @@ void AirConditioner::control(const Control &control) {
 
       // First command without preset
       m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
-                                   // onData
-                                   std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
+                             // onData
+                             std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 
     } else {
       m_setStatus(std::move(status));
@@ -151,20 +151,20 @@ void AirConditioner::m_getPowerUsage() {
   LOG_D(TAG, "Enqueuing a GET_POWERUSAGE(0x41) request...");
 
   m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
-                       // onData
-                       [this](FrameData data) -> ResponseStatus {
-                         const auto status = data.to<StatusData>();
+                 // onData
+                 [this](FrameData data) -> ResponseStatus {
+                   const auto status = data.to<StatusData>();
 
-                         if (!status.hasPowerInfo())
-                           return ResponseStatus::RESPONSE_WRONG;
+                   if (!status.hasPowerInfo())
+                     return ResponseStatus::RESPONSE_WRONG;
 
-                         if (m_powerUsage != status.getPowerUsage()) {
-                           m_powerUsage = status.getPowerUsage();
-                           this->sendUpdate();
-                         }
+                   if (m_powerUsage != status.getPowerUsage()) {
+                     m_powerUsage = status.getPowerUsage();
+                     this->sendUpdate();
+                   }
 
-                         return ResponseStatus::RESPONSE_OK;
-                       });
+                   return ResponseStatus::RESPONSE_OK;
+                 });
 }
 
 //
@@ -183,7 +183,7 @@ void AirConditioner::m_getCapabilities() {
         if (!data.hasID(0xB5))
           return RESPONSE_WRONG;
 
-        const uint8_t next = m_capabilities.read(data.to<PropertyQuery>());
+        const uint8_t next = m_capabilities.read(PropertiesData::fromData(data));
 
         if (next == 0)
           return RESPONSE_OK;
@@ -209,8 +209,8 @@ void AirConditioner::m_getStatus() {
   LOG_D(TAG, "Enqueuing a GET_STATUS(0x41) request...");
 
   m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
-                       // onData
-                       std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
+                 // onData
+                 std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }
 
 void AirConditioner::m_displayToggle() {
@@ -218,8 +218,8 @@ void AirConditioner::m_displayToggle() {
   LOG_D(TAG, "Enqueuing a priority TOGGLE_LIGHT(0x41) request...");
 
   m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
-                       // onData
-                       std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
+                 // onData
+                 std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }
 
 template<typename T> void setProperty(T &property, const T &value, bool &update) {

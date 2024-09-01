@@ -15,7 +15,7 @@
 namespace dudanov {
 namespace midea {
 
-class PropertyQuery;
+class PropertiesData;
 
 namespace ac {
 
@@ -65,7 +65,7 @@ enum Feature : uint16_t {
 class CmdB5 {
  public:
   // Read AC capabilities from frame data.
-  uint8_t read(const PropertyQuery &data);
+  uint8_t read(const PropertiesData &data);
   // Dump capabilities.
   void dump() const;
   // Checking for need sending B1 query.

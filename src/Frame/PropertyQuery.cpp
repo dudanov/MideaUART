@@ -3,7 +3,7 @@
 namespace dudanov {
 namespace midea {
 
-void PropertyQuery::appendUUID(PropertyUUID uuid) {
+void PropertiesData::appendUUID(PropertyUUID uuid) {
   this->append(uuid);
   m_data[1]++;  // increment number of UUIDs
 }

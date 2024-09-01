@@ -17,22 +17,20 @@ static float s_get_temperature(int integer, int decimal, bool fahrenheits) {
   return static_cast<float>(integer) * 0.5f;
 }
 
-bool FrameStatusData::updateStatus(DeviceStatus &s) {
-  switch (m_getValue(0)) {
-    case 0xC0:
-      m_statusC0(s);
-      return true;
+bool FrameStatusData::hasStatusData(const FrameData &data) {
+  return data.hasID(0xC0) || data.hasID(0xA0) || data.hasID(0xA1);
+}
 
-    case 0xA0:
-      m_statusA0(s);
-      return true;
+void FrameStatusData::updateStatus(DeviceStatus &s) {
+  if (hasID(0xC0)) {
+    m_statusC0(s);
 
-    case 0xA1:
-      m_statusA1(s);
-      return true;
+  } else if (hasID(0xA0)) {
+    m_statusA0(s);
+
+  } else if (hasID(0xA1)) {
+    m_statusA1(s);
   }
-
-  return false;
 }
 
 void FrameStatusData::m_statusC0(DeviceStatus &s) const {

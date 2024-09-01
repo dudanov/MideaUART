@@ -130,13 +130,31 @@ struct B1Status {
 
 class FrameStatusData : public FrameData {
  public:
-  bool updateStatus(DeviceStatus &s);
+  /**
+   * @brief Checks for `FrameData` is convertible to `FrameStatusData`.
+   * @param data reference to `FrameData` instance.
+   * @return `true` if `FrameData` is `FrameStatusData`.
+   */
+  static bool hasStatusData(const FrameData &data);
+
+  /**
+   * @brief Updates `DeviceStatus`.
+   *
+   * @param s reference to `DeviceStatus`.
+   */
+  void updateStatus(DeviceStatus &s);
+
+  /**
+   * @brief Make `0x40 Set status` command from `DeviceStatus`.
+   *
+   * @param s reference to `DeviceStatus`.
+   */
+  void to40Command(const DeviceStatus &s);
 
  protected:
   void m_statusA0(DeviceStatus &s) const;
   void m_statusA1(DeviceStatus &s) const;
   void m_statusC0(DeviceStatus &s) const;
-  void to40Command(const DeviceStatus &s);
 };
 
 }  // namespace ac

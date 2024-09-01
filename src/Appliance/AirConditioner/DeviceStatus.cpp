@@ -262,7 +262,7 @@ void FrameStatusData::m_command40(const DeviceStatus &s) {
 
   if (s.timer_off) {
     m_data[5] = 0x80 | s.timer_off / 15;
-    m_data[6] |= s.timer_off % 15;
+    m_data[6] += s.timer_off % 15;
   }
 
   m_data[7] = 0x30 + s.swing;

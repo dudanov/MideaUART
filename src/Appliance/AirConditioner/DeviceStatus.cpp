@@ -317,6 +317,10 @@ FanSpeed DeviceStatus::getFanMode() const {
   return speed;
 }
 
+float DeviceStatus::getIndoorTemp() const { return indoor_temp * 0.5f; }
+
+float DeviceStatus::getOutdoorTemp() const { return outdoor_temp * 0.5f; }
+
 }  // namespace ac
 }  // namespace midea
 }  // namespace dudanov

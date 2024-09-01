@@ -23,6 +23,8 @@ class DeviceStatus {
   FanSpeed getFanMode() const;
   void setFanSpeed(FanSpeed value) { fanSpeed = value; }
   void setFanSpeed(uint8_t value) { fanSpeed = value; }
+  float getIndoorTemp() const;
+  float getOutdoorTemp() const;
 
  protected:
   /// Current `On Timer` minutes.

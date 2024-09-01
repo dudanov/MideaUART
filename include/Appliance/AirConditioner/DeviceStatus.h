@@ -138,23 +138,24 @@ class FrameStatusData : public FrameData {
   static bool hasStatusData(const FrameData &data);
 
   /**
-   * @brief Updates `DeviceStatus`.
-   *
-   * @param s reference to `DeviceStatus`.
-   */
-  void updateStatus(DeviceStatus &s);
-
-  /**
    * @brief Make `0x40 Set status` command from `DeviceStatus`.
    *
    * @param s reference to `DeviceStatus`.
    */
-  void to40Command(const DeviceStatus &s);
+  static FrameData writeStatus(const DeviceStatus &s);
 
- protected:
+  /**
+   * @brief Updates `DeviceStatus`.
+   *
+   * @param s reference to `DeviceStatus`.
+   */
+  void readStatus(DeviceStatus &s) const;
+
+ private:
+  void m_command40(const DeviceStatus &s);
+  void m_statusC0(DeviceStatus &s) const;
   void m_statusA0(DeviceStatus &s) const;
   void m_statusA1(DeviceStatus &s) const;
-  void m_statusC0(DeviceStatus &s) const;
 };
 
 }  // namespace ac

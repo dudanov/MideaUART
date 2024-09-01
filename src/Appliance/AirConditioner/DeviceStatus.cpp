@@ -17,11 +17,17 @@ static float s_get_temperature(int integer, int decimal, bool fahrenheits) {
   return static_cast<float>(integer) * 0.5f;
 }
 
+FrameData FrameStatusData::writeStatus(const DeviceStatus &s) {
+  FrameStatusData data;
+  data.m_command40(s);
+  return data;
+}
+
 bool FrameStatusData::hasStatusData(const FrameData &data) {
   return data.hasID(0xC0) || data.hasID(0xA0) || data.hasID(0xA1);
 }
 
-void FrameStatusData::updateStatus(DeviceStatus &s) {
+void FrameStatusData::readStatus(DeviceStatus &s) const {
   if (hasID(0xC0))
     return m_statusC0(s);
 
@@ -214,7 +220,7 @@ void FrameStatusData::m_statusA1(DeviceStatus &s) const {
   s.humidity = m_getValue(17, 127);
 }
 
-void FrameStatusData::to40Command(const DeviceStatus &s) {
+void FrameStatusData::m_command40(const DeviceStatus &s) {
   uint8_t fan_speed = s.fanSpeed;
   bool turbo = s.turbo;
   bool eco = s.eco;

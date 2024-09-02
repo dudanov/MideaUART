@@ -58,7 +58,7 @@ enum Feature : uint16_t {
  * @brief Capabilities data.
  *
  */
-class CmdB5 {
+class Capabilities {
  public:
   /**
    * @brief Reads capabilities from 0xB5 frame data.

@@ -8,13 +8,13 @@ namespace ac {
 
 static const char *TAG = "CmdB5";
 
-bool CmdB5::isNeedB1Query() const {
+bool Capabilities::isNeedB1Query() const {
   return this->hasNoWindFeel || this->hasSelfClean || this->hasOneKeyNoWindOnMe || this->hasBreeze || this->hasBuzzer ||
          this->hasSmartEye || this->hasIndoorHumidity || this->hasVerticalWind || this->hasHorizontalWind ||
          this->isTwins || this->isFourDirection;
 }
 
-void CmdB5::m_setBaseFunc() {
+void Capabilities::m_setBaseFunc() {
   this->unitChangeable = true;
   this->eco = false;
   this->updownFan = false;
@@ -30,7 +30,7 @@ void CmdB5::m_setBaseFunc() {
   this->strongHot = false;
 }
 
-void CmdB5::m_toSubCool() {
+void Capabilities::m_toSubCool() {
   this->auto_ = false;
   this->hot = false;
   this->eightHot = false;
@@ -42,7 +42,7 @@ void CmdB5::m_toSubCool() {
   this->strongCool = true;
 }
 
-void CmdB5::m_toOnlyCool() {
+void Capabilities::m_toOnlyCool() {
   this->auto_ = true;
   this->hot = false;
   this->eightHot = false;
@@ -54,7 +54,7 @@ void CmdB5::m_toOnlyCool() {
   this->strongCool = true;
 }
 
-void CmdB5::m_toOnlyHot() {
+void Capabilities::m_toOnlyHot() {
   this->auto_ = true;
   this->cool = false;
   this->dry = false;
@@ -66,7 +66,7 @@ void CmdB5::m_toOnlyHot() {
   this->strongCool = true;
 }
 
-void CmdB5::m_toAllEnable() {
+void Capabilities::m_toAllEnable() {
   this->auto_ = true;
   this->hot = true;
   this->eightHot = true;
@@ -78,7 +78,7 @@ void CmdB5::m_toAllEnable() {
   this->strongCool = true;
 }
 
-void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
+void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
   const uint8_t b0 = reader[0];
 
   switch (reader.uuid()) {
@@ -207,32 +207,32 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
     case Feature::MODES:
       this->hotcold = b0;
 
-      if (b0 == CmdB5::COLD_HOT) {
+      if (b0 == Capabilities::COLD_HOT) {
         this->cool = true;
         this->hot = true;
         this->dry = true;
         this->auto_ = true;
 
-      } else if (b0 == CmdB5::HOT) {
+      } else if (b0 == Capabilities::HOT) {
         this->cool = false;
         this->dry = false;
         this->hot = true;
         this->auto_ = true;
 
-      } else if (b0 == CmdB5::COLD_SUB) {
+      } else if (b0 == Capabilities::COLD_SUB) {
         this->cool = true;
         this->dry = false;
         this->hot = false;
         this->auto_ = false;
 
-      } else if (b0 == CmdB5::COLD_SUB_COLD_HOT) {
+      } else if (b0 == Capabilities::COLD_SUB_COLD_HOT) {
         this->cool = true;
         this->dry = false;
         this->hot = true;
         this->auto_ = false;
         this->wind = true;
 
-      } else if (b0 == CmdB5::COLD_SUB_COLD) {
+      } else if (b0 == Capabilities::COLD_SUB_COLD) {
         this->cool = true;
         this->dry = true;
         this->hot = false;
@@ -240,7 +240,7 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
         this->wind = true;
 
       } else {
-        // CmdB5::COLD
+        // Capabilities::COLD
         this->hot = false;
         this->cool = true;
         this->dry = true;
@@ -307,7 +307,7 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
   }
 }
 
-uint8_t CmdB5::read(const PropertiesData &data) {
+uint8_t Capabilities::read(const PropertiesData &data) {
   if (!data.hasID(0xB5))
     return 0;
 
@@ -323,7 +323,7 @@ uint8_t CmdB5::read(const PropertiesData &data) {
   if (condition) \
     LOG_CONFIG(TAG, str);
 
-void CmdB5::dump() const {
+void Capabilities::dump() const {
   LOG_CONFIG(TAG, "Midea Capabilities Report:");
 
   if (this->auto_) {

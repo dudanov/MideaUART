@@ -20,7 +20,7 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
-class CmdB5;
+class Capabilities;
 
 /**
  * @brief All modes a Midea device can be in.
@@ -216,9 +216,9 @@ class CapabilitiesQuery : public FrameData {
 class GetFeatureStateQuery : public PropertiesData {
  public:
   // DataBodyQueryB1
-  GetFeatureStateQuery();
+  explicit GetFeatureStateQuery();
   // DataBodyDevB1
-  explicit GetFeatureStateQuery(const CmdB5 &b5);
+  explicit GetFeatureStateQuery(const Capabilities &b5);
 };
 
 }  // namespace ac

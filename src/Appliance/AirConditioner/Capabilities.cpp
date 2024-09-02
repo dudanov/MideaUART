@@ -14,7 +14,7 @@ bool CmdB5::isNeedB1Query() const {
          this->isTwins || this->isFourDirection;
 }
 
-void CmdB5::setBaseFunc() {
+void CmdB5::m_setBaseFunc() {
   this->unitChangeable = true;
   this->eco = false;
   this->updownFan = false;
@@ -30,7 +30,7 @@ void CmdB5::setBaseFunc() {
   this->strongHot = false;
 }
 
-void CmdB5::toSubCool() {
+void CmdB5::m_toSubCool() {
   this->auto_ = false;
   this->hot = false;
   this->eightHot = false;
@@ -42,7 +42,7 @@ void CmdB5::toSubCool() {
   this->strongCool = true;
 }
 
-void CmdB5::toOnlyCool() {
+void CmdB5::m_toOnlyCool() {
   this->auto_ = true;
   this->hot = false;
   this->eightHot = false;
@@ -54,7 +54,7 @@ void CmdB5::toOnlyCool() {
   this->strongCool = true;
 }
 
-void CmdB5::toOnlyHot() {
+void CmdB5::m_toOnlyHot() {
   this->auto_ = true;
   this->cool = false;
   this->dry = false;
@@ -66,7 +66,7 @@ void CmdB5::toOnlyHot() {
   this->strongCool = true;
 }
 
-void CmdB5::toAllEnable() {
+void CmdB5::m_toAllEnable() {
   this->auto_ = true;
   this->hot = true;
   this->eightHot = true;
@@ -308,6 +308,9 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
 }
 
 uint8_t CmdB5::read(const PropertiesData &data) {
+  if (!data.hasID(0xB5))
+    return 0;
+
   auto b5 = data.getReader();
 
   for (; b5.available() > 3; b5.advance())

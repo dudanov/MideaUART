@@ -168,13 +168,13 @@ void ApplianceBase::m_sendFrame(FrameType type, const FrameData &data) {
   m_periodTimer.start(m_period);
 }
 
-void ApplianceBase::m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess,
+void ApplianceBase::m_queueRequest(FrameType type, FrameData &&data, ResponseHandler onData, Handler onSucess,
                                    Handler onError) {
   LOG_D(TAG, "Enqueuing the request...");
   m_queue.push_back(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});
 }
 
-void ApplianceBase::m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess,
+void ApplianceBase::m_queueRequestPriority(FrameType type, FrameData &&data, ResponseHandler onData, Handler onSucess,
                                            Handler onError) {
   LOG_D(TAG, "Priority request queuing...");
   m_queue.push_front(new Request{std::move(data), std::move(onData), std::move(onSucess), std::move(onError), type});

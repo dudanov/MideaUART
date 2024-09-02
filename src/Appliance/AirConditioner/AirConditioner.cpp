@@ -147,10 +147,9 @@ void AirConditioner::setPowerState(bool state) {
 }
 
 void AirConditioner::m_getPowerUsage() {
-  FrameDataQuery41 data{};
   LOG_D(TAG, "Enqueuing a GET_POWERUSAGE(0x41) request...");
 
-  m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+  m_queueRequest(FrameType::DEVICE_QUERY, PowerUsageQuery{},
                  // onData
                  [this](FrameData data) -> ResponseStatus {
                    const auto status = data.to<StatusData>();
@@ -167,17 +166,15 @@ void AirConditioner::m_getPowerUsage() {
                  });
 }
 
-//
 void AirConditioner::m_getCapabilities() {
   if (m_autoconfStatus == AUTOCONF_PROGRESS)
     return;
 
-  CapabilitiesQuery b5data;
   m_autoconfStatus = AUTOCONF_PROGRESS;
   LOG_D(TAG, "Enqueuing a priority GET_CAPABILITIES(0xB5) request...");
 
   m_queueRequest(
-      FrameType::DEVICE_QUERY, std::move(b5data),
+      FrameType::DEVICE_QUERY, CapabilitiesQuery{},
       // onData
       [this](FrameData data) -> ResponseStatus {
         if (!data.hasID(0xB5))
@@ -188,8 +185,7 @@ void AirConditioner::m_getCapabilities() {
         if (next == 0)
           return RESPONSE_OK;
 
-        CapabilitiesQuery b5next(next);
-        m_sendFrame(FrameType::DEVICE_QUERY, b5next);
+        m_sendFrame(FrameType::DEVICE_QUERY, CapabilitiesQuery{next});
 
         return RESPONSE_PARTIAL;
       },
@@ -205,19 +201,17 @@ void AirConditioner::m_getCapabilities() {
 }
 
 void AirConditioner::m_getStatus() {
-  FrameDataDevQuery41 data;
   LOG_D(TAG, "Enqueuing a GET_STATUS(0x41) request...");
 
-  m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+  m_queueRequest(FrameType::DEVICE_QUERY, StateQuery{},
                  // onData
                  std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }
 
 void AirConditioner::m_displayToggle() {
-  FrameDataLight41 data;
   LOG_D(TAG, "Enqueuing a priority TOGGLE_LIGHT(0x41) request...");
 
-  m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+  m_queueRequest(FrameType::DEVICE_QUERY, DisplayToggleQuery{},
                  // onData
                  std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }

@@ -106,10 +106,10 @@ class ApplianceBase {
 
   void m_queueNotify(FrameType type, FrameData data) { m_queueRequest(type, std::move(data), nullptr); }
 
-  void m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSucess = nullptr,
+  void m_queueRequest(FrameType type, FrameData &&data, ResponseHandler onData, Handler onSucess = nullptr,
                       Handler onError = nullptr);
 
-  void m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData = nullptr,
+  void m_queueRequestPriority(FrameType type, FrameData &&data, ResponseHandler onData = nullptr,
                               Handler onSucess = nullptr, Handler onError = nullptr);
 
   void m_sendFrame(FrameType type, const FrameData &data);

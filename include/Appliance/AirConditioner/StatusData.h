@@ -176,37 +176,37 @@ class StatusData : public FrameData {
   void m_setSleep(bool state) { m_setMask(10, state, 1); }
 };
 
-/// Specific DeviceStateQuery 0x41 frame
-class FrameDataDevQuery41 : public FrameData {
+/// StateQuery `0x41`.
+class StateQuery : public FrameData {
  public:
-  FrameDataDevQuery41()
+  StateQuery()
       : FrameData({0x41, 0x81, 0x00, 0xFF, 0x03, 0xFF, 0x00, 0x02, 0x00, 0x00, 0x00,
                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, m_genID()}) {
     this->appendCRC();
   }
 };
 
-/// Specific PowerQuery 0x41 frame
-class FrameDataQuery41 : public FrameData {
+/// PowerUsageQuery `0x41`.
+class PowerUsageQuery : public FrameData {
  public:
-  FrameDataQuery41()
+  PowerUsageQuery()
       : FrameData({0x41, 0x21, 0x01, 0x44, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, m_genID()}) {
     this->appendCRC();
   }
 };
 
-/// Specific DisplayToggle 0x41 command frame
-class FrameDataLight41 : public FrameData {
+/// DisplayToggleQuery `0x41`.
+class DisplayToggleQuery : public FrameData {
  public:
-  FrameDataLight41()
+  DisplayToggleQuery()
       : FrameData({0x41, 0x61, 0x00, 0xFF, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00,
                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, m_genID()}) {
     this->appendCRC();
   }
 };
 
-/// Frame data body for capability query 0xB5.
+/// CapabilitiesQuery `0xB5`.
 class CapabilitiesQuery : public FrameData {
  public:
   explicit CapabilitiesQuery() : FrameData{{0xB5, 0x01, 0x11}} { this->appendCRC(); }

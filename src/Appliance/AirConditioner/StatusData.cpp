@@ -114,7 +114,7 @@ float StatusData::getPowerUsage() const {
 GetFeatureStateQuery::GetFeatureStateQuery() : PropertiesData(0xB1) {
   this->appendUUID(INDOOR_HUMIDITY);
   this->appendUUID(SILKY_COOL);
-  this->appendUUID(0x1A);
+  this->appendUUID(0x1A);  // beeper
   this->appendUUID(ECO_EYE);
   this->appendUUID(ACTIVE_CLEAN);
   this->appendUUID(BREEZE_AWAY);

@@ -54,21 +54,17 @@ static char u4hex(uint8_t num) { return num + ((num < 10) ? '0' : ('A' - 10)); }
 std::string Frame::toString() const {
   std::string str;
 
-  if (m_data.empty())
-    return str;
+  if (!m_data.empty()) {
+    str.assign(3 * m_data.size() - 1, ' ');
+    auto dst = str.begin();
 
-  auto src = m_data.begin();
-  str.resize(3 * m_data.size());
-
-  for (auto dst = str.begin();; dst += 3) {
-    dst[0] = u4hex(*src / 16);
-    dst[1] = u4hex(*src % 16);
-
-    if (++src == m_data.end())
-      return str;
-
-    dst[2] = ' ';
+    for (auto it = m_data.begin(); it != m_data.end(); dst += 3, ++it) {
+      dst[0] = u4hex(*it / 16);
+      dst[1] = u4hex(*it % 16);
+    }
   }
+
+  return str;
 }
 
 }  // namespace midea

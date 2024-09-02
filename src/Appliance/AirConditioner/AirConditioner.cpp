@@ -172,7 +172,7 @@ void AirConditioner::m_getCapabilities() {
   if (m_autoconfStatus == AUTOCONF_PROGRESS)
     return;
 
-  FrameDataB5Query b5data;
+  CapabilitiesQuery b5data;
   m_autoconfStatus = AUTOCONF_PROGRESS;
   LOG_D(TAG, "Enqueuing a priority GET_CAPABILITIES(0xB5) request...");
 
@@ -188,7 +188,7 @@ void AirConditioner::m_getCapabilities() {
         if (next == 0)
           return RESPONSE_OK;
 
-        FrameDataSecondB5Query b5next(next);
+        CapabilitiesQuery b5next(next);
         m_sendFrame(FrameType::DEVICE_QUERY, b5next);
 
         return RESPONSE_PARTIAL;

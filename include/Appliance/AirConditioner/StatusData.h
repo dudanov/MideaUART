@@ -206,15 +206,11 @@ class FrameDataLight41 : public FrameData {
   }
 };
 
-/// Starting B5Query frame
-class FrameDataB5Query : public FrameData {
+/// Frame data body for capability query 0xB5.
+class CapabilitiesQuery : public FrameData {
  public:
-  FrameDataB5Query() : FrameData({0xB5, 0x01, 0x11}) { this->appendCRC(); }
-};
-
-class FrameDataSecondB5Query : public FrameData {
- public:
-  explicit FrameDataSecondB5Query(uint8_t idx) : FrameData({0xB5, 0x01, 0x01, idx}) { this->appendCRC(); }
+  explicit CapabilitiesQuery() : FrameData{{0xB5, 0x01, 0x11}} { this->appendCRC(); }
+  explicit CapabilitiesQuery(uint8_t idx) : FrameData{{0xB5, 0x01, 0x01, idx}} { this->appendCRC(); }
 };
 
 class GetFeatureStateQuery : public PropertiesData {

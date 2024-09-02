@@ -52,20 +52,20 @@ bool Frame::deserialize(const uint8_t &data) {
 static char u4hex(uint8_t num) { return num + ((num < 10) ? '0' : ('A' - 10)); }
 
 std::string Frame::toString() const {
-  std::string ret;
+  std::string str;
 
   if (m_data.empty())
-    return ret;
+    return str;
 
   auto src = m_data.begin();
-  ret.resize(3 * m_data.size());
+  str.resize(3 * m_data.size());
 
-  for (auto dst = ret.begin();; dst += 3) {
+  for (auto dst = str.begin();; dst += 3) {
     dst[0] = u4hex(*src / 16);
     dst[1] = u4hex(*src % 16);
 
     if (++src == m_data.end())
-      return ret;
+      return str;
 
     dst[2] = ' ';
   }

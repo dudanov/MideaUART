@@ -126,7 +126,7 @@ void FrameStatusData::m_statusC0(DeviceStatus &s) const {
   s.humidity = m_getValue(19, 127);
 
   // Byte #21
-  if (m_data.size() >= 24) {
+  if (m_data.size() > 24) {  // body size include CRC byte
     s.double_temp = m_getBit(21, 6);
     s.Eight_Hot = m_getBit(21, 7);
 
@@ -136,7 +136,7 @@ void FrameStatusData::m_statusC0(DeviceStatus &s) const {
   }
 
   // Byte #22
-  if (m_data.size() >= 23)
+  if (m_data.size() > 23)  // body size include CRC byte
     s.hasNoWindFeel = m_getBit(22, 3);
 }
 

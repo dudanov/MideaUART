@@ -284,7 +284,7 @@ void FrameStatusData::m_command40(const DeviceStatus &s) {
 
   m_data[21] = s.Eight_Hot * 0x80 + s.double_temp * 0x40 + s.setExpand % 32 * 0x02 + s.setExpand_dot;
 
-  m_data[23] = m_getID();
+  m_data[23] = m_genID();
 
   appendCRC();
 }

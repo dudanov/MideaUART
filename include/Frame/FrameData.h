@@ -114,7 +114,7 @@ class FrameData {
    *
    * @return Message ID.
    */
-  static uint8_t m_getID();
+  static uint8_t m_genID();
 
   /**
    * @brief Calculate checksum.

@@ -158,6 +158,8 @@ void ApplianceBase::m_resetTimeout() {
     LOG_D(TAG, "Response timeout...");
 
     if (!--m_remainAttempts) {
+      LOG_W(TAG, "Request failed. It looks like unsupported options are enabled. Check your YAML configuration.");
+
       if (m_request->onError != nullptr)
         m_request->onError();
 

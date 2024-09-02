@@ -154,7 +154,6 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
         this->hasAutoClearHumidity = false;
         this->hasHandClearHumidity = true;
       }
-
       break;
 
     case Feature::UNIT_CHANGEABLE:
@@ -186,7 +185,6 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
         this->strongHot = true;
         this->strongCool = false;
       }
-
       break;
 
     case Feature::LED_LIGHT:
@@ -258,7 +256,6 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
         this->dry = true;
         this->auto_ = true;
       }
-
       break;
 
     case Feature::SWING_MODES:
@@ -278,7 +275,6 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
         this->leftrightFan = true;
         this->updownFan = false;
       }
-
       break;
 
     case Feature::POWER_FUNC:
@@ -294,7 +290,6 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
         this->powerCal = true;
         this->powerCalSetting = true;
       }
-
       break;
 
     case Feature::AIR_FILTER:
@@ -314,7 +309,6 @@ void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
         this->nestCheck = true;
         this->nestNeedChange = true;
       }
-
       break;
 
     case Feature::IS_FOUR_DIRECTION:
@@ -337,24 +331,28 @@ uint8_t CmdB5::read(const PropertiesData &data) {
     LOG_CONFIG(TAG, str);
 
 void CmdB5::dump() const {
-  LOG_CONFIG(TAG, "Capabilities Report:");
+  LOG_CONFIG(TAG, "Midea Capabilities Report:");
+
   if (this->auto_) {
     LOG_CONFIG(TAG, "  [x] Auto Mode");
     LOG_CONFIG(TAG, "      - Min: %d", this->auto_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->auto_adjust_up_temp);
   }
+
   if (this->cool) {
     LOG_CONFIG(TAG, "  [x] Cool Mode");
     LOG_CONFIG(TAG, "      - Min: %d", this->cool_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->cool_adjust_up_temp);
     LOG_CAPABILITY("      - Turbo", this->strongCool);
   }
+
   if (this->hot) {
     LOG_CONFIG(TAG, "  [x] Heat Mode");
     LOG_CONFIG(TAG, "      - Min: %d", this->hot_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->hot_adjust_up_temp);
     LOG_CAPABILITY("      - Turbo", this->strongHot);
   }
+
   if (this->dry) {
     LOG_CONFIG(TAG, "  [x] Dry Mode");
     //
@@ -362,6 +360,7 @@ void CmdB5::dump() const {
     // MODE_DRY_SMART supported. .humidity in command is setpoint
     LOG_CAPABILITY("      - Smart", this->hasHandClearHumidity);
   }
+
   LOG_CAPABILITY("  [x] Fan Mode", this->wind);
   LOG_CONFIG(TAG, "  [x] Wind Speed: %d", this->hasWindSpeed);
   LOG_CAPABILITY("  [x] Indoor Humidity", this->hasIndoorHumidity);  // Indoor humidity in B1 response
@@ -379,6 +378,7 @@ void CmdB5::dump() const {
   LOG_CAPABILITY("  [x] Special ECO", this->special_eco);          // Only in `AUTO`, `COOL`, `DRY` modes.
   LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);  // Not supported modes: `DRY`, `FAN_ONLY`.
   LOG_CAPABILITY("  [x] 8°C Heat", this->hot && this->eightHot);   // Only in `HEAT` mode and not supported by `SLEEP`.
+
   // in HEAT mode DeviceStatus.ptcAssis must be 1
   LOG_CAPABILITY("  [x] Electric Auxiliary Heat", this->dianfure);
   LOG_CAPABILITY("  [x] Wind ON me", this->hasBlowingPeople);
@@ -387,6 +387,7 @@ void CmdB5::dump() const {
   LOG_CAPABILITY("  [x] Buzzer", this->hasBuzzer);
   LOG_CAPABILITY("  [x] Active Clean", this->hasSelfClean);
   LOG_CAPABILITY("  [x] Breeze Away", this->hasOneKeyNoWindOnMe);  // Only in `AUTO`, `HEAT` modes.
+
   // DeviceStatus.dusFull. cleanFanTime == 1 in command clear timer
   LOG_CAPABILITY("  [x] Air Filter Cleaning Reminder", this->nestCheck);
   LOG_CAPABILITY("  [x] Air Filter Replacement Reminder", this->nestNeedChange);

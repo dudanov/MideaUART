@@ -57,16 +57,17 @@ std::string Frame::toString() const {
   if (m_data.empty())
     return ret;
 
-  ret.reserve(3 * m_data.size());
+  auto src = m_data.begin();
+  ret.resize(3 * m_data.size());
 
-  for (auto it = m_data.begin();;) {
-    ret.push_back(u4hex(*it / 16));
-    ret.push_back(u4hex(*it % 16));
+  for (auto dst = ret.begin();; dst += 3) {
+    dst[0] = u4hex(*src / 16);
+    dst[1] = u4hex(*src % 16);
 
-    if (++it == m_data.end())
+    if (++src == m_data.end())
       return ret;
 
-    ret.push_back(' ');
+    dst[2] = ' ';
   }
 }
 

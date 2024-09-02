@@ -14,7 +14,7 @@ bool CmdB5::isNeedB1Query() const {
          this->isTwins || this->isFourDirection;
 }
 
-CmdB5 &CmdB5::setBaseFunc() {
+void CmdB5::setBaseFunc() {
   this->unitChangeable = true;
   this->eco = false;
   this->updownFan = false;
@@ -28,11 +28,9 @@ CmdB5 &CmdB5::setBaseFunc() {
   this->powerCal = false;
   this->strongCool = true;
   this->strongHot = false;
-
-  return *this;
 }
 
-CmdB5 &CmdB5::toSubCool() {
+void CmdB5::toSubCool() {
   this->auto_ = false;
   this->hot = false;
   this->eightHot = false;
@@ -42,11 +40,9 @@ CmdB5 &CmdB5::toSubCool() {
   this->leftrightFan = true;
   this->unitChangeable = true;
   this->strongCool = true;
-
-  return *this;
 }
 
-CmdB5 &CmdB5::toOnlyCool() {
+void CmdB5::toOnlyCool() {
   this->auto_ = true;
   this->hot = false;
   this->eightHot = false;
@@ -56,11 +52,9 @@ CmdB5 &CmdB5::toOnlyCool() {
   this->leftrightFan = true;
   this->unitChangeable = true;
   this->strongCool = true;
-
-  return *this;
 }
 
-CmdB5 &CmdB5::toOnlyHot() {
+void CmdB5::toOnlyHot() {
   this->auto_ = true;
   this->cool = false;
   this->dry = false;
@@ -70,11 +64,9 @@ CmdB5 &CmdB5::toOnlyHot() {
   this->leftrightFan = true;
   this->unitChangeable = true;
   this->strongCool = true;
-
-  return *this;
 }
 
-CmdB5 &CmdB5::toAllEnable() {
+void CmdB5::toAllEnable() {
   this->auto_ = true;
   this->hot = true;
   this->eightHot = true;
@@ -84,8 +76,6 @@ CmdB5 &CmdB5::toAllEnable() {
   this->leftrightFan = true;
   this->unitChangeable = true;
   this->strongCool = true;
-
-  return *this;
 }
 
 void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {

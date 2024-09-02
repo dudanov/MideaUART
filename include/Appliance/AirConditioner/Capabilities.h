@@ -70,11 +70,11 @@ class CmdB5 {
   // Checking for need sending B1 query.
   bool isNeedB1Query() const;
 
-  CmdB5 &setBaseFunc();
-  CmdB5 &toOnlyCool();
-  CmdB5 &toAllEnable();
-  CmdB5 &toOnlyHot();
-  CmdB5 &toSubCool();
+  void setBaseFunc();
+  void toOnlyCool();
+  void toAllEnable();
+  void toOnlyHot();
+  void toSubCool();
 
   enum ACType : uint8_t {
     COLD,      // toOnlyCool()

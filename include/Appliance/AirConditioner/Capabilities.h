@@ -12,11 +12,10 @@
 #include <Arduino.h>
 #include <set>
 
+#include "Frame/PropertiesData.h"
+
 namespace dudanov {
 namespace midea {
-
-class PropertiesData;
-
 namespace ac {
 
 /**
@@ -123,7 +122,7 @@ class CmdB5 {
   /// Dry Mode supported.
   bool dry{true};
   /// Auto Mode supported.
-  bool auto1{true};
+  bool auto_{true};
   /// FanOnly Mode supported.
   bool wind{true};
   /// Cool Turbo Mode supported.
@@ -178,6 +177,9 @@ class CmdB5 {
   uint8_t hot_adjust_down_temp{17};
   /// LED Light. Values: 0 (Off), 7 (On).
   uint8_t lightType{0};
+
+ protected:
+  void m_setFuncEnable(const PropertiesData::PropertiesReader &data);
 };
 
 }  // namespace ac

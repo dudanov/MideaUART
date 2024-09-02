@@ -97,7 +97,7 @@ class CmdB5 {
   // Dry mode
   bool dry{true};
   // Auto mode
-  bool auto1{true};
+  bool auto_{true};
   // FanOnly mode
   bool wind{true};
   bool mutilTemp{true};

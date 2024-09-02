@@ -1,3 +1,5 @@
+#pragma once
+
 #include "FrameData.h"
 
 namespace dudanov {

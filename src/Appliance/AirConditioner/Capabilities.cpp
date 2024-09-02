@@ -1,5 +1,4 @@
 #include "Appliance/AirConditioner/Capabilities.h"
-#include "Frame/PropertiesData.h"
 #include "Helpers/Helpers.h"
 #include "Helpers/Log.h"
 
@@ -24,7 +23,7 @@ CmdB5 &CmdB5::setBaseFunc() {
   this->cool = true;
   this->hot = true;
   this->dry = true;
-  this->auto1 = true;
+  this->auto_ = true;
   this->wind = true;
   this->powerCal = false;
   this->strongCool = true;
@@ -34,7 +33,7 @@ CmdB5 &CmdB5::setBaseFunc() {
 }
 
 CmdB5 &CmdB5::toSubCool() {
-  this->auto1 = false;
+  this->auto_ = false;
   this->hot = false;
   this->eightHot = false;
   this->cool = true;
@@ -48,7 +47,7 @@ CmdB5 &CmdB5::toSubCool() {
 }
 
 CmdB5 &CmdB5::toOnlyCool() {
-  this->auto1 = true;
+  this->auto_ = true;
   this->hot = false;
   this->eightHot = false;
   this->cool = true;
@@ -62,7 +61,7 @@ CmdB5 &CmdB5::toOnlyCool() {
 }
 
 CmdB5 &CmdB5::toOnlyHot() {
-  this->auto1 = true;
+  this->auto_ = true;
   this->cool = false;
   this->dry = false;
   this->hot = true;
@@ -76,7 +75,7 @@ CmdB5 &CmdB5::toOnlyHot() {
 }
 
 CmdB5 &CmdB5::toAllEnable() {
-  this->auto1 = true;
+  this->auto_ = true;
   this->hot = true;
   this->eightHot = true;
   this->cool = true;
@@ -89,237 +88,237 @@ CmdB5 &CmdB5::toAllEnable() {
   return *this;
 }
 
-static void setFuncEnable(CmdB5 &dst, const PropertiesData::PropertiesReader &data) {
-  const uint8_t b0 = data[0];
+void CmdB5::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
+  const uint8_t b0 = reader[0];
 
-  switch (data.uuid()) {
+  switch (reader.uuid()) {
     case Feature::V_WIND_DIRECTION:
-      dst.hasVerticalWind = b0 == 1;
+      this->hasVerticalWind = b0 == 1;
       break;
 
     case Feature::H_WIND_DIRECTION:
-      dst.hasHorizontalWind = b0 == 1;
+      this->hasHorizontalWind = b0 == 1;
       break;
 
     case Feature::INDOOR_HUMIDITY:
-      dst.hasIndoorHumidity = b0 != 0;
+      this->hasIndoorHumidity = b0 != 0;
       break;
 
     case Feature::SILKY_COOL:
-      dst.hasNoWindFeel = b0 != 0;
+      this->hasNoWindFeel = b0 != 0;
       break;
 
     case Feature::ECO_EYE:
-      dst.hasSmartEye = b0 == 1;
+      this->hasSmartEye = b0 == 1;
       break;
 
     case Feature::ACTIVE_CLEAN:
-      dst.hasSelfClean = b0 == 1;
+      this->hasSelfClean = b0 == 1;
       break;
 
     case Feature::WIND_ON_ME:
-      dst.hasBlowingPeople = b0 == 1;
+      this->hasBlowingPeople = b0 == 1;
       break;
 
     case Feature::WIND_OFF_ME:
-      dst.hasAvoidPeople = b0 == 1;
+      this->hasAvoidPeople = b0 == 1;
       break;
 
     case Feature::BREEZE_AWAY:
-      dst.hasOneKeyNoWindOnMe = b0 == 1;
+      this->hasOneKeyNoWindOnMe = b0 == 1;
       break;
 
     case Feature::BREEZE:
-      dst.hasBreeze = b0 == 1;
+      this->hasBreeze = b0 == 1;
       break;
 
     case Feature::FAN_SPEED:
-      dst.hasNoWindSpeed = b0 == 1;
-      dst.hasWindSpeed = b0;
+      this->hasNoWindSpeed = b0 == 1;
+      this->hasWindSpeed = b0;
       break;
 
     case Feature::HUMIDITY:
       if (b0 == 0) {
-        dst.hasAutoClearHumidity = false;
-        dst.hasHandClearHumidity = false;
+        this->hasAutoClearHumidity = false;
+        this->hasHandClearHumidity = false;
 
       } else if (b0 == 1) {
-        dst.hasAutoClearHumidity = true;
-        dst.hasHandClearHumidity = false;
+        this->hasAutoClearHumidity = true;
+        this->hasHandClearHumidity = false;
 
       } else if (b0 == 2) {
-        dst.hasAutoClearHumidity = true;
-        dst.hasHandClearHumidity = true;
+        this->hasAutoClearHumidity = true;
+        this->hasHandClearHumidity = true;
 
       } else if (b0 == 3) {
-        dst.hasAutoClearHumidity = false;
-        dst.hasHandClearHumidity = true;
+        this->hasAutoClearHumidity = false;
+        this->hasHandClearHumidity = true;
       }
 
       break;
 
     case Feature::UNIT_CHANGEABLE:
-      dst.unitChangeable = b0 == 0;
+      this->unitChangeable = b0 == 0;
       break;
 
     case Feature::BUZZER:
-      dst.hasBuzzer = b0 != 0;
+      this->hasBuzzer = b0 != 0;
       break;
 
     case Feature::AUX_HEATER:
-      dst.dianfure = b0 == 1;
+      this->dianfure = b0 == 1;
       break;
 
     case Feature::TURBO_MODES:
       if (b0 == 0) {
-        dst.strongHot = false;
-        dst.strongCool = true;
+        this->strongHot = false;
+        this->strongCool = true;
 
       } else if (b0 == 1) {
-        dst.strongHot = true;
-        dst.strongCool = true;
+        this->strongHot = true;
+        this->strongCool = true;
 
       } else if (b0 == 2) {
-        dst.strongHot = false;
-        dst.strongCool = false;
+        this->strongHot = false;
+        this->strongCool = false;
 
       } else if (b0 == 3) {
-        dst.strongHot = true;
-        dst.strongCool = false;
+        this->strongHot = true;
+        this->strongCool = false;
       }
 
       break;
 
     case Feature::LED_LIGHT:
-      dst.lightType = b0;
+      this->lightType = b0;
       break;
 
     case Feature::TEMP_RANGES:
-      dst.cool_adjust_down_temp = b0 / 2;
-      dst.cool_adjust_up_temp = data[1] / 2;
-      dst.auto_adjust_down_temp = data[2] / 2;
-      dst.auto_adjust_up_temp = data[3] / 2;
-      dst.hot_adjust_down_temp = data[4] / 2;
-      dst.hot_adjust_up_temp = data[5] / 2;
-      dst.isHavePoint = (data.size() > 6) ? data[6] : data[2];
+      this->cool_adjust_down_temp = b0 / 2;
+      this->cool_adjust_up_temp = reader[1] / 2;
+      this->auto_adjust_down_temp = reader[2] / 2;
+      this->auto_adjust_up_temp = reader[3] / 2;
+      this->hot_adjust_down_temp = reader[4] / 2;
+      this->hot_adjust_up_temp = reader[5] / 2;
+      this->isHavePoint = (reader.size() > 6) ? reader[6] : reader[2];
       break;
 
     case Feature::IS_TWINS:
-      dst.isTwins = b0 == 1;
+      this->isTwins = b0 == 1;
       break;
 
     case Feature::ECO_MODES:
-      dst.eco = b0 == 1;
-      dst.special_eco = b0 == 2;
+      this->eco = b0 == 1;
+      this->special_eco = b0 == 2;
       break;
 
     case Feature::EIGHT_HEAT:
-      dst.eightHot = b0 == 1;
+      this->eightHot = b0 == 1;
       break;
 
     case Feature::MODES:
-      dst.hotcold = b0;
+      this->hotcold = b0;
 
       if (b0 == CmdB5::COLD_HOT) {
-        dst.cool = true;
-        dst.hot = true;
-        dst.dry = true;
-        dst.auto1 = true;
+        this->cool = true;
+        this->hot = true;
+        this->dry = true;
+        this->auto_ = true;
 
       } else if (b0 == CmdB5::HOT) {
-        dst.cool = false;
-        dst.dry = false;
-        dst.hot = true;
-        dst.auto1 = true;
+        this->cool = false;
+        this->dry = false;
+        this->hot = true;
+        this->auto_ = true;
 
       } else if (b0 == CmdB5::COLD_SUB) {
-        dst.cool = true;
-        dst.dry = false;
-        dst.hot = false;
-        dst.auto1 = false;
+        this->cool = true;
+        this->dry = false;
+        this->hot = false;
+        this->auto_ = false;
 
       } else if (b0 == CmdB5::COLD_SUB_COLD_HOT) {
-        dst.cool = true;
-        dst.dry = false;
-        dst.hot = true;
-        dst.auto1 = false;
-        dst.wind = true;
+        this->cool = true;
+        this->dry = false;
+        this->hot = true;
+        this->auto_ = false;
+        this->wind = true;
 
       } else if (b0 == CmdB5::COLD_SUB_COLD) {
-        dst.cool = true;
-        dst.dry = true;
-        dst.hot = false;
-        dst.auto1 = false;
-        dst.wind = true;
+        this->cool = true;
+        this->dry = true;
+        this->hot = false;
+        this->auto_ = false;
+        this->wind = true;
 
       } else {
         // CmdB5::COLD
-        dst.hot = false;
-        dst.cool = true;
-        dst.dry = true;
-        dst.auto1 = true;
+        this->hot = false;
+        this->cool = true;
+        this->dry = true;
+        this->auto_ = true;
       }
 
       break;
 
     case Feature::SWING_MODES:
       if (b0 == 0) {
-        dst.leftrightFan = false;
-        dst.updownFan = true;
+        this->leftrightFan = false;
+        this->updownFan = true;
 
       } else if (b0 == 1) {
-        dst.leftrightFan = true;
-        dst.updownFan = true;
+        this->leftrightFan = true;
+        this->updownFan = true;
 
       } else if (b0 == 2) {
-        dst.leftrightFan = false;
-        dst.updownFan = false;
+        this->leftrightFan = false;
+        this->updownFan = false;
 
       } else if (b0 == 3) {
-        dst.leftrightFan = true;
-        dst.updownFan = false;
+        this->leftrightFan = true;
+        this->updownFan = false;
       }
 
       break;
 
     case Feature::POWER_FUNC:
       if (b0 < 2) {
-        dst.powerCal = false;
-        dst.powerCalSetting = false;
+        this->powerCal = false;
+        this->powerCalSetting = false;
 
       } else if (b0 == 2) {
-        dst.powerCal = true;
-        dst.powerCalSetting = false;
+        this->powerCal = true;
+        this->powerCalSetting = false;
 
       } else if (b0 == 3) {
-        dst.powerCal = true;
-        dst.powerCalSetting = true;
+        this->powerCal = true;
+        this->powerCalSetting = true;
       }
 
       break;
 
     case Feature::AIR_FILTER:
       if (b0 == 0) {
-        dst.nestCheck = false;
-        dst.nestNeedChange = false;
+        this->nestCheck = false;
+        this->nestNeedChange = false;
 
       } else if (b0 < 3) {
-        dst.nestCheck = true;
-        dst.nestNeedChange = false;
+        this->nestCheck = true;
+        this->nestNeedChange = false;
 
       } else if (b0 == 3) {
-        dst.nestCheck = false;
-        dst.nestNeedChange = true;
+        this->nestCheck = false;
+        this->nestNeedChange = true;
 
       } else if (b0 == 4) {
-        dst.nestCheck = true;
-        dst.nestNeedChange = true;
+        this->nestCheck = true;
+        this->nestNeedChange = true;
       }
 
       break;
 
     case Feature::IS_FOUR_DIRECTION:
-      dst.isFourDirection = b0 == 1;
+      this->isFourDirection = b0 == 1;
       break;
   }
 }
@@ -328,7 +327,7 @@ uint8_t CmdB5::read(const PropertiesData &data) {
   auto b5 = data.getReader();
 
   for (; b5.available() > 3; b5.advance())
-    setFuncEnable(*this, b5);
+    m_setFuncEnable(b5);
 
   return (b5.available() == 3) ? b5[-3] : 0;
 }
@@ -339,7 +338,7 @@ uint8_t CmdB5::read(const PropertiesData &data) {
 
 void CmdB5::dump() const {
   LOG_CONFIG(TAG, "Capabilities Report:");
-  if (this->auto1) {
+  if (this->auto_) {
     LOG_CONFIG(TAG, "  [x] Auto Mode");
     LOG_CONFIG(TAG, "      - Min: %d", this->auto_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->auto_adjust_up_temp);

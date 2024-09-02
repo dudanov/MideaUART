@@ -6,7 +6,7 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
-static const char *TAG = "CmdB5";
+static const char *TAG = "Capabilities";
 
 bool Capabilities::isNeedB1Query() const {
   return this->hasNoWindFeel || this->hasSelfClean || this->hasOneKeyNoWindOnMe || this->hasBreeze || this->hasBuzzer ||

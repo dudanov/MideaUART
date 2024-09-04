@@ -21,9 +21,7 @@ static inline void changeState(Mode mode, float targetTemp) {
 }
 
 // Example how can change power state
-static inline void setPowerState(bool state) {
-  ac.setPowerState(state);
-}
+static inline void setPowerState(bool state) { ac.setPowerState(state); }
 
 // Example how can change mode to AUTO and set target temp to 25C
 static inline void changeAuto25() {
@@ -44,12 +42,10 @@ void onStateChange() {
 }
 
 void setup() {
-  Serial.begin(9600);     // set serial baudrate to 9600 8N1
-  ac.setStream(&Serial);  // set stream serial interface
-  ac.addOnStateCallback(onStateChange); // add callback
+  Serial.begin(9600);                    // set serial baudrate to 9600 8N1
+  ac.setStream(&Serial);                 // set stream serial interface
+  ac.addOnStateCallback(onStateChange);  // add callback
   ac.setup();
 }
 
-void loop() {
-  ac.loop();
-}
+void loop() { ac.loop(); }

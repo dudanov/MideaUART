@@ -20,46 +20,39 @@ void sv_log_printf_(int level, const char *tag, int line, const char *format, ..
 void sv_log_printf_(int level, const char *tag, int line, const __FlashStringHelper *format, ...);
 
 #if LOG_LEVEL >= LOG_LEVEL_VERY_VERBOSE
-#define sv_log_vv(tag, format, ...) \
-  sv_log_printf_(LOG_LEVEL_VERY_VERBOSE, tag, __LINE__, F(format), ##__VA_ARGS__)
+#define sv_log_vv(tag, format, ...) sv_log_printf_(LOG_LEVEL_VERY_VERBOSE, tag, __LINE__, F(format), ##__VA_ARGS__)
 #else
 #define sv_log_vv(tag, format, ...)
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_VERBOSE
-#define sv_log_v(tag, format, ...) \
-  sv_log_printf_(LOG_LEVEL_VERBOSE, tag, __LINE__, F(format), ##__VA_ARGS__)
+#define sv_log_v(tag, format, ...) sv_log_printf_(LOG_LEVEL_VERBOSE, tag, __LINE__, F(format), ##__VA_ARGS__)
 #else
 #define sv_log_v(tag, format, ...)
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_DEBUG
-#define sv_log_d(tag, format, ...) \
-  sv_log_printf_(LOG_LEVEL_DEBUG, tag, __LINE__, F(format), ##__VA_ARGS__)
-#define sv_log_config(tag, format, ...) \
-  sv_log_printf_(LOG_LEVEL_CONFIG, tag, __LINE__, F(format), ##__VA_ARGS__)
+#define sv_log_d(tag, format, ...) sv_log_printf_(LOG_LEVEL_DEBUG, tag, __LINE__, F(format), ##__VA_ARGS__)
+#define sv_log_config(tag, format, ...) sv_log_printf_(LOG_LEVEL_CONFIG, tag, __LINE__, F(format), ##__VA_ARGS__)
 #else
 #define sv_log_d(tag, format, ...)
 #define sv_log_config(tag, format, ...)
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-#define sv_log_i(tag, format, ...) \
-  sv_log_printf_(LOG_LEVEL_INFO, tag, __LINE__, F(format), ##__VA_ARGS__)
+#define sv_log_i(tag, format, ...) sv_log_printf_(LOG_LEVEL_INFO, tag, __LINE__, F(format), ##__VA_ARGS__)
 #else
 #define sv_log_i(tag, format, ...)
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_WARN
-#define sv_log_w(tag, format, ...) \
-  sv_log_printf_(LOG_LEVEL_WARN, tag, __LINE__, F(format), ##__VA_ARGS__)
+#define sv_log_w(tag, format, ...) sv_log_printf_(LOG_LEVEL_WARN, tag, __LINE__, F(format), ##__VA_ARGS__)
 #else
 #define sv_log_w(tag, format, ...)
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
-#define sv_log_e(tag, format, ...) \
-  sv_log_printf_(LOG_LEVEL_ERROR, tag, __LINE__, F(format), ##__VA_ARGS__)
+#define sv_log_e(tag, format, ...) sv_log_printf_(LOG_LEVEL_ERROR, tag, __LINE__, F(format), ##__VA_ARGS__)
 #else
 #define sv_log_e(tag, format, ...)
 #endif

@@ -34,6 +34,7 @@ class Timer {
   void reset() { m_last = TimerManager::ms(); }
   void setCallback(TimerCallback cb) { m_callback = cb; }
   void call() { m_callback(this); }
+
  private:
   // Функция обратного вызова или лямбда
   TimerCallback m_callback;
@@ -42,6 +43,5 @@ class Timer {
   // Последнее время срабатывания
   TimerTick m_last;
 };
-
 
 }  // namespace dudanov

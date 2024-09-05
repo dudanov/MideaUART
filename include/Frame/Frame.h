@@ -80,7 +80,7 @@ class Frame {
   std::string toString() const;
 
   /**
-   * @brief Deserializes frame byte by byte.
+   * @brief Deserializes frame byte by byte. Caller is responsible for clearing frame after handling.
    *
    * @param data byte to process.
    * @return `true` if frame deserializing is complete and it ready for handling.

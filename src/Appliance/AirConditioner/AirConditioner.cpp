@@ -1,4 +1,5 @@
 #include "Appliance/AirConditioner/AirConditioner.h"
+#include "Appliance/AirConditioner/DeviceStatus.h"
 #include "Helpers/Timer.h"
 #include "Helpers/Log.h"
 
@@ -224,7 +225,7 @@ template<typename T> void setProperty(T &property, const T &value, bool &update)
 }
 
 ResponseStatus AirConditioner::m_readStatus(FrameData data) {
-  if (!data.hasStatus())
+  if (!FrameStatusData::hasStatusData(data))
     return ResponseStatus::RESPONSE_WRONG;
 
   LOG_D(TAG, "New status data received. Parsing...");

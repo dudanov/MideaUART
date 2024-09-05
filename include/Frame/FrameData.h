@@ -48,24 +48,39 @@ class FrameData {
    */
   template<typename T> T to() { return T(std::move(*this)); }
 
+  /**
+   * @brief Access for const element by index.
+   *
+   * @param idx index of element.
+   * @return const uint8_t& element.
+   */
   const uint8_t &operator[](size_t idx) const { return m_data[idx]; }
 
+  /**
+   * @brief Access for element by index.
+   *
+   * @param idx index of element.
+   * @return uint8_t& element.
+   */
   uint8_t &operator[](size_t idx) { return m_data[idx]; }
 
-  bool hasID(uint8_t value) const { return m_data[0] == value; }
-
-  bool hasStatus() const { return this->hasID(0xC0); }
+  /**
+   * @brief Checking for data has specified `typeID`.
+   *
+   * @param typeID type ID.
+   */
+  bool hasID(uint8_t typeID) const { return m_data.front() == typeID; }
 
   bool hasPowerInfo() const { return this->hasID(0xC1); }
 
   /**
-   * @brief Calculates and adds a checksum.
+   * @brief Calculates and appends checksum.
    *
    */
   void appendCRC() { m_data.push_back(m_calcCRC()); }
 
   /**
-   * @brief Updates the checksum (last byte).
+   * @brief Updates the checksum.
    *
    */
   void updateCRC() {
@@ -175,6 +190,8 @@ class FrameData {
    * @param state bit state.
    */
   void m_setBit(size_t idx, uint8_t bit, bool state) { m_setMask(idx, state, 1 << bit); }
+
+  static const uint8_t OFFSET_TYPE_ID = 0;
 };
 
 }  // namespace midea

@@ -1,14 +1,17 @@
 #include "Frame/Frame.h"
+#include "Helpers/Log.h"
 
 namespace dudanov {
 namespace midea {
 
+static const char *TAG = "Frame";
+
 Frame::Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &data)
-    : m_data({START_BYTE, 0x00, applianceID, 0x00, 0x00, 0x00, 0x00, 0x00, protocolID, typeID}) {
+    : m_data{{START_BYTE, 0x00, applianceID, 0x00, 0x00, 0x00, 0x00, 0x00, protocolID, typeID}} {
   this->setData(data);
 }
 
-FrameData Frame::getData() const { return FrameData(&m_data[OFFSET_DATA], &m_data[m_len()]); }
+FrameData Frame::getData() const { return FrameData{&m_data[OFFSET_DATA], &m_data[m_len()]}; }
 
 void Frame::setData(const FrameData &data) {
   m_trimData();
@@ -40,6 +43,8 @@ bool Frame::deserialize(const uint8_t &data) {
     // Frame received. Return validation result.
     if (m_calcCS() == 0)
       return true;
+
+    LOG_W(TAG, "Checksum is wrong.");
 
   } else if ((idx == OFFSET_LENGTH && data > OFFSET_DATA) || data == START_BYTE) {
     return false;

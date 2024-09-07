@@ -48,7 +48,7 @@ enum Feature : uint16_t {
   WIND_OFF_ME = 0x0033,       /**< Wind OFF me. Only in `COOL` and `HEAT`. Turn off all swing. */
   ACTIVE_CLEAN = 0x0039,      /**< Active Clean. */
   BREEZE_AWAY = 0x0042,       /**< Breeze Away. */
-  BREEZE = 0x0043,            /**< Breeze. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
+  BREEZE = 0x0043,            /**< Breezeless. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
   BUZZER = 0x022C,            /**< Buzzer. Values: 0 (Off), 1 (On). */
   IS_TWINS = 0x0232,          /**< Slave. Values in 0x0231 B1. */
   IS_FOUR_DIRECTION = 0x0233, /**< Master. Values in 0x0230 B1. */

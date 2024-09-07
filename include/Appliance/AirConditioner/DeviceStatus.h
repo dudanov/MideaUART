@@ -116,29 +116,64 @@ class DeviceStatus {
   bool selfFeelOwn : 1;
 };
 
+/**
+ * @brief
+ *
+ */
 struct B1Status {
+  /// Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100.
   uint8_t hWindDirection{};
+
+  /// Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100.
   uint8_t vWindDirection{};
+
+  /// Indoor Humidity.
   uint8_t indoorHumidity{};
-  std::vector<uint8_t> mMasterValues{};
-  std::vector<uint8_t> mSlaveValues{};
-  /// 39 Self Cleaning.
-  bool isSelfCleanOn{};
+
+  /// Breezeless. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less).
   uint8_t breezeType{1};
+
+  /// Master Values.
+  std::array<uint8_t, 4> mMasterValues{};
+
+  /// Slave Values.
+  std::array<uint8_t, 4> mSlaveValues{};
+
+  /// Active Clean.
+  bool isSelfCleanOn{};
+
+  /// Buzzer.
   bool isBuzzerOn{true};
+
   /// Breeze Away.
-  bool isNoWindFeelOn{false};
-  bool isSoundOn{false};
+  bool isNoWindFeelOn{};
+
+  /// Sound.
+  bool isSoundOn{};
+
   /// Wind On Me. Only in `COOL` and `HEAT`. Turn ON all Swing.
-  bool isBlowingPeopleOn{false};
+  bool isBlowingPeopleOn{};
+
   /// Wind Off Me. Only in `COOL` and `HEAT`. Turn OFF all Swing.
-  bool isAvoidPeopleOn{false};
-  bool isOneKeyNoWindOnMeOn{false};
-  bool isCombineBreezeOn{false};
-  bool isSmartEyeOn{false};
-  bool DehumLight{false};
+  bool isAvoidPeopleOn{};
+
+  ///
+  bool isOneKeyNoWindOnMeOn{};
+
+  ///
+  bool isCombineBreezeOn{};
+
+  ///
+  bool isSmartEyeOn{};
+
+  ///
+  bool DehumLight{};
 };
 
+/**
+ * @brief
+ *
+ */
 class FrameStatusData : public FrameData {
  public:
   /**

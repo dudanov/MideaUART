@@ -54,7 +54,7 @@ bool Frame::deserialize(const uint8_t &data) {
   return false;
 }
 
-static char u4hex(uint8_t num) { return num + ((num < 10) ? '0' : ('A' - 10)); }
+static char u4hex(uint8_t x) { return x + (x < 10 ? '0' : '7'); }
 
 std::string Frame::toString() const {
   std::string str;

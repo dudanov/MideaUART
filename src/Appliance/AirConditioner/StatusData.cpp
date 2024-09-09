@@ -95,13 +95,13 @@ void StatusData::setPreset(Preset preset) {
   }
 }
 
-static uint8_t bcd2u8(uint8_t bcd) { return bcd / 16 * 10 + bcd % 16; }
+static uint8_t bcd2u8(uint8_t x) { return x / 16 * 10 + x % 16; }
 
 float StatusData::getPowerUsage() const {
-  uint32_t result = 0;
-  const uint8_t *it = &m_data[18];
+  uint32_t result{};
+  auto it{&m_data[18]};
 
-  for (uint32_t weight = 1;; weight *= 100, --it) {
+  for (uint32_t weight{1};; weight *= 100, --it) {
     result += weight * bcd2u8(*it);
 
     if (weight == 10000)

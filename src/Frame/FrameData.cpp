@@ -33,7 +33,7 @@ uint8_t FrameData::m_calcCRC() const {
       0xF7, 0xB6, 0xE8, 0x0A, 0x54, 0xD7, 0x89, 0x6B, 0x35,
   };
 
-  uint8_t crc = 0;
+  uint8_t crc{};
 
   for (uint8_t data : m_data)
     crc = pgm_read_byte(CRC8_854_TABLE + (crc ^ data));

@@ -141,12 +141,12 @@ class PropertiesData : public FrameData {
    * @return `PropertiesReader` instance.
    */
   PropertiesReader getReader() const {
-    size_t hdr_size = 3;
+    size_t header_length = 3;
 
-    if (this->hasID(0xB1))
-      hdr_size = 4;
+    if (this->hasID(0xB0) || this->hasID(0xB1))
+      header_length = 4;
 
-    return PropertiesReader(*this, hdr_size);
+    return PropertiesReader(*this, header_length);
   }
 
  protected:

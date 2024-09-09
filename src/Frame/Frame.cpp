@@ -16,13 +16,13 @@ FrameData Frame::getData() const { return FrameData{&m_data[OFFSET_DATA], &m_dat
 void Frame::setData(const FrameData &data) {
   m_trimData();
   m_appendData(data);
-  m_data[OFFSET_LENGTH] = m_data.size();
+  m_data[OFFSET_LENGTH] = static_cast<uint8_t>(m_data.size());
   m_appendCS();
 }
 
 uint8_t Frame::m_calcCS() const {
   // Start byte excluded from checksum.
-  uint8_t cs = START_BYTE;
+  uint8_t cs{START_BYTE};
 
   for (uint8_t data : m_data)
     cs -= data;
@@ -31,7 +31,7 @@ uint8_t Frame::m_calcCS() const {
 }
 
 bool Frame::deserialize(const uint8_t &data) {
-  const uint8_t idx = m_data.size();
+  const uint8_t idx{static_cast<uint8_t>(m_data.size())};
 
   m_data.push_back(data);
 
@@ -57,7 +57,7 @@ bool Frame::deserialize(const uint8_t &data) {
 static char u4hex(uint8_t x) { return x + (x < 10 ? '0' : '7'); }
 
 std::string Frame::toString() const {
-  std::string str;
+  std::string str{};
 
   if (!m_data.empty()) {
     str.assign(3 * m_data.size() - 1, ' ');

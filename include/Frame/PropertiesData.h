@@ -140,14 +140,7 @@ class PropertiesData : public FrameData {
    *
    * @return `PropertiesReader` instance.
    */
-  PropertiesReader getReader() const {
-    size_t header_length = 3;
-
-    if (this->hasID(0xB0) || this->hasID(0xB1))
-      header_length = 4;
-
-    return PropertiesReader(*this, header_length);
-  }
+  PropertiesReader getReader() const;
 
  protected:
   explicit PropertiesData(uint8_t id) : FrameData{{id, 0}} {}

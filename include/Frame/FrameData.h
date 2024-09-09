@@ -125,7 +125,7 @@ class FrameData {
   std::vector<uint8_t> m_data;
 
   /**
-   * @brief Static function for generate message ID.
+   * @brief Message ID generator.
    *
    * @return Message ID.
    */

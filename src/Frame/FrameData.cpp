@@ -10,9 +10,8 @@
 namespace dudanov {
 namespace midea {
 
-// Message ID generator
 uint8_t FrameData::m_genID() {
-  static uint8_t id = 0;
+  static uint8_t id;
   return ++id;
 }
 

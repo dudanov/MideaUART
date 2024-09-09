@@ -7,7 +7,7 @@ namespace midea {
 static const char *TAG = "Frame";
 
 Frame::Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &data)
-    : m_data{{START_BYTE, 0x00, applianceID, 0x00, 0x00, 0x00, 0x00, 0x00, protocolID, typeID}} {
+    : m_data{{START_BYTE, 0, applianceID, 0, 0, 0, 0, 0, protocolID, typeID}} {
   this->setData(data);
 }
 

@@ -95,7 +95,7 @@ void StatusData::setPreset(Preset preset) {
   }
 }
 
-static unsigned bcd2u8(uint8_t x) { return x / 16 * 10 + x % 16; }
+static uint8_t bcd2u8(uint8_t x) { return x / 16 * 10 + x % 16; }
 
 float StatusData::getPowerUsage() const {
   unsigned power{}, weight{1};

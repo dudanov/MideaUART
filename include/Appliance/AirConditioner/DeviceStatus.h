@@ -160,7 +160,7 @@ struct B1Status {
   ///
   bool isOneKeyNoWindOnMeOn{};
 
-  ///
+  /// Breezeless is not `OFF`.
   bool isCombineBreezeOn{};
 
   ///

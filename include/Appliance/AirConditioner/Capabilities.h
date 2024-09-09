@@ -23,22 +23,6 @@ namespace ac {
  *
  */
 enum Feature : uint16_t {
-  FAN_SPEED = 0x0210,       /**< Supported Fan Speeds. */
-  ECO_MODES = 0x0212,       /**< ECO. */
-  EIGHT_HEAT = 0x0213,      /**< 8°C Heat. */
-  MODES = 0x0214,           /**< Supported Modes. */
-  SWING_MODES = 0x0215,     /**< Swing Modes. */
-  POWER_FUNC = 0x0216,      /**< Power Features. */
-  AIR_FILTER = 0x0217,      /**< Air Filter Features. (dusFull) */
-  AUX_HEATER = 0x0219,      /**< Electric Auxiliary Heating. */
-  TURBO_MODES = 0x021A,     /**< Turbo Mode Features. */
-  HUMIDITY = 0x021F,        /**< Drying Modes. */
-  UNIT_CHANGEABLE = 0x0222, /**< Fahrenheit Support. */
-  LED_LIGHT = 0x0224,       /**< LED Control. Values: 0 (Off), 7 (On). */
-  TEMP_RANGES = 0x0225,     /**< Temperature Ranges. */
-
-  /* B1 Command Features. */
-
   V_WIND_DIRECTION = 0x0009,  /**< Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100. */
   H_WIND_DIRECTION = 0x000A,  /**< Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100. */
   INDOOR_HUMIDITY = 0x0015,   /**< Indoor Humidity. */
@@ -49,6 +33,19 @@ enum Feature : uint16_t {
   ACTIVE_CLEAN = 0x0039,      /**< Active Clean. */
   BREEZE_AWAY = 0x0042,       /**< Breeze Away. */
   BREEZE = 0x0043,            /**< Breezeless. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
+  FAN_SPEED = 0x0210,         /**< Supported Fan Speeds. */
+  ECO_MODES = 0x0212,         /**< ECO. */
+  EIGHT_HEAT = 0x0213,        /**< 8°C Heat. */
+  MODES = 0x0214,             /**< Supported Modes. */
+  SWING_MODES = 0x0215,       /**< Swing Modes. */
+  POWER_FUNC = 0x0216,        /**< Power Features. */
+  AIR_FILTER = 0x0217,        /**< Air Filter Features. (dusFull) */
+  AUX_HEATER = 0x0219,        /**< Electric Auxiliary Heating. */
+  TURBO_MODES = 0x021A,       /**< Turbo Mode Features. */
+  DRY_MODES = 0x021F,         /**< Drying Modes. */
+  UNIT_CHANGEABLE = 0x0222,   /**< Fahrenheit Support. */
+  LED_LIGHT = 0x0224,         /**< LED Control. Values: 0 (Off), 7 (On). */
+  TEMP_RANGES = 0x0225,       /**< Temperature Ranges. */
   BUZZER = 0x022C,            /**< Buzzer. Values: 0 (Off), 1 (On). */
   IS_TWINS = 0x0232,          /**< Slave. Values in 0x0231 B1. */
   IS_FOUR_DIRECTION = 0x0233, /**< Master. Values in 0x0230 B1. */

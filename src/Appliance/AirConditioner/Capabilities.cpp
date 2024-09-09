@@ -127,7 +127,7 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       this->hasWindSpeed = b0;
       break;
 
-    case Feature::HUMIDITY:
+    case Feature::DRY_MODES:
       if (b0 == 0) {
         this->hasAutoClearHumidity = false;
         this->hasHandClearHumidity = false;

@@ -18,52 +18,52 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
   const uint8_t b0 = reader[0];
 
   switch (reader.uuid()) {
-    case Feature::V_WIND_DIRECTION:
+    case Feature::FEATURE_VWIND:
       this->hasVerticalWind = b0 == 1;
       break;
 
-    case Feature::H_WIND_DIRECTION:
+    case Feature::FEATURE_HWIND:
       this->hasHorizontalWind = b0 == 1;
       break;
 
-    case Feature::INDOOR_HUMIDITY:
+    case Feature::FEATURE_HUMIDITY:
       this->hasIndoorHumidity = b0 != 0;
       break;
 
-    case Feature::SILKY_COOL:
+    case Feature::FEATURE_SILKY_COOL:
       this->hasNoWindFeel = b0 != 0;
       break;
 
-    case Feature::ECO_EYE:
+    case Feature::FEATURE_ECO_EYE:
       this->hasSmartEye = b0 == 1;
       break;
 
-    case Feature::ACTIVE_CLEAN:
+    case Feature::FEATURE_CLEAN:
       this->hasSelfClean = b0 == 1;
       break;
 
-    case Feature::WIND_ON_ME:
+    case Feature::FEATURE_WIND_ON_ME:
       this->hasBlowingPeople = b0 == 1;
       break;
 
-    case Feature::WIND_OFF_ME:
+    case Feature::FEATURE_WIND_OFF_ME:
       this->hasAvoidPeople = b0 == 1;
       break;
 
-    case Feature::BREEZE_AWAY:
+    case Feature::FEATURE_BREEZE_AWAY:
       this->hasOneKeyNoWindOnMe = b0 == 1;
       break;
 
-    case Feature::BREEZE:
+    case Feature::FEATURE_BREEZELESS:
       this->hasBreeze = b0 == 1;
       break;
 
-    case Feature::FAN_SPEED:
+    case Feature::FEATURE_FAN:
       this->hasNoWindSpeed = b0 == 1;
       this->hasWindSpeed = b0;
       break;
 
-    case Feature::DRY_MODES:
+    case Feature::FEATURE_DRY:
       if (b0 == 0) {
         this->hasAutoClearHumidity = false;
         this->hasHandClearHumidity = false;
@@ -82,19 +82,19 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       }
       break;
 
-    case Feature::UNIT_CHANGEABLE:
+    case Feature::FEATURE_FAHRENHEIT:
       this->unitChangeable = b0 == 0;
       break;
 
-    case Feature::BUZZER:
+    case Feature::FEATURE_BUZZER:
       this->hasBuzzer = b0 != 0;
       break;
 
-    case Feature::AUX_HEATER:
+    case Feature::FEATURE_AUX_HEATER:
       this->dianfure = b0 == 1;
       break;
 
-    case Feature::TURBO_MODES:
+    case Feature::FEATURE_TURBO:
       if (b0 == 0) {
         this->strongHot = false;
         this->strongCool = true;
@@ -113,11 +113,11 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       }
       break;
 
-    case Feature::LED_LIGHT:
+    case Feature::FEATURE_LIGHT:
       this->lightType = b0;
       break;
 
-    case Feature::TEMP_RANGES:
+    case Feature::FEATURE_TEMP:
       this->cool_adjust_down_temp = b0 / 2;
       this->cool_adjust_up_temp = reader[1] / 2;
       this->auto_adjust_down_temp = reader[2] / 2;
@@ -127,20 +127,22 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       this->isHavePoint = (reader.size() > 6) ? reader[6] : reader[2];
       break;
 
-    case Feature::IS_TWINS:
+    case Feature::FEATURE_TWINS:
       this->isTwins = b0 == 1;
       break;
 
-    case Feature::ECO_MODES:
-      this->eco = b0 == 1;
-      this->special_eco = b0 == 2;
+    case Feature::FEATURE_ECO:
+      if (b0 == 1)
+        this->eco = true;
+      else if (b0 == 2)
+        this->special_eco = true;
       break;
 
-    case Feature::EIGHT_HEAT:
+    case Feature::FEATURE_8HEAT:
       this->eightHot = b0 == 1;
       break;
 
-    case Feature::MODES:
+    case Feature::FEATURE_MODES:
       if (b0 == 0) {
         this->hot = false;
         this->cool = true;
@@ -181,7 +183,7 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       }
       break;
 
-    case Feature::SWING_MODES:
+    case Feature::FEATURE_SWING:
       if (b0 == 0) {
         this->leftrightFan = false;
         this->updownFan = true;
@@ -200,7 +202,7 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       }
       break;
 
-    case Feature::POWER_FUNC:
+    case Feature::FEATURE_POWER:
       if (b0 <= 1) {
         this->powerCal = false;
         this->powerCalSetting = false;
@@ -215,7 +217,7 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       }
       break;
 
-    case Feature::AIR_FILTER:
+    case Feature::FEATURE_FILTER:
       if (b0 == 0) {
         this->nestCheck = false;
         this->nestNeedChange = false;
@@ -234,7 +236,7 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       }
       break;
 
-    case Feature::IS_FOUR_DIRECTION:
+    case Feature::FEATURE_FOUR_DIRECTION:
       this->isFourDirection = b0 == 1;
       break;
   }

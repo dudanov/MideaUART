@@ -111,47 +111,47 @@ float StatusData::getPowerUsage() const {
 /* PropertiesStateQuery */
 
 PropertiesStateQuery::PropertiesStateQuery() : PropertiesData(0xB1) {
-  this->appendUUID(INDOOR_HUMIDITY);
-  this->appendUUID(SILKY_COOL);
+  this->appendUUID(FEATURE_HUMIDITY);
+  this->appendUUID(FEATURE_SILKY_COOL);
   this->appendUUID(0x1A);  // beeper
-  this->appendUUID(ECO_EYE);
-  this->appendUUID(ACTIVE_CLEAN);
-  this->appendUUID(BREEZE_AWAY);
-  this->appendUUID(BREEZE);
-  this->appendUUID(BUZZER);
+  this->appendUUID(FEATURE_ECO_EYE);
+  this->appendUUID(FEATURE_CLEAN);
+  this->appendUUID(FEATURE_BREEZE_AWAY);
+  this->appendUUID(FEATURE_BREEZELESS);
+  this->appendUUID(FEATURE_BUZZER);
   this->appendCRC();
 }
 
 PropertiesStateQuery::PropertiesStateQuery(const Capabilities &b5) : PropertiesData(0xB1) {
   if (b5.hasBlowingPeople)
-    this->appendUUID(Feature::WIND_ON_ME);
+    this->appendUUID(Feature::FEATURE_WIND_ON_ME);
 
   if (b5.hasAvoidPeople)
-    this->appendUUID(Feature::WIND_OFF_ME);
+    this->appendUUID(Feature::FEATURE_WIND_OFF_ME);
 
   if (b5.hasSelfClean)
-    this->appendUUID(Feature::ACTIVE_CLEAN);
+    this->appendUUID(Feature::FEATURE_CLEAN);
 
   if (b5.hasOneKeyNoWindOnMe)
-    this->appendUUID(Feature::BREEZE_AWAY);
+    this->appendUUID(Feature::FEATURE_BREEZE_AWAY);
 
   if (b5.hasBreeze)
-    this->appendUUID(Feature::BREEZE);
+    this->appendUUID(Feature::FEATURE_BREEZELESS);
 
   if (b5.hasSmartEye)
-    this->appendUUID(Feature::ECO_EYE);
+    this->appendUUID(Feature::FEATURE_ECO_EYE);
 
   if (b5.hasBuzzer)
-    this->appendUUID(Feature::BUZZER);
+    this->appendUUID(Feature::FEATURE_BUZZER);
 
   if (b5.hasAutoClearHumidity || b5.hasHandClearHumidity)
-    this->appendUUID(Feature::INDOOR_HUMIDITY);
+    this->appendUUID(Feature::FEATURE_HUMIDITY);
 
   if (b5.hasVerticalWind)
-    this->appendUUID(Feature::V_WIND_DIRECTION);
+    this->appendUUID(Feature::FEATURE_VWIND);
 
   if (b5.hasHorizontalWind)
-    this->appendUUID(Feature::H_WIND_DIRECTION);
+    this->appendUUID(Feature::FEATURE_HWIND);
 
   if (b5.isTwins)
     this->appendUUID(2 * 256 + 49);

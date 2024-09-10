@@ -80,114 +80,6 @@ class Capabilities {
 
   /* Capabilities */
 
-  /// Wind On Me supported.
-  bool hasBlowingPeople{false};
-
-  /// Wind Off Me supported.
-  bool hasAvoidPeople{false};
-
-  /// Active Clean supported.
-  bool hasSelfClean{false};
-
-  /// Breeze Away supported.
-  bool hasOneKeyNoWindOnMe{false};
-
-  /// Breezeless Preset supported.
-  bool hasBreeze{false};
-
-  /// ECO Intelligent Eye supported.
-  bool hasSmartEye{false};
-
-  /// Sound supported.
-  bool hasBuzzer{false};
-
-  /// Indoor Humidity supported.
-  bool hasIndoorHumidity{false};
-
-  /// Horizontal Wind Direction supported.
-  bool hasHorizontalWind{false};
-
-  /// Vertical Wind Direction supported.
-  bool hasVerticalWind{false};
-
-  /// Multi Split.
-  bool isTwins{false};
-
-  /// Cassette Four Direction.
-  bool isFourDirection{false};
-
-  /// Fahrenheits units supported.
-  bool unitChangeable{true};
-
-  /// Cool Mode supported.
-  bool cool{true};
-
-  // Heat Mode supported.
-  bool hot{true};
-
-  /// Dry Mode supported.
-  bool dry{true};
-
-  /// Auto Mode supported.
-  bool auto_{true};
-
-  /// FanOnly Mode supported.
-  bool wind{true};
-
-  /// Cool Turbo Mode supported.
-  bool strongCool{true};
-
-  /// Vertical Swing supported.
-  bool leftrightFan{true};
-
-  /// Horizontal Swing supported.
-  bool updownFan{false};
-
-  /// ECO Preset supported.
-  bool eco{false};
-
-  /// Special ECO Preset supported.
-  bool special_eco{false};
-
-  /// Frost Protection Preset supported.
-  bool eightHot{false};
-
-  /// Power Usage Report supported.
-  bool powerCal{false};
-
-  /// Power Limit supported.
-  bool powerCalSetting{false};
-
-  /// Air Filter Cleaning Reminder supported.
-  bool nestCheck{false};
-
-  /// Air Filter Replacement Reminder supported.
-  bool nestNeedChange{false};
-
-  /// Electric Auxiliary Heat supported.
-  bool dianfure{false};
-
-  /// Heat Turbo preset supported.
-  bool strongHot{false};
-
-  /// Silky Cool Preset supported.
-  bool hasNoWindFeel{false};
-
-  /// Dry Mode Auto supported.
-  bool hasAutoClearHumidity{false};
-
-  /// Dry Mode Smart supported.
-  bool hasHandClearHumidity{false};
-
-  /// Decimal Point supported.
-  bool isHavePoint{false};
-
-  /// Fan Speed in percents.
-  bool hasNoWindSpeed{false};
-
-  /// Fan Speeds coded data.
-  uint8_t hasWindSpeed{0};
-
   /// Supported Maximum Temperature in Cool Mode.
   uint8_t cool_adjust_up_temp{30};
 
@@ -208,6 +100,114 @@ class Capabilities {
 
   /// LED Light. Values: 0 (Off), 7 (On).
   uint8_t lightType{0};
+
+  /// Fan Speeds coded data.
+  uint8_t hasWindSpeed{0};
+
+  /// `Wind On Me` supported.
+  bool hasBlowingPeople{false};
+
+  /// `Wind Off Me` supported.
+  bool hasAvoidPeople{false};
+
+  /// `Active Clean` supported.
+  bool hasSelfClean{false};
+
+  /// `Breeze Away` supported.
+  bool hasOneKeyNoWindOnMe{false};
+
+  /// `Breezeless` supported.
+  bool hasBreeze{false};
+
+  /// `ECO Intelligent Eye` supported.
+  bool hasSmartEye{false};
+
+  /// `Sound` supported.
+  bool hasBuzzer{false};
+
+  /// `Indoor Humidity` supported.
+  bool hasIndoorHumidity{false};
+
+  /// `Horizontal Wind Direction` supported.
+  bool hasHorizontalWind{false};
+
+  /// `Vertical Wind Direction` supported.
+  bool hasVerticalWind{false};
+
+  /// Multi Split.
+  bool isTwins{false};
+
+  /// Cassette Four Direction.
+  bool isFourDirection{false};
+
+  /// Fahrenheits display units supported.
+  bool unitChangeable{true};
+
+  /// `Cool Mode` supported.
+  bool cool{true};
+
+  // `Heat Mode` supported.
+  bool hot{true};
+
+  /// `Dry Mode` supported.
+  bool dry{true};
+
+  /// `Auto Mode` supported.
+  bool auto_{true};
+
+  /// `Fan Mode` supported.
+  bool wind{true};
+
+  /// `Cool Turbo Mode` supported.
+  bool strongCool{true};
+
+  /// `Vertical Swing` supported.
+  bool leftrightFan{true};
+
+  /// `Horizontal Swing` supported.
+  bool updownFan{false};
+
+  /// `ECO Preset` supported.
+  bool eco{false};
+
+  /// `Special ECO` supported.
+  bool special_eco{false};
+
+  /// `Frost Protection` supported.
+  bool eightHot{false};
+
+  /// `Power Usage Report` supported.
+  bool powerCal{false};
+
+  /// `Power Limit` supported.
+  bool powerCalSetting{false};
+
+  /// `Air Filter Cleaning Reminder` supported.
+  bool nestCheck{false};
+
+  /// `Air Filter Replacement Reminder` supported.
+  bool nestNeedChange{false};
+
+  /// `Electric Auxiliary Heater` supported.
+  bool dianfure{false};
+
+  /// `Heat Turbo` supported.
+  bool strongHot{false};
+
+  /// `Silky Cool` supported.
+  bool hasNoWindFeel{false};
+
+  /// `Dry Mode Auto` supported.
+  bool hasAutoClearHumidity{false};
+
+  /// `Dry Mode Smart` supported.
+  bool hasHandClearHumidity{false};
+
+  /// `Decimal Point` supported.
+  bool isHavePoint{false};
+
+  /// `Fan Speed` in percents.
+  bool hasNoWindSpeed{false};
 
  protected:
   void m_setFuncEnable(const PropertiesData::PropertiesReader &data);

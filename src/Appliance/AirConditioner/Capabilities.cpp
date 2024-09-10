@@ -14,70 +14,6 @@ bool Capabilities::isNeedB1Query() const {
          this->isTwins || this->isFourDirection;
 }
 
-void Capabilities::m_setBaseFunc() {
-  this->unitChangeable = true;
-  this->eco = false;
-  this->updownFan = false;
-  this->leftrightFan = false;
-  this->eightHot = false;
-  this->cool = true;
-  this->hot = true;
-  this->dry = true;
-  this->auto_ = true;
-  this->wind = true;
-  this->powerCal = false;
-  this->strongCool = true;
-  this->strongHot = false;
-}
-
-void Capabilities::m_toSubCool() {
-  this->auto_ = false;
-  this->hot = false;
-  this->eightHot = false;
-  this->cool = true;
-  this->dry = false;
-  this->eco = true;
-  this->leftrightFan = true;
-  this->unitChangeable = true;
-  this->strongCool = true;
-}
-
-void Capabilities::m_toOnlyCool() {
-  this->auto_ = true;
-  this->hot = false;
-  this->eightHot = false;
-  this->cool = true;
-  this->dry = true;
-  this->eco = true;
-  this->leftrightFan = true;
-  this->unitChangeable = true;
-  this->strongCool = true;
-}
-
-void Capabilities::m_toOnlyHot() {
-  this->auto_ = true;
-  this->cool = false;
-  this->dry = false;
-  this->hot = true;
-  this->eightHot = true;
-  this->eco = true;
-  this->leftrightFan = true;
-  this->unitChangeable = true;
-  this->strongCool = true;
-}
-
-void Capabilities::m_toAllEnable() {
-  this->auto_ = true;
-  this->hot = true;
-  this->eightHot = true;
-  this->cool = true;
-  this->dry = true;
-  this->eco = true;
-  this->leftrightFan = true;
-  this->unitChangeable = true;
-  this->strongCool = true;
-}
-
 void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reader) {
   const uint8_t b0 = reader[0];
 
@@ -205,46 +141,43 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       break;
 
     case Feature::MODES:
-      this->hotcold = b0;
+      if (b0 == 0) {
+        this->hot = false;
+        this->cool = true;
+        this->dry = true;
+        this->auto_ = true;
 
-      if (b0 == Capabilities::COLD_HOT) {
+      } else if (b0 == 1) {
         this->cool = true;
         this->hot = true;
         this->dry = true;
         this->auto_ = true;
 
-      } else if (b0 == Capabilities::HOT) {
+      } else if (b0 == 2) {
         this->cool = false;
         this->dry = false;
         this->hot = true;
         this->auto_ = true;
 
-      } else if (b0 == Capabilities::COLD_SUB) {
+      } else if (b0 == 3) {
         this->cool = true;
         this->dry = false;
         this->hot = false;
         this->auto_ = false;
 
-      } else if (b0 == Capabilities::COLD_SUB_COLD_HOT) {
+      } else if (b0 == 4) {
         this->cool = true;
         this->dry = false;
         this->hot = true;
         this->auto_ = false;
         this->wind = true;
 
-      } else if (b0 == Capabilities::COLD_SUB_COLD) {
+      } else if (b0 == 5) {
         this->cool = true;
         this->dry = true;
         this->hot = false;
         this->auto_ = false;
         this->wind = true;
-
-      } else {
-        // Capabilities::COLD
-        this->hot = false;
-        this->cool = true;
-        this->dry = true;
-        this->auto_ = true;
       }
       break;
 
@@ -268,7 +201,7 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
       break;
 
     case Feature::POWER_FUNC:
-      if (b0 < 2) {
+      if (b0 <= 1) {
         this->powerCal = false;
         this->powerCalSetting = false;
 
@@ -287,7 +220,7 @@ void Capabilities::m_setFuncEnable(const PropertiesData::PropertiesReader &reade
         this->nestCheck = false;
         this->nestNeedChange = false;
 
-      } else if (b0 < 3) {
+      } else if (b0 <= 2) {
         this->nestCheck = true;
         this->nestNeedChange = false;
 
@@ -358,7 +291,7 @@ void Capabilities::dump() const {
   LOG_CONFIG(TAG, "  [x] Wind Speed: %d", this->hasWindSpeed);
   LOG_CAPABILITY("  [x] Indoor Humidity", this->hasIndoorHumidity);  // Indoor humidity in B1 response
   LOG_CAPABILITY("  [x] Decimal Point", this->isHavePoint);
-  LOG_CAPABILITY("  [x] Unit Changeable", this->unitChangeable);
+  LOG_CAPABILITY("  [x] Fahrenheits", this->unitChangeable);
   LOG_CAPABILITY("  [x] Breezeless", this->hasBreeze);  // Only in `COOL` mode. Valid values are: 1, 2, 3, 4.
   LOG_CAPABILITY("  [x] Vertical Direction", this->hasVerticalWind);
   LOG_CAPABILITY("  [x] Horizontal Direction", this->hasHorizontalWind);

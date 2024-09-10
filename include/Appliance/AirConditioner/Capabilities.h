@@ -78,17 +78,6 @@ class Capabilities {
    */
   bool isNeedB1Query() const;
 
-  enum ACType : uint8_t {
-    COLD,      // m_toOnlyCool()
-    COLD_HOT,  // m_toAllEnable()
-    HOT,       // m_toOnlyHot()
-    COLD_SUB,  // m_toSubCool()
-    COLD_SUB_COLD_HOT,
-    COLD_SUB_COLD,
-  };
-
-  ACType getDeviceType() const { return static_cast<ACType>(this->hotcold); }
-
   /* Capabilities */
 
   /// Wind On Me supported.
@@ -199,9 +188,6 @@ class Capabilities {
   /// Fan Speeds coded data.
   uint8_t hasWindSpeed{0};
 
-  /// Base features.
-  uint8_t hotcold{0};
-
   /// Supported Maximum Temperature in Cool Mode.
   uint8_t cool_adjust_up_temp{30};
 
@@ -225,11 +211,6 @@ class Capabilities {
 
  protected:
   void m_setFuncEnable(const PropertiesData::PropertiesReader &data);
-  void m_setBaseFunc();
-  void m_toOnlyCool();
-  void m_toAllEnable();
-  void m_toOnlyHot();
-  void m_toSubCool();
 };
 
 }  // namespace ac

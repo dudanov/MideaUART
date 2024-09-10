@@ -70,25 +70,23 @@ class PropertiesData : public FrameData {
      * @brief Constructor from `PropertiesData`. Skip `ID`, `NUM` and `CRC` fields.
      *
      * @param src reference to `PropertiesData`.
-     * @param headerLength header length.
      */
-    explicit PropertiesReader(const PropertiesData &src, size_t headerLength)
-        : m_header{&src.m_data[2]}, m_data{m_header + headerLength}, m_end{&src.m_data.back()} {}
-
-    /**
-     * @brief
-     *
-     *
-     * @return
-     */
-    size_t headerLength() const { return std::distance(m_header, m_data); }
+    explicit PropertiesReader(const PropertiesData &src)
+        : m_pheader{&src.m_data[2]}, m_pdata{m_pheader + 3 + !src.hasID(0xB5)}, m_pend{&src.m_data.back()} {}
 
     /**
      * @brief Size of properties data.
      *
      * @return size of properties data.
      */
-    int size() const { return m_data[-1]; }
+    uint8_t size() const { return m_pdata[-1]; }
+
+    /**
+     * @brief Result of operation. Valid only for `0xB0` and `0xB1` messages.
+     *
+     * @return Result of operation.
+     */
+    uint8_t result() const { return m_pdata[-2]; }
 
     /**
      * @brief Property data access `operator[]`.
@@ -96,14 +94,14 @@ class PropertiesData : public FrameData {
      * @param idx byte index.
      * @return property byte.
      */
-    const uint8_t &operator[](int idx) const { return m_data[idx]; }
+    const uint8_t &operator[](int idx) const { return m_pdata[idx]; }
 
     /**
      * @brief Available bytes for read.
      *
      * @return int Available bytes for read.
      */
-    int available() const { return std::distance(m_data + this->size(), m_end); }
+    int available() const { return std::distance(m_pdata + this->size(), m_pend); }
 
     /**
      * @brief Current property is valid.
@@ -117,22 +115,23 @@ class PropertiesData : public FrameData {
      *
      * @return UUID.
      */
-    PropertyUUID uuid() const { return m_header[1] * 256 + m_header[0]; }
+    PropertyUUID uuid() const { return m_pheader[1] * 256 + m_pheader[0]; }
 
     /**
      * @brief Advance reader to next property.
      *
      */
     void advance() {
-      auto offset = this->size() + this->headerLength();
-      m_header += offset;
-      m_data += offset;
+      auto offset = this->size() + this->m_hdrLen();
+      m_pheader += offset;
+      m_pdata += offset;
     }
 
    private:
-    const uint8_t *m_header;
-    const uint8_t *m_data;
-    const uint8_t *const m_end;
+    size_t m_hdrLen() const { return std::distance(m_pheader, m_pdata); }
+    const uint8_t *m_pheader;     // pointer to header
+    const uint8_t *m_pdata;       // pointer to data
+    const uint8_t *const m_pend;  // pointer to data end
   };
 
   /**

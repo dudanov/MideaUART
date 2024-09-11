@@ -14,7 +14,7 @@ bool Capabilities::isNeedB1Query() const {
          this->isTwins || this->isFourDirection;
 }
 
-void Capabilities::m_setFuncEnable(const PropertiesReader &reader) {
+void Capabilities::m_setFeature(const PropertiesReader &reader) {
   const uint8_t b0 = reader[0];
 
   switch (reader.uuid()) {
@@ -246,7 +246,7 @@ uint8_t Capabilities::read(const FrameData &data) {
   PropertiesReader reader{data};
 
   for (; reader.available() > 0; reader.advance())
-    m_setFuncEnable(reader);
+    m_setFeature(reader);
 
   return reader.available() ? 0 : reader.uuid();
 }

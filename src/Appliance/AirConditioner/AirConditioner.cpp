@@ -152,8 +152,8 @@ void AirConditioner::m_getPowerUsage() {
 
   m_queueRequest(FrameType::DEVICE_QUERY, PowerUsageQuery{},
                  // onData
-                 [this](FrameData data) -> ResponseStatus {
-                   const auto status = data.to<StatusData>();
+                 [this](FrameData s) -> ResponseStatus {
+                   const auto status = s.to<StatusData>();
 
                    if (!status.hasPowerInfo())
                      return ResponseStatus::RESPONSE_WRONG;
@@ -177,11 +177,11 @@ void AirConditioner::m_getCapabilities() {
   m_queueRequest(
       FrameType::DEVICE_QUERY, CapabilitiesQuery{},
       // onData
-      [this](FrameData data) -> ResponseStatus {
-        if (!data.hasID(0xB5))
+      [this](FrameData s) -> ResponseStatus {
+        if (!s.hasID(0xB5))
           return RESPONSE_WRONG;
 
-        const uint8_t next = m_capabilities.read(data);
+        const uint8_t next = m_capabilities.read(s);
 
         if (next == 0)
           return RESPONSE_OK;

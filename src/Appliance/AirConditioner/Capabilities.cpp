@@ -242,8 +242,8 @@ void Capabilities::m_setFeature(const PropertiesReader &reader) {
   }
 }
 
-uint8_t Capabilities::read(const FrameData &data) {
-  PropertiesReader reader{data};
+uint8_t Capabilities::read(const FrameData &s) {
+  PropertiesReader reader{s};
 
   for (; reader.available() > 0; reader.advance())
     m_setFeature(reader);

@@ -9,7 +9,7 @@ PropertiesReader::PropertiesReader(const FrameData &s)
 bool PropertiesReader::hasProperties(const FrameData &s) { return s.hasID(0xB0) || s.hasID(0xB1) || s.hasID(0xB5); }
 
 void PropertiesReader::advance() {
-  const auto offset = this->size() + m_hdrLen();
+  auto offset = m_size();
   m_pheader += offset;
   m_pdata += offset;
 }

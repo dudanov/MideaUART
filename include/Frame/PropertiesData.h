@@ -61,7 +61,7 @@ class PropertiesReader {
    *
    * @return int Available bytes for read.
    */
-  int available() const { return std::distance(m_pdata + this->size(), m_pend); }
+  int available() const { return std::distance(m_end(), m_pend); }
 
   /**
    * @brief Current property is valid.
@@ -84,7 +84,14 @@ class PropertiesReader {
   void advance();
 
  private:
-  size_t m_hdrLen() const { return std::distance(m_pheader, m_pdata); }
+  // Pointer to begin of current property.
+  const uint8_t *m_begin() const { return m_pheader; }
+
+  // Pointer to end of current property (begin of next property).
+  const uint8_t *m_end() const { return m_pdata + this->size(); }
+
+  // Size of current property.
+  size_t m_size() const { return std::distance(m_begin(), m_end()); }
 
   const uint8_t *m_pheader;     // pointer to header
   const uint8_t *m_pdata;       // pointer to data

@@ -276,6 +276,7 @@ void Capabilities::dump() const {
     LOG_CONFIG(TAG, "      - Min: %d", this->hot_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->hot_adjust_up_temp);
     LOG_CAPABILITY("      - Turbo", this->strongHot);
+    LOG_CAPABILITY("  [x] 8°C Heat", this->eightHot);  // Only in `HEAT` mode and not supported by `SLEEP`.
   }
 
   if (this->dry) {
@@ -302,7 +303,6 @@ void Capabilities::dump() const {
   LOG_CAPABILITY("  [x] ECO", this->eco);                          // Only in `COOL` mode. Temperature: >= 24°C.
   LOG_CAPABILITY("  [x] Special ECO", this->special_eco);          // Only in `AUTO`, `COOL`, `DRY` modes.
   LOG_CAPABILITY("  [x] ECO Intelligent Eye", this->hasSmartEye);  // Not supported modes: `DRY`, `FAN_ONLY`.
-  LOG_CAPABILITY("  [x] 8°C Heat", this->hot && this->eightHot);   // Only in `HEAT` mode and not supported by `SLEEP`.
 
   // in HEAT mode DeviceStatus.ptcAssis must be 1
   LOG_CAPABILITY("  [x] Electric Auxiliary Heat", this->dianfure);

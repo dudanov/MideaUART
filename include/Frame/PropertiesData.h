@@ -25,6 +25,14 @@ class PropertiesReader {
   explicit PropertiesReader(const FrameData &s) : m_pheader{&s[2]}, m_pdata{&s[5] + !s.hasID(0xB5)}, m_pend{&s[-1]} {}
 
   /**
+   * @brief Checks for properties in `FrameData`.
+   *
+   * @param s reference to `FrameData`.
+   * @return `true` if `FrameData` has properties.
+   */
+  static bool hasProperties(const FrameData &s);
+
+  /**
    * @brief Size of properties data.
    *
    * @return size of properties data.

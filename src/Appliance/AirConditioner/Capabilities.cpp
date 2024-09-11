@@ -243,15 +243,12 @@ void Capabilities::m_setFuncEnable(const PropertiesReader &reader) {
 }
 
 uint8_t Capabilities::read(const FrameData &data) {
-  if (!data.hasID(0xB5))
-    return 0;
+  PropertiesReader reader{data};
 
-  PropertiesReader b5{data};
+  for (; reader.available() > 0; reader.advance())
+    m_setFuncEnable(reader);
 
-  for (; b5.valid(); b5.advance())
-    m_setFuncEnable(b5);
-
-  return b5.available() ? 0 : b5.uuid();
+  return reader.available() ? 0 : reader.uuid();
 }
 
 #define LOG_CAPABILITY(str, condition) \

@@ -24,6 +24,8 @@ class PropertiesReader {
    */
   explicit PropertiesReader(const FrameData &s);
 
+  PropertiesReader(const PropertiesReader &) = delete;
+
   /**
    * @brief Checks for properties in `FrameData`.
    *
@@ -79,14 +81,11 @@ class PropertiesReader {
    * @brief Advance reader to next property.
    *
    */
-  void advance() {
-    auto offset = this->size() + this->m_hdrLen();
-    m_pheader += offset;
-    m_pdata += offset;
-  }
+  void advance();
 
  private:
   size_t m_hdrLen() const { return std::distance(m_pheader, m_pdata); }
+
   const uint8_t *m_pheader;     // pointer to header
   const uint8_t *m_pdata;       // pointer to data
   const uint8_t *const m_pend;  // pointer to data end

@@ -12,19 +12,84 @@ namespace midea {
 using PropertyUUID = uint16_t;
 
 /**
+ * @brief Properties data reader.
+ *
+ */
+class PropertiesReader {
+ public:
+  /**
+   * @brief Constructor from `PropertiesData`. Skip `ID`, `NUM` and `CRC` fields.
+   *
+   * @param s reference to `FrameData`.
+   */
+  explicit PropertiesReader(const FrameData &s) : m_pheader{&s[2]}, m_pdata{&s[5] + !s.hasID(0xB5)}, m_pend{&s[-1]} {}
+
+  /**
+   * @brief Size of properties data.
+   *
+   * @return size of properties data.
+   */
+  uint8_t size() const { return m_pdata[-1]; }
+
+  /**
+   * @brief Result of operation. Valid only for `0xB0` and `0xB1` messages.
+   *
+   * @return Result of operation.
+   */
+  uint8_t result() const { return m_pdata[-2]; }
+
+  /**
+   * @brief Property data access `operator[]`.
+   *
+   * @param idx byte index.
+   * @return property byte.
+   */
+  const uint8_t &operator[](int idx) const { return m_pdata[idx]; }
+
+  /**
+   * @brief Available bytes for read.
+   *
+   * @return int Available bytes for read.
+   */
+  int available() const { return std::distance(m_pdata + this->size(), m_pend); }
+
+  /**
+   * @brief Current property is valid.
+   *
+   * @return property validation result.
+   */
+  bool valid() const { return this->available() >= 0; }
+
+  /**
+   * @brief Property UUID.
+   *
+   * @return UUID.
+   */
+  PropertyUUID uuid() const { return m_pheader[1] * 256 + m_pheader[0]; }
+
+  /**
+   * @brief Advance reader to next property.
+   *
+   */
+  void advance() {
+    auto offset = this->size() + this->m_hdrLen();
+    m_pheader += offset;
+    m_pdata += offset;
+  }
+
+ private:
+  size_t m_hdrLen() const { return std::distance(m_pheader, m_pdata); }
+  const uint8_t *m_pheader;     // pointer to header
+  const uint8_t *m_pdata;       // pointer to data
+  const uint8_t *const m_pend;  // pointer to data end
+};
+
+/**
  * @brief FrameData for new commands 0xB0 (set), 0xB1 (get).
  *
  */
 class PropertiesData : public FrameData {
  public:
-  /**
-   * @brief Makes `PropertiesData` instance from `FrameData` using `move semantics`.
-   *
-   * @param data source frame data.
-   * @return `PropertiesData` instance.
-   */
-  static PropertiesData fromData(FrameData &data) { return PropertiesData{std::move(data)}; }
-
   /**
    * @brief Makes `PropertiesData` instance of specified type ID.
    *
@@ -60,90 +125,8 @@ class PropertiesData : public FrameData {
     this->appendPascalArray(data...);
   }
 
-  /**
-   * @brief Properties data reader.
-   *
-   */
-  class PropertiesReader {
-   public:
-    /**
-     * @brief Constructor from `PropertiesData`. Skip `ID`, `NUM` and `CRC` fields.
-     *
-     * @param src reference to `PropertiesData`.
-     */
-    explicit PropertiesReader(const PropertiesData &src)
-        : m_pheader{&src.m_data[2]}, m_pdata{m_pheader + 3 + !src.hasID(0xB5)}, m_pend{&src.m_data.back()} {}
-
-    /**
-     * @brief Size of properties data.
-     *
-     * @return size of properties data.
-     */
-    uint8_t size() const { return m_pdata[-1]; }
-
-    /**
-     * @brief Result of operation. Valid only for `0xB0` and `0xB1` messages.
-     *
-     * @return Result of operation.
-     */
-    uint8_t result() const { return m_pdata[-2]; }
-
-    /**
-     * @brief Property data access `operator[]`.
-     *
-     * @param idx byte index.
-     * @return property byte.
-     */
-    const uint8_t &operator[](int idx) const { return m_pdata[idx]; }
-
-    /**
-     * @brief Available bytes for read.
-     *
-     * @return int Available bytes for read.
-     */
-    int available() const { return std::distance(m_pdata + this->size(), m_pend); }
-
-    /**
-     * @brief Current property is valid.
-     *
-     * @return property validation result.
-     */
-    bool valid() const { return this->available() >= 0; }
-
-    /**
-     * @brief Property UUID.
-     *
-     * @return UUID.
-     */
-    PropertyUUID uuid() const { return m_pheader[1] * 256 + m_pheader[0]; }
-
-    /**
-     * @brief Advance reader to next property.
-     *
-     */
-    void advance() {
-      auto offset = this->size() + this->m_hdrLen();
-      m_pheader += offset;
-      m_pdata += offset;
-    }
-
-   private:
-    size_t m_hdrLen() const { return std::distance(m_pheader, m_pdata); }
-    const uint8_t *m_pheader;     // pointer to header
-    const uint8_t *m_pdata;       // pointer to data
-    const uint8_t *const m_pend;  // pointer to data end
-  };
-
-  /**
-   * @brief Create properties data reader. Valid only for one read.
-   *
-   * @return `PropertiesReader` instance.
-   */
-  PropertiesReader getReader() const;
-
  protected:
   explicit PropertiesData(uint8_t id) : FrameData{{id, 0}} {}
-  explicit PropertiesData(FrameData &&data) : FrameData{std::move(data)} {}
 };
 
 }  // namespace midea

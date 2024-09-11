@@ -63,7 +63,7 @@ class Capabilities {
    * @param data Reference to `PropertiesData` instance.
    * @return If zero - no more data is required. Else `ID` of next frame.
    */
-  uint8_t read(const PropertiesData &data);
+  uint8_t read(const FrameData &data);
 
   /**
    * @brief Dump capabilities report to logs.
@@ -210,7 +210,7 @@ class Capabilities {
   bool hasNoWindSpeed{false};
 
  protected:
-  void m_setFuncEnable(const PropertiesData::PropertiesReader &data);
+  void m_setFuncEnable(const PropertiesReader &data);
 };
 
 }  // namespace ac

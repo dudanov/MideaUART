@@ -54,7 +54,7 @@ class FrameData {
    * @param idx index of element.
    * @return const uint8_t& element.
    */
-  const uint8_t &operator[](size_t idx) const { return m_data[idx]; }
+  const uint8_t &operator[](int idx) const { return idx >= 0 ? m_data[idx] : *(m_data.end() + idx); }
 
   /**
    * @brief Access for element by index.
@@ -62,7 +62,7 @@ class FrameData {
    * @param idx index of element.
    * @return uint8_t& element.
    */
-  uint8_t &operator[](size_t idx) { return m_data[idx]; }
+  uint8_t &operator[](int idx) { return idx >= 0 ? m_data[idx] : *(m_data.end() + idx); }
 
   /**
    * @brief Checking for data has specified `typeID`.
@@ -190,8 +190,6 @@ class FrameData {
    * @param state bit state.
    */
   void m_setBit(size_t idx, uint8_t bit, bool state) { m_setMask(idx, state, 1 << bit); }
-
-  static const uint8_t OFFSET_TYPE_ID = 0;
 };
 
 }  // namespace midea

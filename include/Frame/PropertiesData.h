@@ -22,7 +22,7 @@ class PropertiesReader {
    *
    * @param s reference to `FrameData`.
    */
-  explicit PropertiesReader(const FrameData &s) : m_pheader{&s[2]}, m_pdata{&s[5] + !s.hasID(0xB5)}, m_pend{&s[-1]} {}
+  explicit PropertiesReader(const FrameData &s);
 
   /**
    * @brief Checks for properties in `FrameData`.

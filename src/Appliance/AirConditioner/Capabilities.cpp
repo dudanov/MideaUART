@@ -248,10 +248,10 @@ uint8_t Capabilities::read(const FrameData &data) {
 
   PropertiesReader b5{data};
 
-  for (; b5.available() > 3; b5.advance())
+  for (; b5.valid(); b5.advance())
     m_setFuncEnable(b5);
 
-  return (b5.available() == 3) ? b5[-3] : 0;
+  return b5.available() ? 0 : b5.uuid();
 }
 
 #define LOG_CAPABILITY(str, condition) \

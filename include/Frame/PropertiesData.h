@@ -61,14 +61,14 @@ class PropertiesReader {
    *
    * @return int Available bytes for read.
    */
-  int available() const { return std::distance(m_end(), m_pend); }
+  int available() const { return std::distance(m_pdata, m_pend); }
 
   /**
    * @brief Current property is valid.
    *
    * @return property validation result.
    */
-  bool valid() const { return this->available() >= 0; }
+  bool valid() const { return this->available() > 0 && this->size(); }
 
   /**
    * @brief Property UUID.

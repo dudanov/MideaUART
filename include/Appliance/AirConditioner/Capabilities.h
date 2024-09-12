@@ -11,10 +11,13 @@
 #pragma once
 #include <Arduino.h>
 
-#include "Frame/PropertiesReader.h"
+#include "Frame/FrameData.h"
 
 namespace dudanov {
 namespace midea {
+
+class PropertiesReader;
+
 namespace ac {
 
 /**

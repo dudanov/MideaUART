@@ -1,4 +1,5 @@
 #include "Appliance/AirConditioner/Capabilities.h"
+#include "Frame/PropertiesReader.h"
 #include "Helpers/Helpers.h"
 #include "Helpers/Log.h"
 

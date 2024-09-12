@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 #include "Frame/FrameData.h"
 #include "StatusData.h"
 

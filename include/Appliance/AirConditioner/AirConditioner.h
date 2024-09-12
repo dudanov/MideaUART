@@ -20,13 +20,13 @@ struct Control {
 
 class AirConditioner : public ApplianceBase {
  public:
-  AirConditioner() : ApplianceBase(APP_CONDITIONER) {}
+  AirConditioner() : ApplianceBase{APP_CONDITIONER} {}
   void m_setup() override;
   void m_onIdle() override { m_getStatus(); }
   void control(const Control &control);
   void setPowerState(bool state);
-  bool getPowerState() const { return m_mode != Mode::MODE_OFF; }
-  void togglePowerState() { this->setPowerState(m_mode == Mode::MODE_OFF); }
+  bool getPowerState() const { return m_mode != MODE_OFF; }
+  void togglePowerState() { this->setPowerState(m_mode == MODE_OFF); }
   float getTargetTemp() const { return m_targetTemp; }
   float getIndoorTemp() const { return m_indoorTemp; }
   float getOutdoorTemp() const { return m_outdoorTemp; }
@@ -53,11 +53,11 @@ class AirConditioner : public ApplianceBase {
   float m_outdoorTemp{};
   float m_targetTemp{};
   float m_powerUsage{};
-  Mode m_mode{Mode::MODE_OFF};
-  Preset m_preset{Preset::PRESET_NONE};
-  FanSpeed m_fanMode{FanSpeed::FAN_AUTO};
-  SwingMode m_swingMode{SwingMode::SWING_OFF};
-  Preset m_lastPreset{Preset::PRESET_NONE};
+  Mode m_mode{MODE_OFF};
+  Preset m_preset{PRESET_NONE};
+  FanSpeed m_fanMode{FAN_AUTO};
+  SwingMode m_swingMode{SWING_OFF};
+  Preset m_lastPreset{PRESET_NONE};
   StatusData m_status{};
   bool m_sendControl{};
 };

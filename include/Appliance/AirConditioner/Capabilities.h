@@ -9,8 +9,6 @@
  *
  */
 #pragma once
-#include <Arduino.h>
-
 #include "Frame/FrameData.h"
 #include "Appliance/CapabilitiesBase.h"
 

@@ -234,7 +234,7 @@ class PropertiesStateQuery : public FrameData {
   // DataBodyQueryB1
   explicit PropertiesStateQuery();
   // DataBodyDevB1
-  explicit PropertiesStateQuery(const Capabilities &b5);
+  explicit PropertiesStateQuery(const Capabilities &s);
 };
 
 }  // namespace ac

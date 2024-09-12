@@ -14,10 +14,10 @@ bool Capabilities::isNeedB1Query() const {
          this->isTwins || this->isFourDirection;
 }
 
-void Capabilities::m_setFeature(const PropertiesReader &reader) {
-  const uint8_t b0 = reader[0];
+void Capabilities::m_setFeature(const PropertiesReader &s) {
+  const uint8_t b0 = s[0];
 
-  switch (reader.uuid()) {
+  switch (s.uuid()) {
     case Feature::FEATURE_VWIND:
       this->hasVerticalWind = b0 == 1;
       break;
@@ -119,12 +119,12 @@ void Capabilities::m_setFeature(const PropertiesReader &reader) {
 
     case Feature::FEATURE_TEMP:
       this->cool_adjust_down_temp = b0 / 2;
-      this->cool_adjust_up_temp = reader[1] / 2;
-      this->auto_adjust_down_temp = reader[2] / 2;
-      this->auto_adjust_up_temp = reader[3] / 2;
-      this->hot_adjust_down_temp = reader[4] / 2;
-      this->hot_adjust_up_temp = reader[5] / 2;
-      this->isHavePoint = (reader.size() > 6) ? reader[6] : reader[2];
+      this->cool_adjust_up_temp = s[1] / 2;
+      this->auto_adjust_down_temp = s[2] / 2;
+      this->auto_adjust_up_temp = s[3] / 2;
+      this->hot_adjust_down_temp = s[4] / 2;
+      this->hot_adjust_up_temp = s[5] / 2;
+      this->isHavePoint = (s.size() > 6 ? s[6] : s[2]) != 0;
       break;
 
     case Feature::FEATURE_TWINS:
@@ -243,12 +243,12 @@ void Capabilities::m_setFeature(const PropertiesReader &reader) {
 }
 
 uint8_t Capabilities::read(const FrameData &s) {
-  PropertiesReader reader{s};
+  PropertiesReader r{s};
 
-  for (; reader.valid(); reader.advance())
-    m_setFeature(reader);
+  for (; r.hasData(); r.advance())
+    m_setFeature(r);
 
-  return reader.available() ? 0 : reader.uuid();
+  return r.hasHeader() ? r.uuid() : 0;
 }
 
 #define LOG_CAPABILITY(str, condition) \

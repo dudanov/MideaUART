@@ -39,7 +39,7 @@ class PropertiesReader {
    *
    * @return size of properties data.
    */
-  uint8_t size() const { return m_pdata[-1]; }
+  int size() const { return m_pdata[-1]; }
 
   /**
    * @brief Result of operation. Valid only for `0xB0` and `0xB1` messages.
@@ -57,18 +57,16 @@ class PropertiesReader {
   const uint8_t &operator[](int idx) const { return m_pdata[idx]; }
 
   /**
-   * @brief Available bytes for read.
+   * @brief Checks whether the current property has valid, readable header.
    *
-   * @return int Available bytes for read.
    */
-  int available() const { return std::distance(m_pdata, m_pend); }
+  bool hasHeader() const { return m_available() >= 0; }
 
   /**
-   * @brief Current property is valid.
+   * @brief Checks whether the current property has valid, readable data.
    *
-   * @return property validation result.
    */
-  bool valid() const { return this->available() > 0 && this->size(); }
+  bool hasData() const { return m_available() > 0 && m_available() >= this->size(); }
 
   /**
    * @brief Property UUID.
@@ -92,6 +90,9 @@ class PropertiesReader {
 
   // Size of current property.
   size_t m_size() const { return std::distance(m_begin(), m_end()); }
+
+  // Available data bytes for read. Always must be greater or equals to `size()`.
+  int m_available() const { return std::distance(m_pdata, m_pend); }
 
   const uint8_t *m_pheader;     // pointer to header
   const uint8_t *m_pdata;       // pointer to data

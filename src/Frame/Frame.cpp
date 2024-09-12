@@ -13,9 +13,9 @@ Frame::Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const Fram
 
 FrameData Frame::getData() const { return FrameData{&m_data[OFFSET_DATA], &m_data[m_len()]}; }
 
-void Frame::setData(const FrameData &data) {
+void Frame::setData(const FrameData &s) {
   m_trimData();
-  m_appendData(data);
+  m_appendData(s);
   m_data[OFFSET_LENGTH] = static_cast<uint8_t>(m_data.size());
   m_appendCS();
 }

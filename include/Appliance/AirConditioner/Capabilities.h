@@ -210,7 +210,7 @@ class Capabilities {
   bool hasNoWindSpeed{false};
 
  protected:
-  void m_setFeature(const PropertiesReader &reader);
+  void m_setFeature(const PropertiesReader &s);
 };
 
 }  // namespace ac

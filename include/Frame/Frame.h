@@ -18,11 +18,11 @@ class Frame {
    * @param applianceID appliance ID.
    * @param protocolID protocol ID.
    * @param typeID frame type ID.
-   * @param data frame data body.
+   * @param s frame data body.
    * @return `Frame` instance.
    */
-  static Frame make(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &data) {
-    return Frame{applianceID, protocolID, typeID, data};
+  static Frame make(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &s) {
+    return Frame{applianceID, protocolID, typeID, s};
   }
 
   /**
@@ -88,45 +88,28 @@ class Frame {
   bool deserialize(const uint8_t &data);
 
   /**
-   * @brief Clears whole frame.
+   * @brief Clears frame.
    *
    */
   void clear() { m_data.clear(); }
 
  protected:
-  /**
-   * @brief Raw data vector.
-   */
+  // Raw data vector.
   std::vector<uint8_t> m_data;
 
-  /**
-   * @brief Trim frame data body.
-   *
-   */
+  // Trims data and checksum.
   void m_trimData() { m_data.erase(m_data.begin() + OFFSET_DATA, m_data.end()); }
 
-  void m_appendData(const FrameData &data) {
-    std::copy(data.m_data.begin(), data.m_data.end(), std::back_inserter(m_data));
-  }
+  // Appends data to the end of the frame.
+  void m_appendData(const FrameData &s) { std::copy(s.m_data.begin(), s.m_data.end(), std::back_inserter(m_data)); }
 
-  /**
-   * @brief Length of frame (without checksum).
-   *
-   * @return Length.
-   */
+  // Returns length field (size of frame without checksum).
   uint8_t m_len() const { return m_data[OFFSET_LENGTH]; }
 
-  /**
-   * @brief Calculates checksum and finalize frame by appending it to the end.
-   *
-   */
+  // Calculates checksum and finalize frame by appending it to the end.
   void m_appendCS() { m_data.push_back(m_calcCS()); }
 
-  /**
-   * @brief Calculate checksum.
-   *
-   * @return Checksum.
-   */
+  // Calculates checksum.
   uint8_t m_calcCS() const;
 
   static const uint8_t START_BYTE = 0xAA;

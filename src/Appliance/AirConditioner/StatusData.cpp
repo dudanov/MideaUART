@@ -111,47 +111,47 @@ float StatusData::getPowerUsage() const {
 /* PropertiesStateQuery */
 
 PropertiesStateQuery::PropertiesStateQuery() : FrameData{0xB1} {
-  this->appendUUID(CAP_HUMIDITY);
-  this->appendUUID(CAP_SILKY_COOL);
+  this->appendUUID(UUID_HUMIDITY);
+  this->appendUUID(UUID_SILKY_COOL);
   this->appendUUID(0x1A);  // beeper
-  this->appendUUID(CAP_ECO_EYE);
-  this->appendUUID(CAP_CLEAN);
-  this->appendUUID(CAP_BREEZE_AWAY);
-  this->appendUUID(CAP_BREEZELESS);
-  this->appendUUID(CAP_BUZZER);
+  this->appendUUID(UUID_ECO_EYE);
+  this->appendUUID(UUID_CLEAN);
+  this->appendUUID(UUID_BREEZE_AWAY);
+  this->appendUUID(UUID_BREEZELESS);
+  this->appendUUID(UUID_BUZZER);
   this->appendCRC();
 }
 
 PropertiesStateQuery::PropertiesStateQuery(const Capabilities &b5) : FrameData{0xB1} {
   if (b5.hasBlowingPeople)
-    this->appendUUID(CapabilityUUID::CAP_WIND_ON_ME);
+    this->appendUUID(CapabilityUUID::UUID_WIND_ON_ME);
 
   if (b5.hasAvoidPeople)
-    this->appendUUID(CapabilityUUID::CAP_WIND_OFF_ME);
+    this->appendUUID(CapabilityUUID::UUID_WIND_OFF_ME);
 
   if (b5.hasSelfClean)
-    this->appendUUID(CapabilityUUID::CAP_CLEAN);
+    this->appendUUID(CapabilityUUID::UUID_CLEAN);
 
   if (b5.hasOneKeyNoWindOnMe)
-    this->appendUUID(CapabilityUUID::CAP_BREEZE_AWAY);
+    this->appendUUID(CapabilityUUID::UUID_BREEZE_AWAY);
 
   if (b5.hasBreeze)
-    this->appendUUID(CapabilityUUID::CAP_BREEZELESS);
+    this->appendUUID(CapabilityUUID::UUID_BREEZELESS);
 
   if (b5.hasSmartEye)
-    this->appendUUID(CapabilityUUID::CAP_ECO_EYE);
+    this->appendUUID(CapabilityUUID::UUID_ECO_EYE);
 
   if (b5.hasBuzzer)
-    this->appendUUID(CapabilityUUID::CAP_BUZZER);
+    this->appendUUID(CapabilityUUID::UUID_BUZZER);
 
   if (b5.hasAutoClearHumidity || b5.hasHandClearHumidity)
-    this->appendUUID(CapabilityUUID::CAP_HUMIDITY);
+    this->appendUUID(CapabilityUUID::UUID_HUMIDITY);
 
   if (b5.hasVerticalWind)
-    this->appendUUID(CapabilityUUID::CAP_VWIND);
+    this->appendUUID(CapabilityUUID::UUID_VWIND);
 
   if (b5.hasHorizontalWind)
-    this->appendUUID(CapabilityUUID::CAP_HWIND);
+    this->appendUUID(CapabilityUUID::UUID_HWIND);
 
   if (b5.isTwins)
     this->appendUUID(2 * 256 + 49);

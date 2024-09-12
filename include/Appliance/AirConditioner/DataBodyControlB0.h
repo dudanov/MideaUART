@@ -14,7 +14,7 @@ class DataBodyControlB0 : public FrameData {
 
   DataBodyControlB0(uint8_t funcLo, uint8_t value, std::vector<uint8_t> values, uint8_t sound, uint8_t funcHi) {
     if (funcLo == 0x63 || funcLo == 0x64) {
-      // Control function: 0x0018: CAP_SILKY_COOL (NoWindFeel)
+      // Control function: 0x0018: UUID_SILKY_COOL (NoWindFeel)
       // Device: 0xAC, FrameType: 0x02
       m_data = {0xB0, 0x02, 0x18, 0x00, 0x01, static_cast<uint8_t>(funcLo == 0x63), 0x1A, 0x00, 0x01, sound};
     } else if (funcHi == 0x02 && (funcLo == 0x30 || funcLo == 0x31)) {
@@ -27,9 +27,9 @@ class DataBodyControlB0 : public FrameData {
                (funcLo == 0x09 || funcLo == 0x0A || funcLo == 0x30 || funcLo == 0x32 || funcLo == 0x33 ||
                 funcLo == 0x39 || funcLo == 0x42 || funcLo == 0x43 || funcLo == 0x67)) {
       // Control functions:
-      // 0x0009: CAP_VWIND, 0x000A: CAP_HWIND, 0x0030: CAP_ECO_EYE, 0x0032: CAP_WIND_ON_ME
-      // 0x0033: CAP_WIND_OFF_ME, 0x0039: CAP_CLEAN, 0x0042: CAP_BREEZE_AWAY
-      // 0x0043: CAP_BREEZELESS, 0x0067: JET_COOL
+      // 0x0009: UUID_VWIND, 0x000A: UUID_HWIND, 0x0030: UUID_ECO_EYE, 0x0032: UUID_WIND_ON_ME
+      // 0x0033: UUID_WIND_OFF_ME, 0x0039: UUID_CLEAN, 0x0042: UUID_BREEZE_AWAY
+      // 0x0043: UUID_BREEZELESS, 0x0067: JET_COOL
       // Device: 0xAC, FrameType: 0x02
       m_data = {0xB0, 0x02, funcLo, 0x00, 0x01, value, 0x1A, 0x00, 0x01, 0x01};
     } else if (funcHi == 0x02 && funcLo == 0x2C) {
@@ -58,12 +58,12 @@ class DataBodyControlB0 : public FrameData {
       m_data = {0xB0, 0x01, 0x4B, 0x00, 0x04, values[0], values[1], 0xFF, 0xFF};
     } else if (funcLo == 102 || funcLo == 103) {
       // Control functions 102, 103:
-      // 0x004B: FRESH_AIR [0x01, 0x03, 0xFF, 0xFF], 0x0043: CAP_BREEZELESS [0x04]
+      // 0x004B: FRESH_AIR [0x01, 0x03, 0xFF, 0xFF], 0x0043: UUID_BREEZELESS [0x04]
       // Device: 0xAC, FrameType: 0x02
       m_data = {0xB0, 0x02, 0x4B, 0x00, 0x04, 0x01, 0x03, 0xFF, 0xFF, 0x43, 0x00, 0x01, 0x04};
     } else if (funcLo == 105) {
       // Control function 105:
-      // 0x0043: CAP_BREEZELESS [0x04]
+      // 0x0043: UUID_BREEZELESS [0x04]
       // Device: 0xAC, FrameType: 0x02
       m_data = {0xB0, 0x02 /* or 0x01 ? */, 0x43, 0x00, 0x01, 0x04};
     } else if (funcLo == 106) {

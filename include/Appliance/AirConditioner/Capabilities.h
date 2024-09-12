@@ -22,32 +22,32 @@ namespace ac {
  *
  */
 enum CapabilityUUID : PropertyUUID {
-  CAP_VWIND = 0x0009,          /**< Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100. */
-  CAP_HWIND = 0x000A,          /**< Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100. */
-  CAP_HUMIDITY = 0x0015,       /**< Indoor Humidity. */
-  CAP_SILKY_COOL = 0x0018,     /**< Silky Cool. */
-  CAP_ECO_EYE = 0x0030,        /**< ECO Intelligent Eye. */
-  CAP_WIND_ON_ME = 0x0032,     /**< Wind ON me. Only in `COOL` and `HEAT`. Turn on all swing. */
-  CAP_WIND_OFF_ME = 0x0033,    /**< Wind OFF me. Only in `COOL` and `HEAT`. Turn off all swing. */
-  CAP_CLEAN = 0x0039,          /**< Active Clean. */
-  CAP_BREEZE_AWAY = 0x0042,    /**< Breeze Away. */
-  CAP_BREEZELESS = 0x0043,     /**< Breezeless. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
-  CAP_FAN = 0x0210,            /**< Supported Fan Speeds. */
-  CAP_ECO = 0x0212,            /**< ECO. */
-  CAP_8HEAT = 0x0213,          /**< 8°C Heat. */
-  CAP_MODES = 0x0214,          /**< Supported Modes. */
-  CAP_SWING = 0x0215,          /**< Swing Modes. */
-  CAP_POWER = 0x0216,          /**< Power Features. */
-  CAP_FILTER = 0x0217,         /**< Air Filter Features. (dusFull) */
-  CAP_AUX_HEATER = 0x0219,     /**< Electric Auxiliary Heating. */
-  CAP_TURBO = 0x021A,          /**< Turbo Mode Features. */
-  CAP_DRY = 0x021F,            /**< Drying Modes. */
-  CAP_FAHRENHEIT = 0x0222,     /**< Fahrenheit Support. */
-  CAP_LIGHT = 0x0224,          /**< LED Control. Values: 0 (Off), 7 (On). */
-  CAP_TEMP = 0x0225,           /**< Temperature Ranges. */
-  CAP_BUZZER = 0x022C,         /**< Buzzer. Values: 0 (Off), 1 (On). */
-  CAP_TWINS = 0x0232,          /**< Slave. Values in 0x0231 B1. */
-  CAP_FOUR_DIRECTION = 0x0233, /**< Master. Values in 0x0230 B1. */
+  UUID_VWIND = 0x0009,          /**< Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100. */
+  UUID_HWIND = 0x000A,          /**< Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100. */
+  UUID_HUMIDITY = 0x0015,       /**< Indoor Humidity. */
+  UUID_SILKY_COOL = 0x0018,     /**< Silky Cool. */
+  UUID_ECO_EYE = 0x0030,        /**< ECO Intelligent Eye. */
+  UUID_WIND_ON_ME = 0x0032,     /**< Wind ON me. Only in `COOL` and `HEAT`. Turn on all swing. */
+  UUID_WIND_OFF_ME = 0x0033,    /**< Wind OFF me. Only in `COOL` and `HEAT`. Turn off all swing. */
+  UUID_CLEAN = 0x0039,          /**< Active Clean. */
+  UUID_BREEZE_AWAY = 0x0042,    /**< Breeze Away. */
+  UUID_BREEZELESS = 0x0043,     /**< Breezeless. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
+  UUID_FAN = 0x0210,            /**< Supported Fan Speeds. */
+  UUID_ECO = 0x0212,            /**< ECO. */
+  UUID_8HEAT = 0x0213,          /**< 8°C Heat. */
+  UUID_MODES = 0x0214,          /**< Supported Modes. */
+  UUID_SWING = 0x0215,          /**< Swing Modes. */
+  UUID_POWER = 0x0216,          /**< Power Features. */
+  UUID_FILTER = 0x0217,         /**< Air Filter Features. (dusFull) */
+  UUID_AUX_HEATER = 0x0219,     /**< Electric Auxiliary Heating. */
+  UUID_TURBO = 0x021A,          /**< Turbo Mode Features. */
+  UUID_DRY = 0x021F,            /**< Drying Modes. */
+  UUID_FAHRENHEIT = 0x0222,     /**< Fahrenheit Support. */
+  UUID_LIGHT = 0x0224,          /**< LED Control. Values: 0 (Off), 7 (On). */
+  UUID_TEMP = 0x0225,           /**< Temperature Ranges. */
+  UUID_BUZZER = 0x022C,         /**< Buzzer. Values: 0 (Off), 1 (On). */
+  UUID_TWINS = 0x0232,          /**< Slave. Values in 0x0231 B1. */
+  UUID_FOUR_DIRECTION = 0x0233, /**< Master. Values in 0x0230 B1. */
 };
 
 /**

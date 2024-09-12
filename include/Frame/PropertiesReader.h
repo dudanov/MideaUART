@@ -83,7 +83,7 @@ class PropertiesReader {
   const uint8_t *m_end() const { return m_pdata + this->size(); }
 
   // Size of current property.
-  size_t m_size() const { return std::distance(m_begin(), m_end()); }
+  int m_size() const { return std::distance(m_begin(), m_end()); }
 
   // Available data bytes for read. Always must be greater or equals to `size()`.
   int m_available() const { return std::distance(m_pdata, m_pend); }

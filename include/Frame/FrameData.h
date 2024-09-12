@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <initializer_list>
 #include <vector>
 
 namespace dudanov {
@@ -35,9 +36,9 @@ class FrameData {
   /**
    * @brief Init data with initializer list of bytes.
    *
-   * @param list list of bytes.
+   * @param lst list of bytes.
    */
-  explicit FrameData(std::initializer_list<uint8_t> list) : m_data{list} {}
+  explicit FrameData(std::initializer_list<uint8_t> lst) : m_data{lst} {}
 
   /**
    * @brief Makes properties `FrameData` instance of specified type ID.

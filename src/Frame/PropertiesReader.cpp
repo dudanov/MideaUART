@@ -1,4 +1,4 @@
-#include "Frame/PropertiesData.h"
+#include "Frame/PropertiesReader.h"
 
 namespace dudanov {
 namespace midea {
@@ -12,11 +12,6 @@ void PropertiesReader::advance() {
   auto offset = m_size();
   m_pheader += offset;
   m_pdata += offset;
-}
-
-void PropertiesData::appendUUID(PropertyUUID uuid) {
-  this->append(uuid);
-  m_data[1]++;  // increment number of UUIDs
 }
 
 }  // namespace midea

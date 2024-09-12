@@ -10,9 +10,8 @@
  */
 #pragma once
 #include <Arduino.h>
-#include <set>
 
-#include "Frame/PropertiesData.h"
+#include "Frame/PropertiesReader.h"
 
 namespace dudanov {
 namespace midea {

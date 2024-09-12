@@ -6,9 +6,9 @@ namespace midea {
 
 static const char *TAG = "Frame";
 
-Frame::Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &data)
+Frame::Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &s)
     : m_data{{START_BYTE, 0, applianceID, 0, 0, 0, 0, 0, protocolID, typeID}} {
-  this->setData(data);
+  this->setData(s);
 }
 
 FrameData Frame::getData() const { return FrameData{&m_data[OFFSET_DATA], &m_data[m_len()]}; }

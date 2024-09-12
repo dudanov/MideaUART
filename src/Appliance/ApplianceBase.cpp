@@ -184,8 +184,8 @@ void ApplianceBase::m_destroyRequest() {
   m_request = nullptr;
 }
 
-void ApplianceBase::m_sendFrame(FrameType type, const FrameData &data) {
-  auto frame = Frame::make(m_applianceID, m_protocolID, type, data);
+void ApplianceBase::m_sendFrame(FrameType type, const FrameData &s) {
+  Frame frame{m_applianceID, m_protocolID, type, s};
 
   LOG_D(TAG, "TX: %s", frame.toString().c_str());
 

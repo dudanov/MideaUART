@@ -21,9 +21,7 @@ class Frame {
    * @param s frame data body.
    * @return `Frame` instance.
    */
-  static Frame make(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &s) {
-    return Frame{applianceID, protocolID, typeID, s};
-  }
+  explicit Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &s);
 
   /**
    * @brief Extracts data body from frame. Frame MUST BE full and valid.
@@ -119,8 +117,6 @@ class Frame {
   static const uint8_t OFFSET_PROTOCOL = 8;
   static const uint8_t OFFSET_TYPE = 9;
   static const uint8_t OFFSET_DATA = 10;
-
-  explicit Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &data);
 };
 
 }  // namespace midea

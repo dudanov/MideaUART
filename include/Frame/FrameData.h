@@ -107,6 +107,13 @@ class FrameData {
   bool hasPowerInfo() const { return this->hasID(0xC1); }
 
   /**
+   * @brief Checks for properties in `FrameData`.
+   *
+   * @return `true` if `FrameData` has properties.
+   */
+  bool hasProperties(const FrameData &s) const { return this->hasID(0xB0) || this->hasID(0xB1) || this->hasID(0xB5); }
+
+  /**
    * @brief Calculates and appends checksum.
    *
    */

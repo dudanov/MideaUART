@@ -21,14 +21,6 @@ class PropertiesReader {
   PropertiesReader(const PropertiesReader &) = delete;
 
   /**
-   * @brief Checks for properties in `FrameData`.
-   *
-   * @param s reference to `FrameData`.
-   * @return `true` if `FrameData` has properties.
-   */
-  static bool hasProperties(const FrameData &s);
-
-  /**
    * @brief Size of properties data.
    *
    * @return size of properties data.

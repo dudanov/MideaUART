@@ -268,7 +268,8 @@ void Capabilities::dump() const {
     LOG_CONFIG(TAG, "      - Min: %d", this->hot_adjust_down_temp);
     LOG_CONFIG(TAG, "      - Max: %d", this->hot_adjust_up_temp);
     LOG_CAPABILITY("      - Turbo", this->strongHot);
-    LOG_CAPABILITY("  [x] 8°C Heat", this->eightHot);  // Only in `HEAT` mode and not supported by `SLEEP`.
+    // Only in `HEAT` mode and not supported by `SLEEP`.
+    LOG_CAPABILITY("      - 8°C Frost Protection", this->eightHot);
   }
 
   if (this->dry) {

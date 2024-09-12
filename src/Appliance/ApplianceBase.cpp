@@ -88,9 +88,9 @@ void ApplianceBase::loop() {
   }
 }
 
-void ApplianceBase::m_handler(const Frame &frame) {
+void ApplianceBase::m_handler(const Frame &s) {
   if (m_isWaitForResponse()) {
-    auto result = m_request->callHandler(frame);
+    auto result = m_request->callHandler(s);
 
     if (result != RESPONSE_WRONG) {
       if (result == RESPONSE_OK) {
@@ -109,16 +109,16 @@ void ApplianceBase::m_handler(const Frame &frame) {
   }
 
   // ignoring responses on network notifies
-  if (frame.hasType(NETWORK_NOTIFY))
+  if (s.hasType(NETWORK_NOTIFY))
     return;
 
   /* HANDLE REQUESTS */
-  if (frame.hasType(QUERY_NETWORK)) {
-    m_sendNetworkNotify(QUERY_NETWORK);
+  if (s.hasType(NETWORK_QUERY)) {
+    m_sendNetworkNotify(NETWORK_QUERY);
     return;
   }
 
-  m_onRequest(frame);
+  m_onRequest(s);
 }
 
 static uint8_t getSignalStrength() {
@@ -136,20 +136,21 @@ static uint8_t getSignalStrength() {
   return 1;
 }
 
-void ApplianceBase::m_sendNetworkNotify(FrameType msgType) {
+void ApplianceBase::m_sendNetworkNotify(FrameType typeID) {
   NetworkNotifyData notify{};
+
   notify.setConnected(WiFi.isConnected());
   notify.setSignalStrength(getSignalStrength());
   notify.setIP(WiFi.localIP());
   notify.appendCRC();
 
-  if (msgType == NETWORK_NOTIFY) {
+  if (typeID == NETWORK_NOTIFY) {
     LOG_D(TAG, "Enqueuing a DEVICE_NETWORK(0x0D) notification...");
-    m_queueNotify(msgType, std::move(notify));
+    m_queueNotify(typeID, std::move(notify));
 
   } else {
-    LOG_D(TAG, "Answer to QUERY_NETWORK(0x63) request...");
-    m_sendFrame(msgType, std::move(notify));
+    LOG_D(TAG, "Answer to NETWORK_QUERY(0x63) request...");
+    m_sendFrame(typeID, std::move(notify));
   }
 }
 

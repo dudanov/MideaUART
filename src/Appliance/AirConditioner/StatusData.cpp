@@ -122,41 +122,41 @@ PropertiesStateQuery::PropertiesStateQuery() : FrameData{0xB1} {
   this->appendCRC();
 }
 
-PropertiesStateQuery::PropertiesStateQuery(const Capabilities &b5) : FrameData{0xB1} {
-  if (b5.hasBlowingPeople)
-    this->appendUUID(CapabilityUUID::UUID_WIND_ON_ME);
+PropertiesStateQuery::PropertiesStateQuery(const Capabilities &s) : FrameData{0xB1} {
+  if (s.hasBlowingPeople)
+    this->appendUUID(UUID_WIND_ON_ME);
 
-  if (b5.hasAvoidPeople)
-    this->appendUUID(CapabilityUUID::UUID_WIND_OFF_ME);
+  if (s.hasAvoidPeople)
+    this->appendUUID(UUID_WIND_OFF_ME);
 
-  if (b5.hasSelfClean)
-    this->appendUUID(CapabilityUUID::UUID_CLEAN);
+  if (s.hasSelfClean)
+    this->appendUUID(UUID_CLEAN);
 
-  if (b5.hasOneKeyNoWindOnMe)
-    this->appendUUID(CapabilityUUID::UUID_BREEZE_AWAY);
+  if (s.hasOneKeyNoWindOnMe)
+    this->appendUUID(UUID_BREEZE_AWAY);
 
-  if (b5.hasBreeze)
-    this->appendUUID(CapabilityUUID::UUID_BREEZELESS);
+  if (s.hasBreeze)
+    this->appendUUID(UUID_BREEZELESS);
 
-  if (b5.hasSmartEye)
-    this->appendUUID(CapabilityUUID::UUID_ECO_EYE);
+  if (s.hasSmartEye)
+    this->appendUUID(UUID_ECO_EYE);
 
-  if (b5.hasBuzzer)
-    this->appendUUID(CapabilityUUID::UUID_BUZZER);
+  if (s.hasBuzzer)
+    this->appendUUID(UUID_BUZZER);
 
-  if (b5.hasAutoClearHumidity || b5.hasHandClearHumidity)
-    this->appendUUID(CapabilityUUID::UUID_HUMIDITY);
+  if (s.hasAutoClearHumidity || s.hasHandClearHumidity)
+    this->appendUUID(UUID_HUMIDITY);
 
-  if (b5.hasVerticalWind)
-    this->appendUUID(CapabilityUUID::UUID_VWIND);
+  if (s.hasVerticalWind)
+    this->appendUUID(UUID_VWIND);
 
-  if (b5.hasHorizontalWind)
-    this->appendUUID(CapabilityUUID::UUID_HWIND);
+  if (s.hasHorizontalWind)
+    this->appendUUID(UUID_HWIND);
 
-  if (b5.isTwins)
+  if (s.isTwins)
     this->appendUUID(2 * 256 + 49);
 
-  if (b5.isFourDirection)
+  if (s.isFourDirection)
     this->appendUUID(2 * 256 + 48);
 
   this->appendCRC();

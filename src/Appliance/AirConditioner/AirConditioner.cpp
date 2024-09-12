@@ -192,7 +192,7 @@ void AirConditioner::m_getCapabilities() {
       },
 
       // onSuccess
-      [this]() { m_autoconfStatus = AUTOCONF_OK; },
+      [this]() { m_autoconfStatus = AUTOCONF_DONE; },
 
       // onError
       [this]() {

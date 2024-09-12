@@ -10,19 +10,19 @@ namespace dudanov {
 namespace midea {
 
 enum ApplianceID : uint8_t {
-  DEHUMIDIFIER = 0xA1,
-  AIR_CONDITIONER = 0xAC,
-  AIR2WATER = 0xC3,
-  FAN = 0xFA,
-  CLEANER = 0xFC,
-  HUMIDIFIER = 0xFD,
-  BROADCAST = 0xFF
+  APP_DEHUMIDIFIER = 0xA1,
+  APP_CONDITIONER = 0xAC,
+  APP_AIR2WATER = 0xC3,
+  APP_FAN = 0xFA,
+  APP_CLEANER = 0xFC,
+  APP_HUMIDIFIER = 0xFD,
+  APP_BROADCAST = 0xFF
 };
 
 enum AutoconfStatus : uint8_t {
   AUTOCONF_DISABLED,
   AUTOCONF_PROGRESS,
-  AUTOCONF_OK,
+  AUTOCONF_DONE,
   AUTOCONF_ERROR,
 };
 
@@ -37,7 +37,7 @@ enum FrameType : uint8_t {
   DEVICE_QUERY = 0x03,
   GET_ELECTRONIC_ID = 0x07,
   NETWORK_NOTIFY = 0x0D,
-  QUERY_NETWORK = 0x63,
+  NETWORK_QUERY = 0x63,
 };
 
 using Handler = std::function<void()>;
@@ -136,9 +136,9 @@ class ApplianceBase {
     ResponseStatus callHandler(const Frame &data);
   };
 
-  void m_sendNetworkNotify(FrameType msg_type = NETWORK_NOTIFY);
+  void m_sendNetworkNotify(FrameType typeID = NETWORK_NOTIFY);
 
-  void m_handler(const Frame &frame);
+  void m_handler(const Frame &s);
 
   bool m_isWaitForResponse() const { return m_request != nullptr; }
 
@@ -148,7 +148,7 @@ class ApplianceBase {
 
   void m_resetTimeout();
 
-  void m_sendRequest(Request *request) { m_sendFrame(request->requestType, request->request); }
+  void m_sendRequest(Request *req) { m_sendFrame(req->requestType, req->request); }
 
   /// Frame receiver with dynamic buffer.
   Frame m_receiver{};

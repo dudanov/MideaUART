@@ -243,15 +243,6 @@ void Capabilities::m_setFeature(const PropertiesReader &s) {
   }
 }
 
-uint8_t Capabilities::read(const FrameData &s) {
-  PropertiesReader r{s};
-
-  for (; r.hasData(); r.advance())
-    m_setFeature(r);
-
-  return r.hasHeader() ? r.uuid() : 0;
-}
-
 #define LOG_CAPABILITY(str, condition) \
   if (condition) \
     LOG_CONFIG(TAG, str);

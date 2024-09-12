@@ -14,5 +14,14 @@ void PropertiesReader::advance() {
   m_pdata += offset;
 }
 
+uint8_t CapabilitiesReader::read(const FrameData &s) {
+  PropertiesReader r{s};
+
+  for (; r.hasData(); r.advance())
+    m_setFeature(r);
+
+  return r.hasHeader() ? r.uuid() : 0;
+}
+
 }  // namespace midea
 }  // namespace dudanov

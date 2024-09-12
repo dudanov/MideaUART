@@ -11,13 +11,10 @@
 #pragma once
 #include <Arduino.h>
 
-#include "Frame/FrameData.h"
+#include "Frame/PropertiesReader.h"
 
 namespace dudanov {
 namespace midea {
-
-class PropertiesReader;
-
 namespace ac {
 
 /**
@@ -57,28 +54,20 @@ enum CapabilityUUID : PropertyUUID {
  * @brief Capabilities data.
  *
  */
-class Capabilities {
+class Capabilities : public CapabilitiesReader {
  public:
-  /**
-   * @brief Reads capabilities from 0xB5 frame data.
-   *
-   * @param s Reference to `PropertiesData` instance.
-   * @return If zero - no more data is required. Else `ID` of next frame.
-   */
-  uint8_t read(const FrameData &s);
-
   /**
    * @brief Dump capabilities report to logs.
    *
    */
-  void dump() const;
+  void dump() const override;
 
   /**
    * @brief Checks if any of 0xB1 capabilities is supported.
    *
    * @return `true` if any of 0xB1 capabilities is supported.
    */
-  bool isNeedB1Query() const;
+  bool isNeedB1Query() const override;
 
   /* Capabilities */
 
@@ -212,7 +201,7 @@ class Capabilities {
   bool hasNoWindSpeed{false};
 
  protected:
-  void m_setFeature(const PropertiesReader &s);
+  void m_setFeature(const PropertiesReader &s) override;
 };
 
 }  // namespace ac

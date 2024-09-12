@@ -15,7 +15,7 @@ bool Capabilities::isNeedB1Query() const {
          this->isTwins || this->isFourDirection;
 }
 
-void Capabilities::m_setFeature(const PropertiesReader &s) {
+void Capabilities::m_setCapability(const PropertiesReader &s) {
   const uint8_t b0 = s[0];
 
   switch (s.uuid()) {

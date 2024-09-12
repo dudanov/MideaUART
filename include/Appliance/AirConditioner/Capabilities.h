@@ -11,7 +11,8 @@
 #pragma once
 #include <Arduino.h>
 
-#include "Frame/PropertiesReader.h"
+#include "Frame/FrameData.h"
+#include "Appliance/CapabilitiesBase.h"
 
 namespace dudanov {
 namespace midea {
@@ -54,7 +55,7 @@ enum CapabilityUUID : PropertyUUID {
  * @brief Capabilities data.
  *
  */
-class Capabilities : public CapabilitiesReader {
+class Capabilities : public CapabilitiesBase {
  public:
   /**
    * @brief Dump capabilities report to logs.
@@ -201,7 +202,7 @@ class Capabilities : public CapabilitiesReader {
   bool hasNoWindSpeed{false};
 
  protected:
-  void m_setFeature(const PropertiesReader &s) override;
+  void m_setCapability(const PropertiesReader &s) override;
 };
 
 }  // namespace ac

@@ -13,14 +13,14 @@ namespace midea {
 
 static const char *TAG = "ApplianceBase";
 
-ResponseStatus ApplianceBase::Request::callHandler(const Frame &frame) {
-  if (!frame.hasType(this->requestType))
+ResponseStatus ApplianceBase::Request::callHandler(const Frame &s) {
+  if (!s.hasType(this->requestType))
     return ResponseStatus::RESPONSE_WRONG;
 
   if (this->onData == nullptr)
     return RESPONSE_OK;
 
-  return this->onData(frame.getData());
+  return this->onData(s.getData());
 }
 
 static bool read_frame(Frame &frame, Stream *stream) {

@@ -18,36 +18,36 @@ namespace midea {
 namespace ac {
 
 /**
- * @brief Feature
+ * @brief Capability UUID.
  *
  */
-enum Feature : PropertyUUID {
-  FEATURE_VWIND = 0x0009,          /**< Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100. */
-  FEATURE_HWIND = 0x000A,          /**< Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100. */
-  FEATURE_HUMIDITY = 0x0015,       /**< Indoor Humidity. */
-  FEATURE_SILKY_COOL = 0x0018,     /**< Silky Cool. */
-  FEATURE_ECO_EYE = 0x0030,        /**< ECO Intelligent Eye. */
-  FEATURE_WIND_ON_ME = 0x0032,     /**< Wind ON me. Only in `COOL` and `HEAT`. Turn on all swing. */
-  FEATURE_WIND_OFF_ME = 0x0033,    /**< Wind OFF me. Only in `COOL` and `HEAT`. Turn off all swing. */
-  FEATURE_CLEAN = 0x0039,          /**< Active Clean. */
-  FEATURE_BREEZE_AWAY = 0x0042,    /**< Breeze Away. */
-  FEATURE_BREEZELESS = 0x0043,     /**< Breezeless. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
-  FEATURE_FAN = 0x0210,            /**< Supported Fan Speeds. */
-  FEATURE_ECO = 0x0212,            /**< ECO. */
-  FEATURE_8HEAT = 0x0213,          /**< 8°C Heat. */
-  FEATURE_MODES = 0x0214,          /**< Supported Modes. */
-  FEATURE_SWING = 0x0215,          /**< Swing Modes. */
-  FEATURE_POWER = 0x0216,          /**< Power Features. */
-  FEATURE_FILTER = 0x0217,         /**< Air Filter Features. (dusFull) */
-  FEATURE_AUX_HEATER = 0x0219,     /**< Electric Auxiliary Heating. */
-  FEATURE_TURBO = 0x021A,          /**< Turbo Mode Features. */
-  FEATURE_DRY = 0x021F,            /**< Drying Modes. */
-  FEATURE_FAHRENHEIT = 0x0222,     /**< Fahrenheit Support. */
-  FEATURE_LIGHT = 0x0224,          /**< LED Control. Values: 0 (Off), 7 (On). */
-  FEATURE_TEMP = 0x0225,           /**< Temperature Ranges. */
-  FEATURE_BUZZER = 0x022C,         /**< Buzzer. Values: 0 (Off), 1 (On). */
-  FEATURE_TWINS = 0x0232,          /**< Slave. Values in 0x0231 B1. */
-  FEATURE_FOUR_DIRECTION = 0x0233, /**< Master. Values in 0x0230 B1. */
+enum CapabilityUUID : PropertyUUID {
+  CAP_VWIND = 0x0009,          /**< Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100. */
+  CAP_HWIND = 0x000A,          /**< Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100. */
+  CAP_HUMIDITY = 0x0015,       /**< Indoor Humidity. */
+  CAP_SILKY_COOL = 0x0018,     /**< Silky Cool. */
+  CAP_ECO_EYE = 0x0030,        /**< ECO Intelligent Eye. */
+  CAP_WIND_ON_ME = 0x0032,     /**< Wind ON me. Only in `COOL` and `HEAT`. Turn on all swing. */
+  CAP_WIND_OFF_ME = 0x0033,    /**< Wind OFF me. Only in `COOL` and `HEAT`. Turn off all swing. */
+  CAP_CLEAN = 0x0039,          /**< Active Clean. */
+  CAP_BREEZE_AWAY = 0x0042,    /**< Breeze Away. */
+  CAP_BREEZELESS = 0x0043,     /**< Breezeless. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
+  CAP_FAN = 0x0210,            /**< Supported Fan Speeds. */
+  CAP_ECO = 0x0212,            /**< ECO. */
+  CAP_8HEAT = 0x0213,          /**< 8°C Heat. */
+  CAP_MODES = 0x0214,          /**< Supported Modes. */
+  CAP_SWING = 0x0215,          /**< Swing Modes. */
+  CAP_POWER = 0x0216,          /**< Power Features. */
+  CAP_FILTER = 0x0217,         /**< Air Filter Features. (dusFull) */
+  CAP_AUX_HEATER = 0x0219,     /**< Electric Auxiliary Heating. */
+  CAP_TURBO = 0x021A,          /**< Turbo Mode Features. */
+  CAP_DRY = 0x021F,            /**< Drying Modes. */
+  CAP_FAHRENHEIT = 0x0222,     /**< Fahrenheit Support. */
+  CAP_LIGHT = 0x0224,          /**< LED Control. Values: 0 (Off), 7 (On). */
+  CAP_TEMP = 0x0225,           /**< Temperature Ranges. */
+  CAP_BUZZER = 0x022C,         /**< Buzzer. Values: 0 (Off), 1 (On). */
+  CAP_TWINS = 0x0232,          /**< Slave. Values in 0x0231 B1. */
+  CAP_FOUR_DIRECTION = 0x0233, /**< Master. Values in 0x0230 B1. */
 };
 
 /**

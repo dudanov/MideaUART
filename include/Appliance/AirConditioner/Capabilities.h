@@ -23,19 +23,19 @@ namespace ac {
  *
  */
 enum CapabilityUUID : PropertyUUID {
-  UUID_VWIND = 0x0009,          /**< Vertical Air Flow Direction. Values: 1, 25, 50, 75, 100. */
-  UUID_HWIND = 0x000A,          /**< Horizontal Air Flow Direction. Values: 1, 25, 50, 75, 100. */
-  UUID_HUMIDITY = 0x0015,       /**< Indoor Humidity. */
-  UUID_SILKY_COOL = 0x0018,     /**< Silky Cool. */
-  UUID_ECO_EYE = 0x0030,        /**< ECO Intelligent Eye. */
-  UUID_WIND_ON_ME = 0x0032,     /**< Wind ON me. Only in `COOL` and `HEAT`. Turn on all swing. */
-  UUID_WIND_OFF_ME = 0x0033,    /**< Wind OFF me. Only in `COOL` and `HEAT`. Turn off all swing. */
-  UUID_CLEAN = 0x0039,          /**< Active Clean. */
-  UUID_BREEZE_AWAY = 0x0042,    /**< Breeze Away. */
-  UUID_BREEZELESS = 0x0043,     /**< Breezeless. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
+  UUID_VWIND = 0x0009,          /**< `Vertical Air Flow Direction`. Values: 1, 25, 50, 75, 100. */
+  UUID_HWIND = 0x000A,          /**< `Horizontal Air Flow Direction`. Values: 1, 25, 50, 75, 100. */
+  UUID_HUMIDITY = 0x0015,       /**< `Indoor Humidity`. */
+  UUID_SILKY_COOL = 0x0018,     /**< `Silky Cool`. */
+  UUID_ECO_EYE = 0x0030,        /**< `ECO Intelligent Eye`. */
+  UUID_WIND_ON_ME = 0x0032,     /**< `Wind ON me`. Only in `COOL` and `HEAT`. Turn on all swing. */
+  UUID_WIND_OFF_ME = 0x0033,    /**< `Wind OFF me`. Only in `COOL` and `HEAT`. Turn off all swing. */
+  UUID_CLEAN = 0x0039,          /**< `Active Clean`. */
+  UUID_BREEZE_AWAY = 0x0042,    /**< `Breeze Away`. */
+  UUID_BREEZELESS = 0x0043,     /**< `Breezeless`. Values: 1 (Off), 2 (Away), 3 (Mild), 4 (Less). */
   UUID_FAN = 0x0210,            /**< Supported Fan Speeds. */
-  UUID_ECO = 0x0212,            /**< ECO. */
-  UUID_8HEAT = 0x0213,          /**< 8°C Heat. */
+  UUID_ECO = 0x0212,            /**< `ECO`. */
+  UUID_8HEAT = 0x0213,          /**< `8°C Frost Protection`. */
   UUID_MODES = 0x0214,          /**< Supported Modes. */
   UUID_SWING = 0x0215,          /**< Swing Modes. */
   UUID_POWER = 0x0216,          /**< Power Features. */

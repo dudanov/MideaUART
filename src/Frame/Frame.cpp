@@ -14,9 +14,11 @@ Frame::Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const Fram
 FrameData Frame::getData() const { return FrameData{&m_data[OFFSET_DATA], &m_data[m_len()]}; }
 
 void Frame::setData(const FrameData &s) {
-  m_trimData();
-  m_appendData(s);
-  m_data[OFFSET_LENGTH] = static_cast<uint8_t>(m_data.size());
+  const uint8_t new_size = s.m_data.size() + OFFSET_DATA;
+
+  m_data[OFFSET_LENGTH] = new_size;
+  m_data.resize(new_size);
+  std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + OFFSET_DATA);
   m_appendCS();
 }
 

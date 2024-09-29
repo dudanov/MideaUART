@@ -95,12 +95,6 @@ class Frame {
   // Raw data vector.
   std::vector<uint8_t> m_data;
 
-  // Trims data and checksum.
-  void m_trimData() { m_data.erase(m_data.begin() + OFFSET_DATA, m_data.end()); }
-
-  // Appends data to the end of the frame.
-  void m_appendData(const FrameData &s) { std::copy(s.m_data.begin(), s.m_data.end(), std::back_inserter(m_data)); }
-
   // Returns length field (size of frame without checksum).
   uint8_t m_len() const { return m_data[OFFSET_LENGTH]; }
 

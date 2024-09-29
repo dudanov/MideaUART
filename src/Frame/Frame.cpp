@@ -17,17 +17,13 @@ void Frame::setData(const FrameData &s) {
   const uint8_t new_size = s.m_data.size() + OFFSET_DATA;
 
   m_data[OFFSET_LENGTH] = new_size;
-  m_data.resize(new_size);
-  std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + OFFSET_DATA);
-  m_appendCS();
+  m_data.resize(new_size + 1);
+  *std::copy(s.m_data.begin(), s.m_data.end(), &m_data[OFFSET_DATA]) = m_calcCS();
 }
 
 uint8_t Frame::m_calcCS() const {
-  // Start byte excluded from checksum.
-  uint8_t cs{START_BYTE};
-
-  for (uint8_t data : m_data)
-    cs -= data;
+  uint8_t cs{};
+  std::for_each(&m_data[OFFSET_LENGTH], &m_data[m_len()], [&cs](auto x) { cs -= x; });
 
   return cs;
 }

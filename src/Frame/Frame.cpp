@@ -16,15 +16,16 @@ FrameData Frame::getData() const { return FrameData{&m_data[OFFSET_DATA], &m_dat
 void Frame::setData(const FrameData &s) {
   const uint8_t new_size = s.m_data.size() + OFFSET_DATA;
 
+  m_data.resize(new_size);
   m_data[OFFSET_LENGTH] = new_size;
-  m_data.resize(new_size + 1);
-  *std::copy(s.m_data.begin(), s.m_data.end(), &m_data[OFFSET_DATA]) = m_calcCS();
+  std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + OFFSET_DATA);
+  m_data.push_back(m_calcCS());
 }
 
 uint8_t Frame::m_calcCS() const {
   uint8_t cs{};
-  std::for_each(&m_data[OFFSET_LENGTH], &m_data[m_len()], [&cs](auto x) { cs -= x; });
 
+  std::for_each(m_data.begin() + OFFSET_LENGTH, m_data.end(), [&](auto x) { cs -= x; });
   return cs;
 }
 

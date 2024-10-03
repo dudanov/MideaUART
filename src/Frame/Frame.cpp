@@ -23,8 +23,9 @@ void Frame::setData(const FrameData &s) {
 
 uint8_t Frame::m_calcCS() const {
   uint8_t cs{};
+  auto it{&m_data[OFFSET_LENGTH]};
 
-  std::for_each(m_data.begin() + OFFSET_LENGTH, m_data.begin() + m_len(), [&](auto x) { cs -= x; });
+  std::for_each(it, &m_data[*it], [&](auto x) { cs -= x; });
   return cs;
 }
 

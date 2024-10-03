@@ -36,7 +36,7 @@ bool Frame::deserialize(const uint8_t &data) {
 
   if (idx > OFFSET_LENGTH) {
     // Frame length is known.
-    if (idx != m_len())
+    if (idx < m_len())
       return false;
 
     // Frame received. Return validation result.

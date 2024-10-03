@@ -16,7 +16,7 @@ FrameData Frame::getData() const { return FrameData{&m_data[OFFSET_DATA], &m_dat
 void Frame::setData(const FrameData &s) {
   const uint8_t new_size = s.m_data.size() + OFFSET_DATA;
 
-  m_data.resize(new_size + 1);
+  m_data.resize(new_size + 1);  // + 1 byte for checksum
   m_data[OFFSET_LENGTH] = new_size;
   *std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + OFFSET_DATA) = m_calcCS();
 }

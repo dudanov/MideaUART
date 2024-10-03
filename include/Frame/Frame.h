@@ -98,9 +98,6 @@ class Frame {
   // Returns length field (size of frame without checksum).
   uint8_t m_len() const { return m_data[OFFSET_LENGTH]; }
 
-  // Calculates checksum and finalize frame by appending it to the end.
-  void m_appendCS() { m_data.push_back(m_calcCS()); }
-
   // Calculates checksum.
   uint8_t m_calcCS() const;
 

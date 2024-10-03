@@ -16,16 +16,15 @@ FrameData Frame::getData() const { return FrameData{&m_data[OFFSET_DATA], &m_dat
 void Frame::setData(const FrameData &s) {
   const uint8_t new_size = s.m_data.size() + OFFSET_DATA;
 
-  m_data.resize(new_size);
+  m_data.resize(new_size + 1);
   m_data[OFFSET_LENGTH] = new_size;
-  std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + OFFSET_DATA);
-  m_data.push_back(m_calcCS());
+  *std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + OFFSET_DATA) = m_calcCS();
 }
 
 uint8_t Frame::m_calcCS() const {
   uint8_t cs{};
 
-  std::for_each(m_data.begin() + OFFSET_LENGTH, m_data.end(), [&](auto x) { cs -= x; });
+  std::for_each(m_data.begin() + OFFSET_LENGTH, m_data.begin() + m_len(), [&](auto x) { cs -= x; });
   return cs;
 }
 
@@ -36,11 +35,11 @@ bool Frame::deserialize(const uint8_t &data) {
 
   if (idx > OFFSET_LENGTH) {
     // Frame length is known.
-    if (idx < m_len())
+    if (idx != m_len())
       return false;
 
     // Frame received. Return validation result.
-    if (m_calcCS() == 0)
+    if (m_calcCS() == data)
       return true;
 
     LOG_W(TAG, "Checksum is wrong.");

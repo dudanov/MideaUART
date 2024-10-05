@@ -14,7 +14,7 @@ namespace midea {
 static const char *TAG = "ApplianceBase";
 
 ResponseStatus ApplianceBase::Request::callHandler(const Frame &s) {
-  if (!s.hasType(this->requestType))
+  if (!s.hasTypeID(this->requestType))
     return ResponseStatus::RESPONSE_WRONG;
 
   if (this->onData == nullptr)
@@ -56,7 +56,7 @@ void ApplianceBase::loop() {
 
   // Frame receiving
   while (read_frame(m_receiver, m_stream)) {
-    m_protocolID = m_receiver.getProtocol();
+    m_protocolID = m_receiver.protocolID();
 
     LOG_D(TAG, "RX: %s", m_receiver.toString().c_str());
 
@@ -109,11 +109,11 @@ void ApplianceBase::m_handler(const Frame &s) {
   }
 
   // ignoring responses on network notifies
-  if (s.hasType(NETWORK_NOTIFY))
+  if (s.hasTypeID(NETWORK_NOTIFY))
     return;
 
   /* HANDLE REQUESTS */
-  if (s.hasType(NETWORK_QUERY)) {
+  if (s.hasTypeID(NETWORK_QUERY)) {
     m_sendNetworkNotify(NETWORK_QUERY);
     return;
   }

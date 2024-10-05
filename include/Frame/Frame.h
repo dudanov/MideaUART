@@ -10,6 +10,10 @@ namespace midea {
 
 class Frame {
  public:
+  /**
+   * @brief Default constructor. Used for reader instance construction.
+   *
+   */
   explicit Frame() = default;
 
   /**
@@ -24,6 +28,20 @@ class Frame {
   explicit Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &s);
 
   /**
+   * @brief Deserializes frame byte by byte. Caller is responsible for clearing frame after handling.
+   *
+   * @param data byte to process.
+   * @return `true` if frame deserializing is complete and it ready for handling.
+   */
+  bool deserialize(const uint8_t &data);
+
+  /**
+   * @brief Clears frame.
+   *
+   */
+  void clear() { m_data.clear(); }
+
+  /**
    * @brief Extracts data body from frame. Frame MUST BE full and valid.
    *
    * @return Frame data body.
@@ -31,11 +49,11 @@ class Frame {
   FrameData getData() const;
 
   /**
-   * @brief Removes and replaces frame data body.
+   * @brief Sets new frame data body and finalize frame by updating checksum.
    *
-   * @param data frame data body.
+   * @param s frame data body.
    */
-  void setData(const FrameData &data);
+  void setData(const FrameData &s);
 
   /**
    * @brief Get frame raw data pointer.
@@ -52,23 +70,19 @@ class Frame {
   size_t size() const { return m_data.size(); }
 
   /**
-   * @brief Set frame type.
-   *
-   * @param value frame type.
-   */
-  void setType(uint8_t value) { m_data[OFFSET_TYPE] = value; }
-
-  /**
    * @brief Check frame type.
    *
    * @param value frame type.
    * @return `true` if frame has specified type.
    */
-  bool hasType(uint8_t value) const { return m_data[OFFSET_TYPE] == value; }
+  bool hasTypeID(uint8_t typeID) const { return m_data[OFFSET_TYPE] == typeID; }
 
-  void setProtocol(uint8_t value) { m_data[OFFSET_PROTOCOL] = value; }
-
-  uint8_t getProtocol() const { return m_data[OFFSET_PROTOCOL]; }
+  /**
+   * @brief Protocol ID.
+   *
+   * @return protocol ID.
+   */
+  uint8_t protocolID() const { return m_data[OFFSET_PROTOCOL]; }
 
   /**
    * @brief Print frame as hex string.
@@ -76,20 +90,6 @@ class Frame {
    * @return Hex string.
    */
   std::string toString() const;
-
-  /**
-   * @brief Deserializes frame byte by byte. Caller is responsible for clearing frame after handling.
-   *
-   * @param data byte to process.
-   * @return `true` if frame deserializing is complete and it ready for handling.
-   */
-  bool deserialize(const uint8_t &data);
-
-  /**
-   * @brief Clears frame.
-   *
-   */
-  void clear() { m_data.clear(); }
 
  protected:
   // Raw data vector.

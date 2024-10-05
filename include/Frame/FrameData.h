@@ -41,14 +41,14 @@ class FrameData {
   explicit FrameData(std::initializer_list<uint8_t> lst) : m_data{lst} {}
 
   /**
-   * @brief Makes properties `FrameData` instance of specified type ID.
+   * @brief Makes `FrameData` for one of the following properties types `[0xB0, 0xB1, 0xB5]`.
    *
-   * @param id type ID.
+   * @param typeID type ID.
    */
-  explicit FrameData(uint8_t id) : m_data{{id, 0}} {}
+  explicit FrameData(uint8_t typeID) : m_data{{typeID, 0}} {}
 
   /**
-   * @brief Append `appendUUID` command (used in 0xB1 GET queries).
+   * @brief Appends property UUID (for 0xB0, 0xB1 and 0xB5 only).
    *
    * @param uuid UUID of property.
    */

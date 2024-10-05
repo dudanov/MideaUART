@@ -130,13 +130,6 @@ class FrameData {
   }
 
   /**
-   * @brief Verifies the checksum.
-   *
-   * @return `true` if checksum is correct.
-   */
-  bool hasValidCRC() const { return m_calcCRC() == 0; }
-
-  /**
    * @brief Appends variadic number of integer arguments.
    *
    * @param data first argument.

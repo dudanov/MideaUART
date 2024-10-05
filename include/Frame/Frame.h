@@ -95,7 +95,7 @@ class Frame {
   // Raw data vector.
   std::vector<uint8_t> m_data;
 
-  // Returns length field (size of frame without checksum).
+  // Length field (size of frame without start byte).
   uint8_t m_len() const { return m_data[OFFSET_LENGTH]; }
 
   // Calculates checksum.

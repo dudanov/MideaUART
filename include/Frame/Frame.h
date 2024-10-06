@@ -39,6 +39,8 @@ enum FrameType : uint8_t {
  *
  */
 class Frame {
+  friend class FrameIO;
+
  public:
   /**
    * @brief Makes `Frame` instance from parameters.
@@ -64,20 +66,6 @@ class Frame {
    * @param s frame data body.
    */
   void setData(const FrameData &s);
-
-  /**
-   * @brief Get frame raw data pointer.
-   *
-   * @return Raw data pointer.
-   */
-  const uint8_t *data() const { return m_data.data(); }
-
-  /**
-   * @brief Get raw data size.
-   *
-   * @return Raw data size.
-   */
-  size_t size() const { return m_data.size(); }
 
   /**
    * @brief Check frame type.
@@ -106,7 +94,7 @@ class Frame {
   std::vector<uint8_t> m_data;
 
   /**
-   * @brief Protected default constructor. Used for `FrameReader` instance construction.
+   * @brief Protected default constructor. Used for `FrameIO` instance construction.
    *
    */
   explicit Frame() = default;

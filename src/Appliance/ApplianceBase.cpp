@@ -23,15 +23,6 @@ ResponseStatus ApplianceBase::Request::callHandler(const Frame &s) {
   return this->onData(s.getData());
 }
 
-static bool read_frame(FrameReader &frame, Stream *stream) {
-  while (stream->available()) {
-    if (frame.deserialize(stream->read()))
-      return true;
-  }
-
-  return false;
-}
-
 void ApplianceBase::setup() {
   m_timerManager.registerTimer(m_periodTimer);
   m_timerManager.registerTimer(m_networkTimer);
@@ -55,13 +46,10 @@ void ApplianceBase::loop() {
   m_loop();
 
   // Frame receiving
-  while (read_frame(m_receiver, m_stream)) {
-    m_protocolID = m_receiver.protocolID();
-
-    LOG_D(TAG, "RX: %s", m_receiver.toString().c_str());
-
-    m_handler(m_receiver);
-    m_receiver.clear();
+  while (m_frameio.read()) {
+    m_protocolID = m_frameio.protocolID();
+    m_handler(m_frameio);
+    m_frameio.clear();
   }
 
   if (m_isBusy || m_isWaitForResponse())
@@ -186,11 +174,7 @@ void ApplianceBase::m_destroyRequest() {
 }
 
 void ApplianceBase::m_sendFrame(FrameType type, const FrameData &s) {
-  Frame frame{m_applianceID, m_protocolID, type, s};
-
-  LOG_D(TAG, "TX: %s", frame.toString().c_str());
-
-  m_stream->write(frame.data(), frame.size());
+  m_frameio.write(m_applianceID, m_protocolID, type, s);
   m_isBusy = true;
   m_periodTimer.setCallback([this](Timer *timer) {
     m_isBusy = false;

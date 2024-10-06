@@ -1,6 +1,5 @@
 #pragma once
 #include <deque>
-#include <Arduino.h>
 #include "Frame/FrameReader.h"
 #include "Helpers/Timer.h"
 #include "Helpers/Logger.h"
@@ -38,7 +37,7 @@ class ApplianceBase {
   /* ############################## */
 
   /// Set serial stream.
-  void setStream(Stream *stream) { m_stream = stream; }
+  void setStream(Streamer *stream) { m_frameio.setStream(stream); }
 
   /// Set minimal period between requests.
   void setPeriod(uint32_t period) { m_period = period; }
@@ -132,7 +131,7 @@ class ApplianceBase {
   void m_sendRequest(Request *req) { m_sendFrame(req->requestType, req->request); }
 
   /// Frame receiver with dynamic buffer.
-  FrameReader m_receiver{};
+  FrameIO m_frameio{};
 
   /// Network status timer.
   Timer m_networkTimer{};
@@ -166,7 +165,7 @@ class ApplianceBase {
   /* ############################## */
 
   /// Stream serial interface
-  Stream *m_stream{nullptr};
+  // Streamer *m_stream{nullptr};
 
   /// Minimal period between requests
   uint32_t m_period{1000};

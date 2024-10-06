@@ -11,12 +11,6 @@ namespace midea {
 class Frame {
  public:
   /**
-   * @brief Default constructor. Used for reader instance construction.
-   *
-   */
-  explicit Frame() = default;
-
-  /**
    * @brief Makes `Frame` instance from parameters.
    *
    * @param applianceID appliance ID.
@@ -28,18 +22,24 @@ class Frame {
   explicit Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &s);
 
   /**
+   * @brief Default constructor. Used for deserializer instance construction.
+   *
+   */
+  explicit Frame() = default;
+
+  /**
+   * @brief Clears frame after handling.
+   *
+   */
+  void clear() { m_data.clear(); }
+
+  /**
    * @brief Deserializes frame byte by byte. Caller is responsible for clearing frame after handling.
    *
    * @param data byte to process.
    * @return `true` if frame deserializing is complete and it ready for handling.
    */
   bool deserialize(const uint8_t &data);
-
-  /**
-   * @brief Clears frame.
-   *
-   */
-  void clear() { m_data.clear(); }
 
   /**
    * @brief Extracts data body from frame. Frame MUST BE full and valid.

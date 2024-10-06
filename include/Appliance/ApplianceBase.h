@@ -37,7 +37,7 @@ class ApplianceBase {
   /* ############################## */
 
   /// Set serial stream.
-  void setStream(Streamer *stream) { m_frameio.setStream(stream); }
+  void setStream(IReaderWriter *stream) { m_frameio.setStream(stream); }
 
   /// Set minimal period between requests.
   void setPeriod(uint32_t period) { m_period = period; }
@@ -163,9 +163,6 @@ class ApplianceBase {
   /* ############################## */
   /* ### COMMUNICATION SETTINGS ### */
   /* ############################## */
-
-  /// Stream serial interface
-  // Streamer *m_stream{nullptr};
 
   /// Minimal period between requests
   uint32_t m_period{1000};

@@ -5,10 +5,10 @@ namespace dudanov {
 namespace midea {
 
 /**
- * @brief Streamer interface.
+ * @brief IReaderWriter interface.
  *
  */
-class Streamer {
+class IReaderWriter {
  public:
   /**
    * @brief Reads new byte from stream if available.
@@ -44,7 +44,7 @@ class FrameIO : public Frame {
    *
    * @param s IO interface.
    */
-  void setStream(Streamer *s) { m_parent = s; }
+  void setStream(IReaderWriter *s) { m_io = s; }
 
   /**
    * @brief Clears frame after handling.
@@ -78,7 +78,7 @@ class FrameIO : public Frame {
   void write(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s);
 
  protected:
-  Streamer *m_parent;
+  IReaderWriter *m_io;
 };
 
 }  // namespace midea

@@ -7,7 +7,7 @@ namespace midea {
 static const char *const TAG = "FrameIO";
 
 bool FrameIO::read() {
-  for (uint8_t byte; m_parent->read(byte);) {
+  for (uint8_t byte; m_io->read(byte);) {
     const uint8_t idx = m_data.size();
 
     m_data.push_back(byte);
@@ -37,7 +37,7 @@ bool FrameIO::read() {
 
 void FrameIO::write(const Frame &frame) {
   LOG_D(TAG, "TX: %s", frame.toString().c_str());
-  m_parent->write(frame.m_data.data(), frame.m_data.size());
+  m_io->write(frame.m_data.data(), frame.m_data.size());
 }
 
 void FrameIO::write(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s) {

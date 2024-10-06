@@ -23,7 +23,7 @@ ResponseStatus ApplianceBase::Request::callHandler(const Frame &s) {
   return this->onData(s.getData());
 }
 
-static bool read_frame(Frame &frame, Stream *stream) {
+static bool read_frame(FrameReader &frame, Stream *stream) {
   while (stream->available()) {
     if (frame.deserialize(stream->read()))
       return true;

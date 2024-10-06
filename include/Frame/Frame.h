@@ -34,6 +34,10 @@ enum FrameType : uint8_t {
   NETWORK_QUERY = 0x63,     /**< Dehumidifier */
 };
 
+/**
+ * @brief Frame class.
+ *
+ */
 class Frame {
  public:
   /**
@@ -46,26 +50,6 @@ class Frame {
    * @return `Frame` instance.
    */
   explicit Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s);
-
-  /**
-   * @brief Default constructor. Used for deserializer instance construction.
-   *
-   */
-  explicit Frame() = default;
-
-  /**
-   * @brief Clears frame after handling.
-   *
-   */
-  void clear() { m_data.clear(); }
-
-  /**
-   * @brief Deserializes frame byte by byte. Caller is responsible for clearing frame after handling.
-   *
-   * @param data byte to process.
-   * @return `true` if frame deserializing is complete and it ready for handling.
-   */
-  bool deserialize(const uint8_t &data);
 
   /**
    * @brief Extracts data body from frame. Frame MUST BE full and valid.
@@ -120,6 +104,12 @@ class Frame {
  protected:
   // Raw data vector.
   std::vector<uint8_t> m_data;
+
+  /**
+   * @brief Protected default constructor. Used for `FrameReader` instance construction.
+   *
+   */
+  explicit Frame() = default;
 
   // Length field (size of frame without start byte).
   uint8_t m_len() const { return m_data[IDX_LENGTH]; }

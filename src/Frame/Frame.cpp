@@ -1,10 +1,8 @@
+#include <algorithm>
 #include "Frame/Frame.h"
-#include "Helpers/Log.h"
 
 namespace dudanov {
 namespace midea {
-
-static const char *const TAG = "Frame";
 
 Frame::Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s)
     : m_data{{SYM_START, 0, applianceID, 0, 0, 0, 0, 0, protocolID, typeID}} {
@@ -30,30 +28,6 @@ uint8_t Frame::m_calcCS() const {
 
   std::for_each(it, &m_data[*it], [&](auto x) { cs -= x; });
   return cs;
-}
-
-bool Frame::deserialize(const uint8_t &data) {
-  const uint8_t idx = m_data.size();
-
-  m_data.push_back(data);
-
-  if (idx > IDX_LENGTH) {
-    // Frame length is known.
-    if (idx < m_len())
-      return false;
-
-    // Frame received. Return validation result.
-    if (m_calcCS() == data)
-      return true;
-
-    LOG_W(TAG, "Checksum is wrong.");
-
-  } else if ((idx == IDX_LENGTH && data > IDX_DATA) || data == SYM_START) {
-    return false;
-  }
-
-  m_data.clear();
-  return false;
 }
 
 static char u4hex(uint8_t x) { return x + (x < 10 ? '0' : '7'); }

@@ -1,8 +1,7 @@
 #pragma once
 #include <deque>
 #include <Arduino.h>
-#include "Frame/Frame.h"
-#include "Frame/FrameData.h"
+#include "Frame/FrameReader.h"
 #include "Helpers/Timer.h"
 #include "Helpers/Logger.h"
 
@@ -133,7 +132,7 @@ class ApplianceBase {
   void m_sendRequest(Request *req) { m_sendFrame(req->requestType, req->request); }
 
   /// Frame receiver with dynamic buffer.
-  Frame m_receiver{};
+  FrameReader m_receiver{};
 
   /// Network status timer.
   Timer m_networkTimer{};

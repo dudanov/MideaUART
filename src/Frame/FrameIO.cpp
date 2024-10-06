@@ -1,4 +1,5 @@
 #include "Frame/FrameIO.h"
+#include "Frame/IOStream.h"
 #include "Helpers/Log.h"
 
 namespace dudanov {

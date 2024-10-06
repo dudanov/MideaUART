@@ -33,7 +33,7 @@ uint8_t Frame::m_calcCS() const {
 static char u4hex(uint8_t x) { return x + (x < 10 ? '0' : '7'); }
 
 std::string Frame::toString() const {
-  std::string str{};
+  std::string str;
 
   if (!m_data.empty()) {
     str.assign(3 * m_data.size() - 1, ' ');

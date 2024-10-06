@@ -41,9 +41,9 @@ class FrameIO : public Frame {
   /**
    * @brief Writes frame to the stream.
    *
-   * @param frame frame to write.
+   * @param s frame to write.
    */
-  void write(const Frame &frame);
+  void write(const Frame &s);
 
   /**
    * @brief Creates frame instance from parameters and writes it to the stream.

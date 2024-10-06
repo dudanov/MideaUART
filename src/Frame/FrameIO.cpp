@@ -20,7 +20,20 @@ bool FrameIO::read() {
 
       // Frame received. Return validation result.
       if (m_calcCS() == byte) {
+        auto appID = static_cast<ApplianceID>(m_data[IDX_APPLIANCE]);
+        auto protoID = m_data[IDX_PROTOCOL];
+
         LOG_D(TAG, "RX: %s", this->toString().c_str());
+
+        if (appID != m_applianceID)
+          LOG_D(TAG, "Set appliance ID to 0x%02X.", appID);
+
+        if (protoID != m_protocolID)
+          LOG_D(TAG, "Update protocol to version %d.", appID);
+
+        m_applianceID = appID;
+        m_protocolID = protoID;
+
         return true;
       }
 

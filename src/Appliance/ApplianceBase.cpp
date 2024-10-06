@@ -47,7 +47,6 @@ void ApplianceBase::loop() {
 
   // Frame receiving
   while (m_frameio.read()) {
-    m_protocolID = m_frameio.protocolID();
     m_handler(m_frameio);
     m_frameio.clear();
   }
@@ -174,7 +173,7 @@ void ApplianceBase::m_destroyRequest() {
 }
 
 void ApplianceBase::m_sendFrame(FrameType type, const FrameData &s) {
-  m_frameio.write(m_applianceID, m_protocolID, type, s);
+  m_frameio.write(type, s);
   m_isBusy = true;
   m_periodTimer.setCallback([this](Timer *timer) {
     m_isBusy = false;

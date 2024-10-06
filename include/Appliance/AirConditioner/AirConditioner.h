@@ -20,7 +20,6 @@ struct Control {
 
 class AirConditioner : public ApplianceBase {
  public:
-  AirConditioner() : ApplianceBase{APP_CONDITIONER} {}
   void m_setup() override;
   void m_onIdle() override { m_getStatus(); }
   void control(const Control &control);

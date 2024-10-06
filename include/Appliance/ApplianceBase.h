@@ -26,7 +26,6 @@ using OnStateCallback = std::function<void()>;
 
 class ApplianceBase {
  public:
-  ApplianceBase(ApplianceID id) : m_applianceID{id} {}
   /// Setup
   void setup();
   /// Loop
@@ -150,12 +149,6 @@ class ApplianceBase {
 
   // Remaining request attempts
   uint8_t m_remainAttempts{};
-
-  /// Appliance ID.
-  ApplianceID m_applianceID;
-
-  /// Protocol ID.
-  uint8_t m_protocolID{};
 
   /// Period flag
   bool m_isBusy{};

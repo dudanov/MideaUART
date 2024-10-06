@@ -53,12 +53,17 @@ class FrameIO : public Frame {
    * @param typeID type of frame.
    * @param s frame data body.
    */
-  void write(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s) {
-    this->write(Frame{applianceID, protocolID, typeID, s});
-  }
+  void write(FrameType typeID, const FrameData &s) { this->write(Frame{m_applianceID, m_protocolID, typeID, s}); }
 
  protected:
-  IOStream *m_io;
+  // IO stream interface instance.
+  IOStream *m_io{nullptr};
+
+  // Appliance ID.
+  ApplianceID m_applianceID{APP_BROADCAST};
+
+  // Protocol ID.
+  uint8_t m_protocolID{};
 };
 
 }  // namespace midea

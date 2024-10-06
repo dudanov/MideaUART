@@ -7,23 +7,26 @@ namespace midea {
 static const char *TAG = "Frame";
 
 Frame::Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &s)
-    : m_data{{START_BYTE, 0, applianceID, 0, 0, 0, 0, 0, protocolID, typeID}} {
+    : m_data{{SYM_START, 0, applianceID, 0, 0, 0, 0, 0, protocolID, typeID}} {
   this->setData(s);
 }
 
-FrameData Frame::getData() const { return FrameData{&m_data[OFFSET_DATA], &m_data[m_len()]}; }
+FrameData Frame::getData() const { return FrameData{&m_data[IDX_DATA], &m_data[m_len()]}; }
 
 void Frame::setData(const FrameData &s) {
-  const uint8_t new_size = s.m_data.size() + OFFSET_DATA;
+  const uint8_t new_size = s.m_data.size() + IDX_DATA;
 
-  m_data.resize(new_size + 1);  // + 1 byte for checksum
-  m_data[OFFSET_LENGTH] = new_size;
-  *std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + OFFSET_DATA) = m_calcCS();
+  m_data.resize(new_size + 1);  // +1 byte for the checksum
+
+  m_data[IDX_LENGTH] = new_size;
+  m_data[IDX_SYNC] = new_size ^ m_data[IDX_APPLIANCE];
+
+  *std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + IDX_DATA) = m_calcCS();
 }
 
 uint8_t Frame::m_calcCS() const {
   uint8_t cs{};
-  const auto it{&m_data[OFFSET_LENGTH]};
+  const auto it{&m_data[IDX_LENGTH]};
 
   std::for_each(it, &m_data[*it], [&](auto x) { cs -= x; });
   return cs;
@@ -34,7 +37,7 @@ bool Frame::deserialize(const uint8_t &data) {
 
   m_data.push_back(data);
 
-  if (idx > OFFSET_LENGTH) {
+  if (idx > IDX_LENGTH) {
     // Frame length is known.
     if (idx < m_len())
       return false;
@@ -45,7 +48,7 @@ bool Frame::deserialize(const uint8_t &data) {
 
     LOG_W(TAG, "Checksum is wrong.");
 
-  } else if ((idx == OFFSET_LENGTH && data > OFFSET_DATA) || data == START_BYTE) {
+  } else if ((idx == IDX_LENGTH && data > IDX_DATA) || data == SYM_START) {
     return false;
   }
 

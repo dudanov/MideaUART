@@ -75,14 +75,14 @@ class Frame {
    * @param value frame type.
    * @return `true` if frame has specified type.
    */
-  bool hasTypeID(uint8_t typeID) const { return m_data[OFFSET_TYPE] == typeID; }
+  bool hasTypeID(uint8_t typeID) const { return m_data[IDX_TYPE] == typeID; }
 
   /**
    * @brief Protocol ID.
    *
    * @return protocol ID.
    */
-  uint8_t protocolID() const { return m_data[OFFSET_PROTOCOL]; }
+  uint8_t protocolID() const { return m_data[IDX_PROTOCOL]; }
 
   /**
    * @brief Print frame as hex string.
@@ -96,18 +96,19 @@ class Frame {
   std::vector<uint8_t> m_data;
 
   // Length field (size of frame without start byte).
-  uint8_t m_len() const { return m_data[OFFSET_LENGTH]; }
+  uint8_t m_len() const { return m_data[IDX_LENGTH]; }
 
   // Calculates checksum.
   uint8_t m_calcCS() const;
 
-  static const uint8_t START_BYTE = 0xAA;
-  static const uint8_t OFFSET_START = 0;
-  static const uint8_t OFFSET_LENGTH = 1;
-  static const uint8_t OFFSET_APPTYPE = 2;
-  static const uint8_t OFFSET_PROTOCOL = 8;
-  static const uint8_t OFFSET_TYPE = 9;
-  static const uint8_t OFFSET_DATA = 10;
+  static const uint8_t SYM_START = 0xAA;
+  static const uint8_t IDX_START = 0;
+  static const uint8_t IDX_LENGTH = 1;
+  static const uint8_t IDX_APPLIANCE = 2;
+  static const uint8_t IDX_SYNC = 3;
+  static const uint8_t IDX_PROTOCOL = 8;
+  static const uint8_t IDX_TYPE = 9;
+  static const uint8_t IDX_DATA = 10;
 };
 
 }  // namespace midea

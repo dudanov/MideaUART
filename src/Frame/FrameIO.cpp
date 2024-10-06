@@ -26,10 +26,10 @@ bool FrameIO::read() {
         LOG_D(TAG, "RX: %s", this->toString().c_str());
 
         if (appID != m_applianceID)
-          LOG_D(TAG, "Set appliance ID to 0x%02X.", appID);
+          LOG_D(TAG, "ApplianceID updated to 0x%02X", appID);
 
         if (protoID != m_protocolID)
-          LOG_D(TAG, "Update protocol to version %d.", appID);
+          LOG_D(TAG, "ProtocolID updated to %d", appID);
 
         m_applianceID = appID;
         m_protocolID = protoID;

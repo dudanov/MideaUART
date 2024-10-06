@@ -8,6 +8,32 @@
 namespace dudanov {
 namespace midea {
 
+/**
+ * @brief
+ *
+ */
+enum ApplianceID : uint8_t {
+  APP_DEHUMIDIFIER = 0xA1, /**< Dehumidifier */
+  APP_CONDITIONER = 0xAC,  /**< Air conditioner */
+  APP_AIR2WATER = 0xC3,    /**< Air to water */
+  APP_FAN = 0xFA,          /**< Fan */
+  APP_CLEANER = 0xFC,      /**< Vacuum cleaner */
+  APP_HUMIDIFIER = 0xFD,   /**< Humidifier */
+  APP_BROADCAST = 0xFF,    /**< Broadcast */
+};
+
+/**
+ * @brief
+ *
+ */
+enum FrameType : uint8_t {
+  DEVICE_CONTROL = 0x02,    /**< Dehumidifier */
+  DEVICE_QUERY = 0x03,      /**< Dehumidifier */
+  GET_ELECTRONIC_ID = 0x07, /**< Dehumidifier */
+  NETWORK_NOTIFY = 0x0D,    /**< Dehumidifier */
+  NETWORK_QUERY = 0x63,     /**< Dehumidifier */
+};
+
 class Frame {
  public:
   /**
@@ -19,7 +45,7 @@ class Frame {
    * @param s frame data body.
    * @return `Frame` instance.
    */
-  explicit Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &s);
+  explicit Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s);
 
   /**
    * @brief Default constructor. Used for deserializer instance construction.
@@ -75,7 +101,7 @@ class Frame {
    * @param value frame type.
    * @return `true` if frame has specified type.
    */
-  bool hasTypeID(uint8_t typeID) const { return m_data[IDX_TYPE] == typeID; }
+  bool hasTypeID(FrameType typeID) const { return m_data[IDX_TYPE] == typeID; }
 
   /**
    * @brief Protocol ID.
@@ -101,14 +127,16 @@ class Frame {
   // Calculates checksum.
   uint8_t m_calcCS() const;
 
-  static const uint8_t SYM_START = 0xAA;
-  static const uint8_t IDX_START = 0;
-  static const uint8_t IDX_LENGTH = 1;
-  static const uint8_t IDX_APPLIANCE = 2;
-  static const uint8_t IDX_SYNC = 3;
-  static const uint8_t IDX_PROTOCOL = 8;
-  static const uint8_t IDX_TYPE = 9;
-  static const uint8_t IDX_DATA = 10;
+  // Constants
+  enum : uint8_t {
+    IDX_LENGTH = 1,
+    IDX_APPLIANCE,
+    IDX_SYNC,
+    IDX_PROTOCOL = 8,
+    IDX_TYPE,
+    IDX_DATA,
+    SYM_START = 170,
+  };
 };
 
 }  // namespace midea

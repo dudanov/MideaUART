@@ -4,9 +4,9 @@
 namespace dudanov {
 namespace midea {
 
-static const char *TAG = "Frame";
+static const char *const TAG = "Frame";
 
-Frame::Frame(uint8_t applianceID, uint8_t protocolID, uint8_t typeID, const FrameData &s)
+Frame::Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s)
     : m_data{{SYM_START, 0, applianceID, 0, 0, 0, 0, 0, protocolID, typeID}} {
   this->setData(s);
 }

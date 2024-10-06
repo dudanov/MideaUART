@@ -9,16 +9,6 @@
 namespace dudanov {
 namespace midea {
 
-enum ApplianceID : uint8_t {
-  APP_DEHUMIDIFIER = 0xA1,
-  APP_CONDITIONER = 0xAC,
-  APP_AIR2WATER = 0xC3,
-  APP_FAN = 0xFA,
-  APP_CLEANER = 0xFC,
-  APP_HUMIDIFIER = 0xFD,
-  APP_BROADCAST = 0xFF
-};
-
 enum AutoconfStatus : uint8_t {
   AUTOCONF_DISABLED,
   AUTOCONF_PROGRESS,
@@ -30,14 +20,6 @@ enum ResponseStatus : uint8_t {
   RESPONSE_OK,
   RESPONSE_PARTIAL,
   RESPONSE_WRONG,
-};
-
-enum FrameType : uint8_t {
-  DEVICE_CONTROL = 0x02,
-  DEVICE_QUERY = 0x03,
-  GET_ELECTRONIC_ID = 0x07,
-  NETWORK_NOTIFY = 0x0D,
-  NETWORK_QUERY = 0x63,
 };
 
 using Handler = std::function<void()>;

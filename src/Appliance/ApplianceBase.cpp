@@ -11,7 +11,7 @@
 namespace dudanov {
 namespace midea {
 
-static const char *TAG = "ApplianceBase";
+static const char *const TAG = "ApplianceBase";
 
 ResponseStatus ApplianceBase::Request::callHandler(const Frame &s) {
   if (!s.hasTypeID(this->requestType))

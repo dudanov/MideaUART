@@ -7,7 +7,7 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
-static const char *TAG = "AirConditioner";
+static const char *const TAG = "AirConditioner";
 
 void AirConditioner::m_setup() {
   if (m_autoconfStatus != AUTOCONF_DISABLED)

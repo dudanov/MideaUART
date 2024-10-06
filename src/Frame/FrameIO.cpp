@@ -29,7 +29,7 @@ bool FrameIO::read() {
           LOG_D(TAG, "ApplianceID updated to 0x%02X", appID);
 
         if (protoID != m_protocolID)
-          LOG_D(TAG, "ProtocolID updated to %d", appID);
+          LOG_D(TAG, "ProtocolID updated to %d", protoID);
 
         m_applianceID = appID;
         m_protocolID = protoID;

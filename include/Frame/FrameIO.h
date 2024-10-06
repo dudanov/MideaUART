@@ -44,7 +44,7 @@ class FrameIO : public Frame {
    *
    * @param s IO interface.
    */
-  void setStream(IReaderWriter *s) { m_io = s; }
+  void setIO(IReaderWriter *s) { m_io = s; }
 
   /**
    * @brief Clears frame after handling.

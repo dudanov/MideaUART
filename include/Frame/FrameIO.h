@@ -5,10 +5,10 @@ namespace dudanov {
 namespace midea {
 
 /**
- * @brief IStream interface.
+ * @brief IOStream interface.
  *
  */
-class IStream {
+class IOStream {
  public:
   /**
    * @brief Reads new byte from stream if available.
@@ -42,9 +42,9 @@ class FrameIO : public Frame {
   /**
    * @brief Sets stream interface instance.
    *
-   * @param s IO interface.
+   * @param io IO interface.
    */
-  void setStream(IStream *s) { m_io = s; }
+  void setStream(IOStream *io) { m_io = io; }
 
   /**
    * @brief Clears frame after handling.
@@ -79,7 +79,7 @@ class FrameIO : public Frame {
   }
 
  protected:
-  IStream *m_io;
+  IOStream *m_io;
 };
 
 }  // namespace midea

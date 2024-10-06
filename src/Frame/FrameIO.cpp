@@ -40,9 +40,5 @@ void FrameIO::write(const Frame &frame) {
   m_io->write(frame.m_data.data(), frame.m_data.size());
 }
 
-void FrameIO::write(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s) {
-  this->write(Frame{applianceID, protocolID, typeID, s});
-}
-
 }  // namespace midea
 }  // namespace dudanov

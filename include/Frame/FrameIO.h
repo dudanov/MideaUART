@@ -74,7 +74,9 @@ class FrameIO : public Frame {
    * @param typeID type of frame.
    * @param s frame data body.
    */
-  void write(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s);
+  void write(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s) {
+    this->write(Frame{applianceID, protocolID, typeID, s});
+  }
 
  protected:
   IStream *m_io;

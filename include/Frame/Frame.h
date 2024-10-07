@@ -27,11 +27,11 @@ enum ApplianceID : uint8_t {
  *
  */
 enum FrameType : uint8_t {
-  DEV_CTRL = 2,          /**< Device control */
-  DEV_QUERY,             /**< Device query */
-  GET_ELECTRONIC_ID = 7, /**< Electronic ID */
-  NET_NOTIFY = 13,       /**< Network notify */
-  NET_QUERY = 99,        /**< Network query */
+  DEV_CTRL = 2,      /**< Device control */
+  DEV_QUERY,         /**< Device query */
+  ELECTRONIC_ID = 7, /**< Electronic ID */
+  NET_NOTIFY = 13,   /**< Network notify */
+  NET_QUERY = 99,    /**< Network query */
 };
 
 /**

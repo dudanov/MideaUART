@@ -96,12 +96,12 @@ void ApplianceBase::m_handler(const Frame &s) {
   }
 
   // ignoring responses on network notifies
-  if (s.hasTypeID(NETWORK_NOTIFY))
+  if (s.hasTypeID(NET_NOTIFY))
     return;
 
   /* HANDLE REQUESTS */
-  if (s.hasTypeID(NETWORK_QUERY)) {
-    m_sendNetworkNotify(NETWORK_QUERY);
+  if (s.hasTypeID(NET_QUERY)) {
+    m_sendNetworkNotify(NET_QUERY);
     return;
   }
 
@@ -131,12 +131,12 @@ void ApplianceBase::m_sendNetworkNotify(FrameType typeID) {
   notify.setIP(WiFi.localIP());
   notify.appendCRC();
 
-  if (typeID == NETWORK_NOTIFY) {
+  if (typeID == NET_NOTIFY) {
     LOG_D(TAG, "Enqueuing a DEVICE_NETWORK(0x0D) notification...");
     m_queueNotify(typeID, std::move(notify));
 
   } else {
-    LOG_D(TAG, "Answer to NETWORK_QUERY(0x63) request...");
+    LOG_D(TAG, "Answer to NET_QUERY(0x63) request...");
     m_sendFrame(typeID, std::move(notify));
   }
 }

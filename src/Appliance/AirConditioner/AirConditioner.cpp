@@ -113,7 +113,7 @@ void AirConditioner::control(const Control &control) {
       status.updateCRC();
 
       // First command without preset
-      m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
+      m_queueRequestPriority(FrameType::DEV_CTRL, std::move(status),
                              // onData
                              std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 
@@ -127,7 +127,7 @@ void AirConditioner::m_setStatus(StatusData status) {
   LOG_D(TAG, "Enqueuing a priority SET_STATUS(0x40) request...");
 
   m_queueRequestPriority(
-      FrameType::DEVICE_CONTROL, std::move(status),
+      FrameType::DEV_CTRL, std::move(status),
       // onData
       std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1),
       // onSuccess
@@ -150,7 +150,7 @@ void AirConditioner::setPowerState(bool state) {
 void AirConditioner::m_getPowerUsage() {
   LOG_D(TAG, "Enqueuing a GET_POWERUSAGE(0x41) request...");
 
-  m_queueRequest(FrameType::DEVICE_QUERY, PowerUsageQuery{},
+  m_queueRequest(FrameType::DEV_QUERY, PowerUsageQuery{},
                  // onData
                  [this](FrameData s) -> ResponseStatus {
                    const auto status = s.to<StatusData>();
@@ -175,7 +175,7 @@ void AirConditioner::m_getCapabilities() {
   LOG_D(TAG, "Enqueuing a priority GET_CAPABILITIES(0xB5) request...");
 
   m_queueRequest(
-      FrameType::DEVICE_QUERY, CapabilitiesQuery{},
+      FrameType::DEV_QUERY, CapabilitiesQuery{},
       // onData
       [this](FrameData s) -> ResponseStatus {
         if (!s.hasID(0xB5))
@@ -186,7 +186,7 @@ void AirConditioner::m_getCapabilities() {
         if (next == 0)
           return RESPONSE_OK;
 
-        m_sendFrame(FrameType::DEVICE_QUERY, CapabilitiesQuery{next});
+        m_sendFrame(FrameType::DEV_QUERY, CapabilitiesQuery{next});
 
         return RESPONSE_PARTIAL;
       },
@@ -204,7 +204,7 @@ void AirConditioner::m_getCapabilities() {
 void AirConditioner::m_getStatus() {
   LOG_D(TAG, "Enqueuing a GET_STATUS(0x41) request...");
 
-  m_queueRequest(FrameType::DEVICE_QUERY, StateQuery{},
+  m_queueRequest(FrameType::DEV_QUERY, StateQuery{},
                  // onData
                  std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }
@@ -212,7 +212,7 @@ void AirConditioner::m_getStatus() {
 void AirConditioner::m_displayToggle() {
   LOG_D(TAG, "Enqueuing a priority TOGGLE_LIGHT(0x41) request...");
 
-  m_queueRequest(FrameType::DEVICE_QUERY, DisplayToggleQuery{},
+  m_queueRequest(FrameType::DEV_QUERY, DisplayToggleQuery{},
                  // onData
                  std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1));
 }

@@ -9,29 +9,29 @@ namespace dudanov {
 namespace midea {
 
 /**
- * @brief
+ * @brief Appliance types ID.
  *
  */
 enum ApplianceID : uint8_t {
-  APP_DEHUMIDIFIER = 0xA1, /**< Dehumidifier */
-  APP_CONDITIONER = 0xAC,  /**< Air conditioner */
-  APP_AIR2WATER = 0xC3,    /**< Air to water */
-  APP_FAN = 0xFA,          /**< Fan */
-  APP_CLEANER = 0xFC,      /**< Vacuum cleaner */
-  APP_HUMIDIFIER = 0xFD,   /**< Humidifier */
-  APP_BROADCAST = 0xFF,    /**< Broadcast */
+  DEHUMIDIFIER = 0xA1,    /**< Dehumidifier */
+  AIR_CONDITIONER = 0xAC, /**< Air conditioner */
+  AIR2WATER = 0xC3,       /**< Air to water */
+  FAN = 0xFA,             /**< Fan */
+  CLEANER = 0xFC,         /**< Vacuum cleaner */
+  HUMIDIFIER = 0xFD,      /**< Humidifier */
+  BROADCAST = 0xFF,       /**< Broadcast */
 };
 
 /**
- * @brief
+ * @brief Frame types.
  *
  */
 enum FrameType : uint8_t {
-  DEVICE_CONTROL = 0x02,    /**< Dehumidifier */
-  DEVICE_QUERY = 0x03,      /**< Dehumidifier */
-  GET_ELECTRONIC_ID = 0x07, /**< Dehumidifier */
-  NETWORK_NOTIFY = 0x0D,    /**< Dehumidifier */
-  NETWORK_QUERY = 0x63,     /**< Dehumidifier */
+  DEV_CTRL = 2,          /**< Device control */
+  DEV_QUERY,             /**< Device query */
+  GET_ELECTRONIC_ID = 7, /**< Electronic ID */
+  NET_NOTIFY = 13,       /**< Network notify */
+  NET_QUERY = 99,        /**< Network query */
 };
 
 /**

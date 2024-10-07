@@ -115,7 +115,7 @@ class ApplianceBase {
     ResponseStatus callHandler(const Frame &data);
   };
 
-  void m_sendNetworkNotify(FrameType typeID = NETWORK_NOTIFY);
+  void m_sendNetworkNotify(FrameType typeID = NET_NOTIFY);
 
   void m_handler(const Frame &s);
 

@@ -60,7 +60,7 @@ class FrameIO : public Frame {
   IOStream *m_io{nullptr};
 
   // Appliance ID.
-  ApplianceID m_applianceID{APP_BROADCAST};
+  ApplianceID m_applianceID{BROADCAST};
 
   // Protocol ID.
   uint8_t m_protocolID{};

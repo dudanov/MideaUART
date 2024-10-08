@@ -61,13 +61,6 @@ class Frame {
   FrameData getData() const;
 
   /**
-   * @brief Sets new frame data body and finalize frame by updating checksum.
-   *
-   * @param s frame data body.
-   */
-  void setData(const FrameData &s);
-
-  /**
    * @brief Check frame type.
    *
    * @param value frame type.
@@ -107,7 +100,8 @@ class Frame {
 
   // Constants
   enum : uint8_t {
-    IDX_LENGTH = 1,
+    IDX_START,
+    IDX_LENGTH,
     IDX_APPLIANCE,
     IDX_SYNC,
     IDX_PROTOCOL = 8,

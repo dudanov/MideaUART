@@ -4,23 +4,22 @@
 namespace dudanov {
 namespace midea {
 
-Frame::Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s)
-    : m_data{{SYM_START, 0, applianceID, 0, 0, 0, 0, 0, protocolID, typeID}} {
-  this->setData(s);
-}
-
-FrameData Frame::getData() const { return FrameData{&m_data[IDX_DATA], &m_data[m_len()]}; }
-
-void Frame::setData(const FrameData &s) {
+Frame::Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s) {
   const uint8_t new_size = s.m_data.size() + IDX_DATA;
 
   m_data.resize(new_size + 1);  // +1 byte for the checksum
 
+  m_data[IDX_START] = SYM_START;
   m_data[IDX_LENGTH] = new_size;
-  m_data[IDX_SYNC] = new_size ^ m_data[IDX_APPLIANCE];
+  m_data[IDX_APPLIANCE] = applianceID;
+  m_data[IDX_SYNC] = new_size ^ applianceID;
+  m_data[IDX_PROTOCOL] = protocolID;
+  m_data[IDX_TYPE] = typeID;
 
   *std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + IDX_DATA) = m_calcCS();
 }
+
+FrameData Frame::getData() const { return FrameData{&m_data[IDX_DATA], &m_data[m_len()]}; }
 
 uint8_t Frame::m_calcCS() const {
   uint8_t cs{};

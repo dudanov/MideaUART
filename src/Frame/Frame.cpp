@@ -35,14 +35,15 @@ static char u4hex(uint8_t x) { return x + (x < 10 ? '0' : '7'); }
 std::string Frame::toString() const {
   std::string str;
 
-  if (!m_data.empty()) {
-    str.assign(3 * m_data.size() - 1, ' ');
-    auto dst{str.begin()};
+  if (m_data.empty())
+    return str;
 
-    for (auto it{m_data.begin()}; it != m_data.end(); dst += 3, ++it) {
-      dst[0] = u4hex(*it / 16);
-      dst[1] = u4hex(*it % 16);
-    }
+  str.assign(3 * m_data.size() - 1, ' ');
+  auto dst{str.begin()};
+
+  for (auto it{m_data.begin()}; it != m_data.end(); dst += 3, ++it) {
+    dst[0] = u4hex(*it / 16);
+    dst[1] = u4hex(*it % 16);
   }
 
   return str;

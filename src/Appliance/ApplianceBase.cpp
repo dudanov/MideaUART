@@ -20,7 +20,7 @@ ResponseStatus ApplianceBase::Request::callHandler(const Frame &s) {
   if (this->onData == nullptr)
     return RESPONSE_OK;
 
-  return this->onData(s.getData());
+  return this->onData(s.data());
 }
 
 void ApplianceBase::setup() {

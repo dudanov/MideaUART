@@ -4,7 +4,7 @@
 namespace dudanov {
 namespace midea {
 
-FrameData Frame::getData() const { return {&m_data[IDX_DATA], &m_data[m_len()]}; }
+FrameData Frame::data() const { return {&m_data[IDX_DATA], &m_data[m_len()]}; }
 
 Frame::Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s) {
   const uint8_t len = s.m_data.size() + IDX_DATA;

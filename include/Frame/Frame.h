@@ -55,7 +55,7 @@ class Frame {
    *
    * @return Frame data body.
    */
-  FrameData getData() const;
+  FrameData data() const;
 
   /**
    * @brief Check frame type.

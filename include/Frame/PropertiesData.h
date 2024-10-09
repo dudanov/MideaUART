@@ -11,16 +11,11 @@ namespace midea {
 using PropertyUUID = uint16_t;
 
 /**
- * @brief Message body.
+ * @brief Frame body with properties.
  *
  */
 class PropertiesData : public FrameData {
  public:
-  /**
-   * @brief Default constructor. Data vector is empty.
-   */
-  explicit PropertiesData() = default;
-
   /**
    * @brief Makes `PropertiesData` for one of the following properties types `[0xB0, 0xB1, 0xB5]`.
    *

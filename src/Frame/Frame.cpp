@@ -16,7 +16,8 @@ Frame::Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, cons
   m_data[IDX_PROTOCOL] = protocolID;
   m_data[IDX_TYPE] = typeID;
 
-  *std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + IDX_DATA) = m_calcCS();
+  const auto cs = std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + IDX_DATA);
+  *cs = m_calcCS();
 }
 
 FrameData Frame::getData() const { return FrameData{&m_data[IDX_DATA], &m_data[m_len()]}; }

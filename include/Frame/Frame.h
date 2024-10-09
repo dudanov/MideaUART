@@ -1,9 +1,6 @@
 #pragma once
-#include <cstdint>
-#include <vector>
-#include <string>
-
 #include "Frame/FrameData.h"
+#include <string>
 
 namespace dudanov {
 namespace midea {

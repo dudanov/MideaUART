@@ -116,7 +116,7 @@ class FrameData {
    * @param begin begin iterator.
    * @param end end iterator.
    */
-  explicit FrameData(const uint8_t *begin, const uint8_t *end) : m_data{begin, end} {}
+  FrameData(const uint8_t *begin, const uint8_t *end) : m_data{begin, end} {}
 
   /**
    * @brief Message ID generator.

@@ -66,7 +66,7 @@ class Capabilities : public CapabilitiesBase {
    *
    * @return `true` if any of 0xB1 capabilities is supported.
    */
-  bool isNeedB1Query() const override;
+  bool isQueryNeeded() const override;
 
   /* Capabilities */
 

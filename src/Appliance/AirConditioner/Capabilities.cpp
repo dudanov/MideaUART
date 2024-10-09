@@ -9,7 +9,7 @@ namespace ac {
 
 static const char *const TAG = "Capabilities";
 
-bool Capabilities::isNeedB1Query() const {
+bool Capabilities::isQueryNeeded() const {
   return this->hasNoWindFeel || this->hasSelfClean || this->hasOneKeyNoWindOnMe || this->hasBreeze || this->hasBuzzer ||
          this->hasSmartEye || this->hasIndoorHumidity || this->hasVerticalWind || this->hasHorizontalWind ||
          this->isTwins || this->isFourDirection;

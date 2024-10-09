@@ -32,7 +32,7 @@ class CapabilitiesBase {
    *
    * @return `true` if any of 0xB1 capabilities is supported.
    */
-  virtual bool isNeedB1Query() const = 0;
+  virtual bool isQueryNeeded() const = 0;
 
  protected:
   virtual void m_setCapability(const PropertiesReader &s) = 0;

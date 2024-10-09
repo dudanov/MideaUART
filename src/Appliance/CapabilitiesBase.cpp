@@ -1,17 +1,17 @@
+#include "Appliance/CapabilitiesBase.h"
 #include "Frame/FrameData.h"
 #include "Frame/PropertiesReader.h"
-#include "Appliance/CapabilitiesBase.h"
 
 namespace dudanov {
 namespace midea {
 
-uint8_t CapabilitiesBase::read(const FrameData &s) {
-  PropertiesReader r{s};
+uint8_t CapabilitiesBase::update(const FrameData &s) {
+  PropertiesReader reader{s};
 
-  for (; r.hasData(); r.advance())
-    m_setCapability(r);
+  for (; reader.hasData(); reader.advance())
+    m_setCapability(reader);
 
-  return r.hasHeader() ? r.uuid() : 0;
+  return reader.hasHeader() ? reader.uuid() : 0;
 }
 
 }  // namespace midea

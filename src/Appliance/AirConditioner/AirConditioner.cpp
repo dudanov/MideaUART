@@ -181,7 +181,7 @@ void AirConditioner::m_getCapabilities() {
         if (!s.hasID(0xB5))
           return RESPONSE_WRONG;
 
-        const uint8_t next = m_capabilities.read(s);
+        const uint8_t next = m_capabilities.update(s);
 
         if (next == 0)
           return RESPONSE_OK;

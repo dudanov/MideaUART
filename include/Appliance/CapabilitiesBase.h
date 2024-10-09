@@ -19,7 +19,7 @@ class CapabilitiesBase {
    * @param s Reference to `PropertiesData` instance.
    * @return If zero - no more data is required. Else `ID` of next frame.
    */
-  uint8_t read(const FrameData &s);
+  uint8_t update(const FrameData &s);
 
   /**
    * @brief Dump capabilities report to logs.

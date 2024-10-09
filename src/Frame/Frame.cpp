@@ -4,6 +4,8 @@
 namespace dudanov {
 namespace midea {
 
+FrameData Frame::getData() const { return FrameData{&m_data[IDX_DATA], &m_data[m_len()]}; }
+
 Frame::Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s) {
   const uint8_t len = s.m_data.size() + IDX_DATA;
 
@@ -20,8 +22,6 @@ Frame::Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, cons
   *cs = m_calcCS();
 }
 
-FrameData Frame::getData() const { return FrameData{&m_data[IDX_DATA], &m_data[m_len()]}; }
-
 uint8_t Frame::m_calcCS() const {
   uint8_t cs{};
   const auto it{&m_data[IDX_LENGTH]};
@@ -33,11 +33,10 @@ uint8_t Frame::m_calcCS() const {
 static char u4hex(uint8_t x) { return x + (x < 10 ? '0' : '7'); }
 
 std::string Frame::toString() const {
-  std::string str;
-
   if (m_data.empty())
-    return str;
+    return {};
 
+  std::string str;
   str.assign(3 * m_data.size() - 1, ' ');
   auto dst{str.begin()};
 

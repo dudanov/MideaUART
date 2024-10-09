@@ -9,7 +9,7 @@
  *
  */
 #pragma once
-#include "Frame/FrameData.h"
+#include "Frame/PropertiesData.h"
 #include "Appliance/CapabilitiesBase.h"
 
 namespace dudanov {

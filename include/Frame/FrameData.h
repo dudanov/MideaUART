@@ -7,12 +7,6 @@ namespace dudanov {
 namespace midea {
 
 /**
- * @brief Type of property's 16-bit UUID.
- *
- */
-using PropertyUUID = uint16_t;
-
-/**
  * @brief Message body.
  *
  */
@@ -24,55 +18,6 @@ class FrameData {
    * @brief Default constructor. Data vector is empty.
    */
   explicit FrameData() = default;
-
-  /**
-   * @brief Constructs data body from begin and end data iterators.
-   *
-   * @param begin begin iterator.
-   * @param end end iterator.
-   */
-  explicit FrameData(const uint8_t *begin, const uint8_t *end) : m_data{begin, end} {}
-
-  /**
-   * @brief Init data with initializer list of bytes.
-   *
-   * @param lst list of bytes.
-   */
-  explicit FrameData(std::initializer_list<uint8_t> lst) : m_data{lst} {}
-
-  /**
-   * @brief Makes `FrameData` for one of the following properties types `[0xB0, 0xB1, 0xB5]`.
-   *
-   * @param typeID type ID.
-   */
-  explicit FrameData(uint8_t typeID) : m_data{{typeID, 0}} {}
-
-  /**
-   * @brief Appends property UUID (for 0xB0, 0xB1 and 0xB5 only).
-   *
-   * @param uuid UUID of property.
-   */
-  void appendUUID(PropertyUUID uuid);
-
-  /**
-   * @brief Adds a Pascal-type byte array. The array size is added automatically.
-   *
-   * @param ...data bytes to set.
-   */
-  template<typename... Args> void appendPascalArray(Args... data) {
-    this->append(static_cast<uint8_t>(sizeof...(Args)), static_cast<uint8_t>(data)...);
-  }
-
-  /**
-   * @brief Append property with specified byte array.
-   *
-   * @param uuid Property UUID.
-   * @param data bytes to set.
-   */
-  template<typename... Args> void appendProperty(PropertyUUID uuid, Args... data) {
-    this->appendUUID(uuid);
-    this->appendPascalArray(data...);
-  }
 
   /**
    * @brief Move this object to derivied frame data object.
@@ -157,6 +102,21 @@ class FrameData {
    *
    */
   std::vector<uint8_t> m_data;
+
+  /**
+   * @brief Init data with initializer list of bytes.
+   *
+   * @param lst list of bytes.
+   */
+  explicit FrameData(std::initializer_list<uint8_t> lst) : m_data{lst} {}
+
+  /**
+   * @brief Constructs data body from begin and end data iterators.
+   *
+   * @param begin begin iterator.
+   * @param end end iterator.
+   */
+  explicit FrameData(const uint8_t *begin, const uint8_t *end) : m_data{begin, end} {}
 
   /**
    * @brief Message ID generator.

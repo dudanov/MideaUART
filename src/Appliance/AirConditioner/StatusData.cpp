@@ -110,7 +110,7 @@ float StatusData::getPowerUsage() const {
 
 /* PropertiesStateQuery */
 
-PropertiesStateQuery::PropertiesStateQuery() : FrameData{0xB1} {
+PropertiesStateQuery::PropertiesStateQuery() : PropertiesData{0xB1} {
   this->appendUUID(UUID_HUMIDITY);
   this->appendUUID(UUID_SILKY_COOL);
   this->appendUUID(0x1A);  // beeper
@@ -122,7 +122,7 @@ PropertiesStateQuery::PropertiesStateQuery() : FrameData{0xB1} {
   this->appendCRC();
 }
 
-PropertiesStateQuery::PropertiesStateQuery(const Capabilities &s) : FrameData{0xB1} {
+PropertiesStateQuery::PropertiesStateQuery(const Capabilities &s) : PropertiesData{0xB1} {
   if (s.hasBlowingPeople)
     this->appendUUID(UUID_WIND_ON_ME);
 

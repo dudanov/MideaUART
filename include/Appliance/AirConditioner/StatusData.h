@@ -12,7 +12,7 @@
 #pragma once
 #include <Arduino.h>
 
-#include "Frame/FrameData.h"
+#include "Frame/PropertiesData.h"
 #include "Frame/PropertiesReader.h"
 #include "Helpers/Helpers.h"
 
@@ -229,7 +229,7 @@ class CapabilitiesQuery : public FrameData {
  * @brief PropertiesStateQuery `0xB1`.
  *
  */
-class PropertiesStateQuery : public FrameData {
+class PropertiesStateQuery : public PropertiesData {
  public:
   // DataBodyQueryB1
   explicit PropertiesStateQuery();

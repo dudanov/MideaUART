@@ -36,8 +36,7 @@ std::string Frame::toString() const {
   if (m_data.empty())
     return {};
 
-  std::string str;
-  str.assign(3 * m_data.size() - 1, ' ');
+  std::string str(3 * m_data.size() - 1, ' ');
   auto dst{str.begin()};
 
   for (auto it{m_data.begin()}; it != m_data.end(); dst += 3, ++it) {

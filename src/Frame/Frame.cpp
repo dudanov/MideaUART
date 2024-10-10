@@ -36,8 +36,8 @@ std::string Frame::toString(const char sep) const {
   if (m_data.empty())
     return {};
 
-  std::string str(3 * m_data.size() - 1, sep);
-  auto dst{str.begin()};
+  auto str = std::string(3 * m_data.size() - 1, sep);
+  auto dst = str.begin();
 
   for (auto it{m_data.begin()}; it != m_data.end(); dst += 3, ++it) {
     dst[0] = u4hex(*it / 16);

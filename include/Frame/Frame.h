@@ -75,9 +75,10 @@ class Frame {
   /**
    * @brief Print frame as hex string.
    *
+   * @param sep bytes separator.
    * @return Hex string.
    */
-  std::string toString() const;
+  std::string toString(char sep = ' ') const;
 
  protected:
   // Raw data vector.

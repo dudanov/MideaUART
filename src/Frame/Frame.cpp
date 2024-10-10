@@ -32,11 +32,11 @@ uint8_t Frame::m_calcCS() const {
 
 static char u4hex(uint8_t x) { return x + (x < 10 ? '0' : '7'); }
 
-std::string Frame::toString() const {
+std::string Frame::toString(const char sep) const {
   if (m_data.empty())
     return {};
 
-  std::string str(3 * m_data.size() - 1, ' ');
+  std::string str(3 * m_data.size() - 1, sep);
   auto dst{str.begin()};
 
   for (auto it{m_data.begin()}; it != m_data.end(); dst += 3, ++it) {

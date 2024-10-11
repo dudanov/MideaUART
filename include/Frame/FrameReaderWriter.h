@@ -51,10 +51,10 @@ class FrameReaderWriter : public Frame {
   IOStream *m_io{nullptr};
 
   // Appliance ID.
-  ApplianceID m_applianceID{BROADCAST};
+  ApplianceID m_appID{BROADCAST};
 
   // Protocol ID.
-  uint8_t m_protocolID{};
+  uint8_t m_protoID{};
 
  private:
   // Updates appliance ID.

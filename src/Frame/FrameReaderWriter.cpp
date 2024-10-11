@@ -10,10 +10,10 @@ static const char *const TAG = "FrameReaderWriter";
 inline void FrameReaderWriter::m_updAppID() {
   auto appID = static_cast<ApplianceID>(m_data[IDX_APPLIANCE]);
 
-  if (appID == m_applianceID)
+  if (appID == m_appID)
     return;
 
-  m_applianceID = appID;
+  m_appID = appID;
 
   LOG_D(TAG, "ApplianceID updated to 0x%02X", appID);
 }
@@ -21,10 +21,10 @@ inline void FrameReaderWriter::m_updAppID() {
 inline void FrameReaderWriter::m_updProtoID() {
   auto protoID = m_data[IDX_PROTOCOL];
 
-  if (protoID == m_protocolID)
+  if (protoID == m_protoID)
     return;
 
-  m_protocolID = protoID;
+  m_protoID = protoID;
 
   LOG_D(TAG, "ProtocolID updated to %d", protoID);
 }
@@ -63,7 +63,7 @@ bool FrameReaderWriter::read() {
 }
 
 void FrameReaderWriter::write(FrameType typeID, const FrameData &s) {
-  auto frame = Frame(m_applianceID, m_protocolID, typeID, s);
+  auto frame = Frame(m_appID, m_protoID, typeID, s);
 
   LOG_D(TAG, "TX: %s", frame.toString().c_str());
   m_io->write(frame.m_data.data(), frame.m_data.size());

@@ -33,7 +33,7 @@ class FrameData {
    * @param idx index of element.
    * @return const uint8_t& element.
    */
-  const uint8_t &operator[](int idx) const { return idx >= 0 ? m_data[idx] : m_data.end()[idx]; }
+  const uint8_t &operator[](int idx) const { return (idx >= 0 ? m_data.begin() : m_data.end())[idx]; }
 
   /**
    * @brief Access for element by index.
@@ -41,7 +41,7 @@ class FrameData {
    * @param idx index of element.
    * @return uint8_t& element.
    */
-  uint8_t &operator[](int idx) { return idx >= 0 ? m_data[idx] : m_data.end()[idx]; }
+  uint8_t &operator[](int idx) { return (idx >= 0 ? m_data.begin() : m_data.end())[idx]; }
 
   /**
    * @brief Checking for data has specified `typeID`.

@@ -62,9 +62,11 @@ bool FrameIO::read() {
   return false;
 }
 
-void FrameIO::write(const Frame &s) {
-  LOG_D(TAG, "TX: %s", s.toString().c_str());
-  m_io->write(s.m_data.data(), s.m_data.size());
+void FrameIO::write(FrameType typeID, const FrameData &s) {
+  auto frame = Frame(m_applianceID, m_protocolID, typeID, s);
+
+  LOG_D(TAG, "TX: %s", frame.toString().c_str());
+  m_io->write(frame.m_data.data(), frame.m_data.size());
 }
 
 }  // namespace midea

@@ -10,13 +10,13 @@ class IOStream;
  * @brief Frame reader class.
  *
  */
-class FrameIO : public Frame {
+class FrameReaderWriter : public Frame {
  public:
   /**
    * @brief Default constructor.
    *
    */
-  explicit FrameIO() = default;
+  explicit FrameReaderWriter() = default;
 
   /**
    * @brief Sets stream interface instance.

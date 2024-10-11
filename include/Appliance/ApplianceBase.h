@@ -1,6 +1,6 @@
 #pragma once
 #include <deque>
-#include "Frame/FrameIO.h"
+#include "Frame/FrameReaderWriter.h"
 #include "Helpers/Timer.h"
 #include "Helpers/Logger.h"
 
@@ -130,7 +130,7 @@ class ApplianceBase {
   void m_sendRequest(Request *req) { m_sendFrame(req->requestType, req->request); }
 
   /// Frame receiver with dynamic buffer.
-  FrameIO m_frameio{};
+  FrameReaderWriter m_frameio{};
 
   /// Network status timer.
   Timer m_networkTimer{};

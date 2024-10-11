@@ -36,7 +36,7 @@ enum FrameType : uint8_t {
  *
  */
 class Frame {
-  friend class FrameIO;
+  friend class FrameReaderWriter;
 
  public:
   /**
@@ -85,7 +85,7 @@ class Frame {
   std::vector<uint8_t> m_data;
 
   /**
-   * @brief Protected default constructor. Used for `FrameIO` instance construction.
+   * @brief Protected default constructor. Used for `FrameReaderWriter` instance construction.
    *
    */
   explicit Frame() = default;

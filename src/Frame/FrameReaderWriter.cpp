@@ -1,13 +1,13 @@
-#include "Frame/FrameIO.h"
+#include "Frame/FrameReaderWriter.h"
 #include "Helpers/Log.h"
 #include "IOStream.h"
 
 namespace dudanov {
 namespace midea {
 
-static const char *const TAG = "FrameIO";
+static const char *const TAG = "FrameReaderWriter";
 
-inline void FrameIO::m_updAppID() {
+inline void FrameReaderWriter::m_updAppID() {
   auto appID = static_cast<ApplianceID>(m_data[IDX_APPLIANCE]);
 
   if (appID == m_applianceID)
@@ -18,7 +18,7 @@ inline void FrameIO::m_updAppID() {
   LOG_D(TAG, "ApplianceID updated to 0x%02X", appID);
 }
 
-inline void FrameIO::m_updProtoID() {
+inline void FrameReaderWriter::m_updProtoID() {
   auto protoID = m_data[IDX_PROTOCOL];
 
   if (protoID == m_protocolID)
@@ -29,7 +29,7 @@ inline void FrameIO::m_updProtoID() {
   LOG_D(TAG, "ProtocolID updated to %d", protoID);
 }
 
-bool FrameIO::read() {
+bool FrameReaderWriter::read() {
   for (uint8_t byte; m_io->read(byte);) {
     const uint8_t idx = m_data.size();
 
@@ -62,7 +62,7 @@ bool FrameIO::read() {
   return false;
 }
 
-void FrameIO::write(FrameType typeID, const FrameData &s) {
+void FrameReaderWriter::write(FrameType typeID, const FrameData &s) {
   auto frame = Frame(m_applianceID, m_protocolID, typeID, s);
 
   LOG_D(TAG, "TX: %s", frame.toString().c_str());

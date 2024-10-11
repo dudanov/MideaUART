@@ -56,6 +56,7 @@ class FrameReaderWriter : public Frame {
   // Protocol ID.
   uint8_t m_protocolID{};
 
+ private:
   // Updates appliance ID.
   void m_updAppID();
 

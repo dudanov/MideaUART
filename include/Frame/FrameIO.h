@@ -48,12 +48,10 @@ class FrameIO : public Frame {
   /**
    * @brief Creates frame instance from parameters and writes it to the stream.
    *
-   * @param applianceID appliance type.
-   * @param protocolID protocol.
    * @param typeID type of frame.
    * @param s frame data body.
    */
-  void write(FrameType typeID, const FrameData &s) { this->write(Frame{m_applianceID, m_protocolID, typeID, s}); }
+  void write(FrameType typeID, const FrameData &s) { this->write(Frame(m_applianceID, m_protocolID, typeID, s)); }
 
  protected:
   // IO stream interface instance.

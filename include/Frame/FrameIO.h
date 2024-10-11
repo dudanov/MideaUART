@@ -64,6 +64,12 @@ class FrameIO : public Frame {
 
   // Protocol ID.
   uint8_t m_protocolID{};
+
+  // Updates appliance ID.
+  void m_updAppID();
+
+  // Updates protocol ID.
+  void m_updProtoID();
 };
 
 }  // namespace midea

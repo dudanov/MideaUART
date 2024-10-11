@@ -7,6 +7,28 @@ namespace midea {
 
 static const char *const TAG = "FrameIO";
 
+inline void FrameIO::m_updAppID() {
+  auto appID = static_cast<ApplianceID>(m_data[IDX_APPLIANCE]);
+
+  if (appID == m_applianceID)
+    return;
+
+  m_applianceID = appID;
+
+  LOG_D(TAG, "ApplianceID updated to 0x%02X", appID);
+}
+
+inline void FrameIO::m_updProtoID() {
+  auto protoID = m_data[IDX_PROTOCOL];
+
+  if (protoID == m_protocolID)
+    return;
+
+  m_protocolID = protoID;
+
+  LOG_D(TAG, "ProtocolID updated to %d", protoID);
+}
+
 bool FrameIO::read() {
   for (uint8_t byte; m_io->read(byte);) {
     const uint8_t idx = m_data.size();
@@ -20,19 +42,10 @@ bool FrameIO::read() {
 
       // Frame received. Return validation result.
       if (m_calcCS() == byte) {
-        auto appID = static_cast<ApplianceID>(m_data[IDX_APPLIANCE]);
-        auto protoID = m_data[IDX_PROTOCOL];
-
         LOG_D(TAG, "RX: %s", this->toString().c_str());
 
-        if (appID != m_applianceID)
-          LOG_D(TAG, "ApplianceID updated to 0x%02X", appID);
-
-        if (protoID != m_protocolID)
-          LOG_D(TAG, "ProtocolID updated to %d", protoID);
-
-        m_applianceID = appID;
-        m_protocolID = protoID;
+        m_updAppID();
+        m_updProtoID();
 
         return true;
       }

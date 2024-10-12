@@ -6,16 +6,16 @@ namespace midea {
 
 FrameData Frame::data() const { return {&m_data[IDX_DATA], &m_data[m_len()]}; }
 
-Frame::Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s) {
+Frame::Frame(ApplianceID appID, uint8_t protoID, FrameType typeID, const FrameData &s) {
   const uint8_t len = s.m_data.size() + IDX_DATA;
 
   m_data.resize(len + 1);  // +1 byte for the checksum
 
   m_data[IDX_START] = SYM_START;
   m_data[IDX_LENGTH] = len;
-  m_data[IDX_APPLIANCE] = applianceID;
-  m_data[IDX_SYNC] = len ^ applianceID;
-  m_data[IDX_PROTOCOL] = protocolID;
+  m_data[IDX_APPLIANCE] = appID;
+  m_data[IDX_SYNC] = len ^ appID;
+  m_data[IDX_PROTOCOL] = protoID;
   m_data[IDX_TYPE] = typeID;
 
   const auto cs = std::copy(s.m_data.begin(), s.m_data.end(), m_data.begin() + IDX_DATA);

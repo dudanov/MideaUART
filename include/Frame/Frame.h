@@ -42,13 +42,13 @@ class Frame {
   /**
    * @brief Makes `Frame` instance from parameters.
    *
-   * @param applianceID appliance ID.
-   * @param protocolID protocol ID.
+   * @param appID appliance ID.
+   * @param protoID protocol ID.
    * @param typeID frame type ID.
    * @param s frame data body.
    * @return `Frame` instance.
    */
-  explicit Frame(ApplianceID applianceID, uint8_t protocolID, FrameType typeID, const FrameData &s);
+  explicit Frame(ApplianceID appID, uint8_t protoID, FrameType typeID, const FrameData &s);
 
   /**
    * @brief Extracts data body from frame. Frame MUST BE full and valid.

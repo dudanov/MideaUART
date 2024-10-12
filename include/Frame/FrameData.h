@@ -188,7 +188,7 @@ class FrameData {
    * @param state if `true` bitmask is set, else clear.
    * @param mask bitmask.
    */
-  void m_setMask(int idx, bool state, uint8_t mask = 255) { m_setValue(idx, state ? mask : 0, mask); }
+  void m_setMask(int idx, uint8_t mask, bool state) { m_setValue(idx, state ? mask : 0, mask); }
 
   /**
    * @brief Set bit state.
@@ -198,7 +198,7 @@ class FrameData {
    * @param bit bit number.
    * @param state bit state.
    */
-  void m_setBit(int idx, uint8_t bit, bool state) { m_setMask(idx, state, 1 << bit); }
+  void m_setBit(int idx, uint8_t bit, bool state) { m_setMask(idx, 1 << bit, state); }
 };
 
 }  // namespace midea

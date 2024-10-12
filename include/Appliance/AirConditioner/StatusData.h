@@ -151,29 +151,29 @@ class StatusData : public FrameData {
   float getPowerUsage() const;
 
   void setBeeper(bool state) {
-    m_setMask(1, true, 2);
-    m_setMask(1, state, 64);
+    m_setBit(1, 1, true);
+    m_setBit(1, 6, state);
   }
 
  protected:
   /* POWER */
-  bool m_getPower() const { return m_getValue(1, 1); }
-  void m_setPower(bool state) { m_setMask(1, state, 1); }
+  bool m_getPower() const { return m_getBit(1, 0); }
+  void m_setPower(bool state) { m_setBit(1, 0, state); }
   /* ECO MODE */
-  bool m_getEco() const { return m_getValue(9, 16); }
-  void m_setEco(bool state) { m_setMask(9, state, 128); }
+  bool m_getEco() const { return m_getBit(9, 4); }
+  void m_setEco(bool state) { m_setBit(9, 7, state); }
   /* TURBO MODE */
-  bool m_getTurbo() const { return m_getValue(8, 32) || m_getValue(10, 2); }
+  bool m_getTurbo() const { return m_getBit(8, 5) || m_getBit(10, 1); }
   void m_setTurbo(bool state) {
-    m_setMask(8, state, 32);
-    m_setMask(10, state, 2);
+    m_setBit(8, 5, state);
+    m_setBit(10, 1, state);
   }
   /* FREEZE PROTECTION */
-  bool m_getFreezeProtection() const { return m_getValue(21, 128); }
-  void m_setFreezeProtection(bool state) { m_setMask(21, state, 128); }
+  bool m_getFreezeProtection() const { return m_getBit(21, 7); }
+  void m_setFreezeProtection(bool state) { m_setBit(21, 7, state); }
   /* SLEEP MODE */
-  bool m_getSleep() const { return m_getValue(10, 1); }
-  void m_setSleep(bool state) { m_setMask(10, state, 1); }
+  bool m_getSleep() const { return m_getBit(10, 0); }
+  void m_setSleep(bool state) { m_setBit(10, 0, state); }
 };
 
 /**

@@ -51,7 +51,7 @@ class PropertiesReader {
    * @brief Checks whether the current property has valid, readable data.
    *
    */
-  bool hasData() const { return m_available() > 0 && this->size() > 0 && m_available() >= this->size(); }
+  bool hasData() const { return this->size() > 0 && this->size() <= m_available(); }
 
   /**
    * @brief Property UUID.

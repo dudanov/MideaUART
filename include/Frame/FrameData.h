@@ -33,7 +33,7 @@ class FrameData {
    * @param idx index of element.
    * @return const uint8_t& element.
    */
-  const uint8_t &operator[](int idx) const { return (idx >= 0 ? m_data.begin() : m_data.end())[idx]; }
+  const uint8_t &operator[](int idx) const { return m_at(idx); }
 
   /**
    * @brief Access for element by index.
@@ -41,7 +41,7 @@ class FrameData {
    * @param idx index of element.
    * @return uint8_t& element.
    */
-  uint8_t &operator[](int idx) { return (idx >= 0 ? m_data.begin() : m_data.end())[idx]; }
+  uint8_t &operator[](int idx) { return m_at(idx); }
 
   /**
    * @brief Checking for data has specified `typeID`.
@@ -133,6 +133,22 @@ class FrameData {
   uint8_t m_calcCRC() const;
 
   /**
+   * @brief Access for const element by index.
+   *
+   * @param idx index of element.
+   * @return const uint8_t& element.
+   */
+  const uint8_t &m_at(int idx) const { return (idx >= 0 ? m_data.begin() : m_data.end())[idx]; }
+
+  /**
+   * @brief Access for element by index.
+   *
+   * @param idx index of element.
+   * @return uint8_t& element.
+   */
+  uint8_t &m_at(int idx) { return (idx >= 0 ? m_data.begin() : m_data.end())[idx]; }
+
+  /**
    * @brief Get value from data body.
    *
    * @param idx byte index.
@@ -140,9 +156,7 @@ class FrameData {
    * @param rshift number of bits right shift (default: 0).
    * @return Value.
    */
-  uint8_t m_getValue(size_t idx, uint8_t mask = 255, uint8_t rshift = 0) const {
-    return (m_data[idx] >> rshift) & mask;
-  }
+  uint8_t m_getValue(int idx, uint8_t mask = 255, uint8_t rshift = 0) const { return (m_at(idx) >> rshift) & mask; }
 
   /**
    * @brief Get bit value from data body.
@@ -151,7 +165,7 @@ class FrameData {
    * @param bit bit number.
    * @return Bit state.
    */
-  bool m_getBit(size_t idx, uint8_t bit) const { return m_getValue(idx, 1, bit); }
+  bool m_getBit(int idx, uint8_t bit) const { return m_getValue(idx, 1, bit); }
 
   /**
    * @brief Set value to data body.
@@ -161,9 +175,10 @@ class FrameData {
    * @param mask value mask without bits shift (default: 0xFF). Used to clear destination bits.
    * @param lshift number of bits to left shift value and mask.
    */
-  void m_setValue(size_t idx, uint8_t value, uint8_t mask = 255, uint8_t lshift = 0) {
-    m_data[idx] &= ~(mask << lshift);
-    m_data[idx] |= (value << lshift);
+  void m_setValue(int idx, uint8_t value, uint8_t mask = 255, uint8_t lshift = 0) {
+    auto &x = m_at(idx);
+    x &= ~(mask << lshift);
+    x |= (value << lshift);
   }
 
   /**
@@ -173,7 +188,7 @@ class FrameData {
    * @param state if `true` bitmask is set, else clear.
    * @param mask bitmask.
    */
-  void m_setMask(size_t idx, bool state, uint8_t mask = 255) { m_setValue(idx, state ? mask : 0, mask); }
+  void m_setMask(int idx, bool state, uint8_t mask = 255) { m_setValue(idx, state ? mask : 0, mask); }
 
   /**
    * @brief Set bit state.
@@ -183,7 +198,7 @@ class FrameData {
    * @param bit bit number.
    * @param state bit state.
    */
-  void m_setBit(size_t idx, uint8_t bit, bool state) { m_setMask(idx, state, 1 << bit); }
+  void m_setBit(int idx, uint8_t bit, bool state) { m_setMask(idx, state, 1 << bit); }
 };
 
 }  // namespace midea

@@ -144,7 +144,7 @@ class ApplianceBase {
   /* ############################## */
   /* ### COMMUNICATION SETTINGS ### */
   /* ############################## */
-  
+
   // Stream serial interface
   Stream *m_stream;
   // Minimal period between requests

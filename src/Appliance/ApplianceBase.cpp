@@ -77,7 +77,7 @@ void ApplianceBase::loop() {
   if (this->m_request->onData != nullptr) {
     this->m_resetAttempts();
     this->m_resetTimeout();
-  } else {    
+  } else {
     this->m_destroyRequest();
   }
 }

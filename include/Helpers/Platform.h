@@ -2,6 +2,7 @@
 
 #ifdef ARDUINO
 #include <Arduino.h>
+#include <IPAddress.h>
 #else
 // ESP-IDF compatibility layer
 #include <cstdint>
@@ -59,3 +60,19 @@ class IPAddress {
 };
 
 #endif  // ARDUINO
+
+// WiFi availability detection
+#ifdef ARDUINO_ARCH_ESP8266
+  // ESP8266 always has WiFi
+  #define HAS_WIFI 1
+#elif defined(ESP32)
+  // ESP32 family: check chip capabilities
+  #include "soc/soc_caps.h"
+  #if SOC_WIFI_SUPPORTED
+    #define HAS_WIFI 1
+  #else
+    #define HAS_WIFI 0
+  #endif
+#else
+  #define HAS_WIFI 0
+#endif

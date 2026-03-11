@@ -7,12 +7,11 @@
   #else
     #include <ESP8266WiFi.h>
   #endif
-  #define HAS_WIFI 1
 #else
-  // ESP-IDF
-  #include "esp_wifi.h"
-  #include "esp_netif.h"
-  #define HAS_WIFI 1
+  #if HAS_WIFI
+    #include "esp_wifi.h"
+    #include "esp_netif.h"
+  #endif
 #endif
 
 namespace dudanov {
@@ -117,6 +116,8 @@ void ApplianceBase::m_handler(const Frame &frame) {
   this->m_onRequest(frame);
 }
 
+#if HAS_WIFI
+
 #ifdef ARDUINO
 static uint8_t getSignalStrength() {
   const int32_t dbm = WiFi.RSSI();
@@ -167,7 +168,15 @@ static IPAddress getLocalIP() {
   }
   return IPAddress();
 }
-#endif
+#endif  // ARDUINO
+
+#else  // !HAS_WIFI
+
+static uint8_t getSignalStrength() { return 0; }
+static bool isWifiConnected() { return false; }
+static IPAddress getLocalIP() { return IPAddress(); }
+
+#endif  // HAS_WIFI
 
 void ApplianceBase::m_sendNetworkNotify(FrameType msgType) {
   NetworkNotifyData notify{};

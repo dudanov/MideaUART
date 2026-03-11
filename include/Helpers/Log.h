@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include "Helpers/Platform.h"
 
 namespace dudanov {
 
@@ -17,7 +17,9 @@ namespace dudanov {
 #endif
 
 void sv_log_printf_(int level, const char *tag, int line, const char *format, ...);
+#ifdef ARDUINO
 void sv_log_printf_(int level, const char *tag, int line, const __FlashStringHelper *format, ...);
+#endif
 
 #if LOG_LEVEL >= LOG_LEVEL_VERY_VERBOSE
 #define sv_log_vv(tag, format, ...) \

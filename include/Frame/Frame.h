@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include "Helpers/Platform.h"
 #include <vector>
 #include "Frame/FrameData.h"
 #include "Helpers/Helpers.h"

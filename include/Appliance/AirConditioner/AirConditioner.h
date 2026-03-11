@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+#include "Helpers/Platform.h"
 #include "Appliance/ApplianceBase.h"
 #include "Appliance/AirConditioner/Capabilities.h"
 #include "Appliance/AirConditioner/StatusData.h"

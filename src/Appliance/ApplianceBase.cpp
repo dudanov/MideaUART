@@ -1,9 +1,17 @@
 #include "Appliance/ApplianceBase.h"
 #include "Helpers/Log.h"
-#ifdef ARDUINO_ARCH_ESP32
-#include <WiFi.h>
+
+#ifdef ARDUINO
+  #ifdef ARDUINO_ARCH_ESP32
+    #include <WiFi.h>
+  #else
+    #include <ESP8266WiFi.h>
+  #endif
 #else
-#include <ESP8266WiFi.h>
+  #if HAS_WIFI
+    #include "esp_wifi.h"
+    #include "esp_netif.h"
+  #endif
 #endif
 
 namespace dudanov {
@@ -108,6 +116,9 @@ void ApplianceBase::m_handler(const Frame &frame) {
   this->m_onRequest(frame);
 }
 
+#if HAS_WIFI
+
+#ifdef ARDUINO
 static uint8_t getSignalStrength() {
   const int32_t dbm = WiFi.RSSI();
   if (dbm > -63)
@@ -119,11 +130,59 @@ static uint8_t getSignalStrength() {
   return 1;
 }
 
+static bool isWifiConnected() {
+  return WiFi.isConnected();
+}
+
+static IPAddress getLocalIP() {
+  return WiFi.localIP();
+}
+#else
+// ESP-IDF implementations
+static uint8_t getSignalStrength() {
+  wifi_ap_record_t ap_info;
+  if (esp_wifi_sta_get_ap_info(&ap_info) == ESP_OK) {
+    int32_t dbm = ap_info.rssi;
+    if (dbm > -63) return 4;
+    if (dbm > -75) return 3;
+    if (dbm > -88) return 2;
+  }
+  return 1;
+}
+
+static bool isWifiConnected() {
+  wifi_ap_record_t ap_info;
+  return esp_wifi_sta_get_ap_info(&ap_info) == ESP_OK;
+}
+
+static IPAddress getLocalIP() {
+  esp_netif_ip_info_t ip_info;
+  esp_netif_t *netif = esp_netif_get_handle_from_ifkey("WIFI_STA_DEF");
+  if (netif && esp_netif_get_ip_info(netif, &ip_info) == ESP_OK) {
+    return IPAddress(
+      ip_info.ip.addr & 0xFF,
+      (ip_info.ip.addr >> 8) & 0xFF,
+      (ip_info.ip.addr >> 16) & 0xFF,
+      (ip_info.ip.addr >> 24) & 0xFF
+    );
+  }
+  return IPAddress();
+}
+#endif  // ARDUINO
+
+#else  // !HAS_WIFI
+
+static uint8_t getSignalStrength() { return 0; }
+static bool isWifiConnected() { return false; }
+static IPAddress getLocalIP() { return IPAddress(); }
+
+#endif  // HAS_WIFI
+
 void ApplianceBase::m_sendNetworkNotify(FrameType msgType) {
   NetworkNotifyData notify{};
-  notify.setConnected(WiFi.isConnected());
+  notify.setConnected(isWifiConnected());
   notify.setSignalStrength(getSignalStrength());
-  notify.setIP(WiFi.localIP());
+  notify.setIP(getLocalIP());
   notify.appendCRC();
   if (msgType == NETWORK_NOTIFY) {
     LOG_D(TAG, "Enqueuing a DEVICE_NETWORK(0x0D) notification...");

@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#include "Helpers/Platform.h"
 #include "Helpers/Timer.h"
 
 namespace dudanov {

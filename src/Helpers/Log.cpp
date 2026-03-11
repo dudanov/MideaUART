@@ -16,6 +16,7 @@ void sv_log_printf_(int level, const char *tag, int line, const char *format, ..
   va_end(arg);
 }
 
+#ifdef ARDUINO
 void sv_log_printf_(int level, const char *tag, int line, const __FlashStringHelper *format, ...) {
   if (logger_ == nullptr)
     return;
@@ -24,5 +25,6 @@ void sv_log_printf_(int level, const char *tag, int line, const __FlashStringHel
   logger_(level, tag, line, format, arg);
   va_end(arg);
 }
+#endif
 
 }  // namespace dudanov

@@ -1,6 +1,6 @@
 #pragma once
 #include <deque>
-#include <Arduino.h>
+#include "Helpers/Platform.h"
 #include "Frame/Frame.h"
 #include "Frame/FrameData.h"
 #include "Helpers/Timer.h"

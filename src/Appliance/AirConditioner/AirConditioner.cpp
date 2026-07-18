@@ -190,6 +190,30 @@ void AirConditioner::m_displayToggle() {
   );
 }
 
+void AirConditioner::setVerticalAngle(uint8_t angle) {
+  SetVaneAngleData data{};
+  data.setVerticalAngle(angle);
+  LOG_D(TAG, "Enqueuing a priority VANE_CONTROL request...");
+  this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(data),
+    // onData
+    [this](FrameData data) -> ResponseStatus {
+      return ResponseStatus::RESPONSE_OK;
+    }
+  );
+}
+
+void AirConditioner::setHorizontalAngle(uint8_t angle) {
+  SetVaneAngleData data{};
+  data.setHorizontalAngle(angle);
+  LOG_D(TAG, "Enqueuing a priority VANE_CONTROL request...");
+  this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(data),
+    // onData
+    [this](FrameData data) -> ResponseStatus {
+      return ResponseStatus::RESPONSE_OK;
+    }
+  );
+}
+
 template<typename T>
 void setProperty(T &property, const T &value, bool &update) {
   if (property != value) {

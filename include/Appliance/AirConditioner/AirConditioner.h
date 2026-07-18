@@ -38,6 +38,8 @@ class AirConditioner : public ApplianceBase {
   Preset getPreset() const { return this->m_preset; }
   const Capabilities &getCapabilities() const { return this->m_capabilities; }
   void displayToggle() { this->m_displayToggle(); }
+  void setVerticalAngle(uint8_t angle);
+  void setHorizontalAngle(uint8_t angle);
  protected:
   void m_getPowerUsage();
   void m_getCapabilities();

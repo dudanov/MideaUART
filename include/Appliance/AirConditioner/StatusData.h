@@ -64,6 +64,11 @@ enum Preset : uint8_t {
   PRESET_FREEZE_PROTECTION,
 };
 
+enum PowerAnalysisMethod : uint8_t {
+  MODE_BCD,
+  MODE_BINARY,
+};
+
 class StatusData : public FrameData {
  public:
   StatusData() : FrameData({0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00,
@@ -105,7 +110,7 @@ class StatusData : public FrameData {
   void setPreset(Preset preset);
 
   /* POWER USAGE */
-  float getPowerUsage() const;
+  float getPowerUsage(PowerAnalysisMethod method) const;
 
   void setBeeper(bool state) {
     this->m_setMask(1, true, 2);

@@ -2,10 +2,10 @@
 #include "Helpers/Log.h"
 
 #ifdef ARDUINO
-  #ifdef ARDUINO_ARCH_ESP32
-    #include <WiFi.h>
-  #else
+  #ifdef ARDUINO_ARCH_ESP8266
     #include <ESP8266WiFi.h>
+  #else
+    #include <WiFi.h>
   #endif
 #else
   #if HAS_WIFI

@@ -20,5 +20,5 @@
   "dependencies": {
   },
   "frameworks": ["arduino", "espidf"],
-  "platforms": ["espressif8266", "espressif32"]
+  "platforms": ["espressif8266", "espressif32", "libretiny"]
 }

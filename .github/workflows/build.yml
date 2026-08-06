@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        env: [esp8266-arduino, esp32-arduino, esp32-idf]
+        env: [esp8266-arduino, esp32-arduino, esp32-idf, libretiny]
 
     steps:
       - uses: actions/checkout@v6

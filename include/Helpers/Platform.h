@@ -14,6 +14,17 @@
 #include "esp_timer.h"
 #include "esp_random.h"
 
+// F() macro - no-op on ESP-IDF (no flash strings needed)
+#define F(x) x
+
+// Arduino API replacements. Namespaced so they never leak into the global
+// namespace of consumers: hosts like ESPHome compile user code with
+// `using namespace esphome;` at global scope, and a global ::millis() here
+// makes every unqualified millis() call ambiguous there. Library code picks
+// these up through the enclosing dudanov namespace on ESP-IDF and falls back
+// to the real Arduino globals when ARDUINO is defined.
+namespace dudanov {
+
 // millis() replacement
 inline unsigned long millis() {
   return (unsigned long)(esp_timer_get_time() / 1000ULL);
@@ -30,9 +41,6 @@ inline long random(long min, long max) {
 
 // String replacement - use std::string
 using String = std::string;
-
-// F() macro - no-op on ESP-IDF (no flash strings needed)
-#define F(x) x
 
 // __FlashStringHelper - just const char* on ESP-IDF
 using __FlashStringHelper = const char;
@@ -58,6 +66,8 @@ class IPAddress {
  private:
   uint8_t addr_[4];
 };
+
+}  // namespace dudanov
 
 #endif  // ARDUINO
 

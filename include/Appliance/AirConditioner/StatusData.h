@@ -64,6 +64,14 @@ enum Preset : uint8_t {
   PRESET_FREEZE_PROTECTION,
 };
 
+/// Enum for display light setting
+enum Display : uint8_t {
+/// Display is off
+DISPLAY_OFF=7,
+/// Display is on 
+DISPLAY_ON=0
+};
+
 class StatusData : public FrameData {
  public:
   StatusData() : FrameData({0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00,
@@ -114,6 +122,9 @@ class StatusData : public FrameData {
 
   bool isFahrenheits() const { return this->m_getValue(10, 4); }
   void setFahrenheits(bool state) { this->m_setMask(10, state, 4); }
+
+  /* DISPLAY LIGHT */
+  Display getLight() const { return static_cast<Display>(this->m_getValue(14,7,4)); }
 
  protected:
   /* POWER */

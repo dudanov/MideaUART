@@ -39,8 +39,10 @@ static bool checkConstraints(const Mode &mode, const Preset &preset) {
 }
 
 void AirConditioner::control(const Control &control) {
-  if (this->m_sendControl)
+  if (this->m_sendControl) {
+    this->m_mergePending(control);
     return;
+  }
   StatusData status = this->m_status;
   Mode mode = this->m_mode;
   Preset preset = this->m_preset;
@@ -109,13 +111,41 @@ void AirConditioner::m_setStatus(StatusData status) {
     // onSuccess
     [this]() {
       this->m_sendControl = false;
+      this->m_flushPending();
     },
     // onError
     [this]() {
       LOG_W(TAG, "SET_STATUS(0x40) request failed...");
       this->m_sendControl = false;
+      // Pending fields still flush; the in-flight control's fields are NOT retried
+      // (avoids retry storms on a wedged AC).
+      this->m_flushPending();
     }
   );
+}
+
+void AirConditioner::m_mergePending(const Control &control) {
+  LOG_D(TAG, "Coalescing control() -- current request still in flight, merging into pending");
+  if (control.mode.hasValue())
+    this->m_pendingControl.mode = control.mode;
+  if (control.preset.hasValue())
+    this->m_pendingControl.preset = control.preset;
+  if (control.fanMode.hasValue())
+    this->m_pendingControl.fanMode = control.fanMode;
+  if (control.swingMode.hasValue())
+    this->m_pendingControl.swingMode = control.swingMode;
+  if (control.targetTemp.hasValue())
+    this->m_pendingControl.targetTemp = control.targetTemp;
+  this->m_hasPendingControl = true;
+}
+
+void AirConditioner::m_flushPending() {
+  if (!this->m_hasPendingControl)
+    return;
+  this->m_hasPendingControl = false;
+  Control pending = this->m_pendingControl;
+  this->m_pendingControl = Control{};
+  this->control(pending);
 }
 
 void AirConditioner::setPowerState(bool state) {

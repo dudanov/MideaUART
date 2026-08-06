@@ -59,6 +59,13 @@ class AirConditioner : public ApplianceBase {
   Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
   bool m_sendControl{};
+  // Coalesces control() calls that arrive while a previous control is in flight.
+  // Without this, rapid back-to-back calls (e.g. four single-field HA service calls)
+  // are silently dropped -- only the first survives.
+  Control m_pendingControl{};
+  bool m_hasPendingControl{};
+  void m_mergePending(const Control &control);
+  void m_flushPending();
 };
 
 }  // namespace ac

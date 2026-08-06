@@ -31,6 +31,7 @@ class AirConditioner : public ApplianceBase {
   float getIndoorTemp() const { return this->m_indoorTemp; }
   float getOutdoorTemp() const { return this->m_outdoorTemp; }
   float getIndoorHum() const { return this->m_indoorHumidity; }
+  float getTotalEnergyUsage() const { return this->m_totalEnergyUsage; }
   float getPowerUsage() const { return this->m_powerUsage; }
   Mode getMode() const { return this->m_mode; }
   SwingMode getSwingMode() const { return this->m_swingMode; }
@@ -51,6 +52,7 @@ class AirConditioner : public ApplianceBase {
   float m_indoorTemp{};
   float m_outdoorTemp{};
   float m_targetTemp{};
+  float m_totalEnergyUsage{};
   float m_powerUsage{};
   Mode m_mode{Mode::MODE_OFF};
   Preset m_preset{Preset::PRESET_NONE};

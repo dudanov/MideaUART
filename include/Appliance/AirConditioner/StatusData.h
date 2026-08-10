@@ -168,6 +168,22 @@ class GetCapabilitiesSecondData : public FrameData {
   GetCapabilitiesSecondData() : FrameData({0xB5, 0x01, 0x01, 0x00}) { this->appendCRC(); }
 };
 
+class SetVaneAngleData : public FrameData {
+ public:
+  SetVaneAngleData() : FrameData({0xb0, 0x02, 0x1a, 0x00, 0x01, 0x01, 0x09, 0x00, 0x01, 0x01, FrameData::m_getRandom()}) {}
+
+  void setVerticalAngle(uint8_t angle) { 
+    this->m_setValue(9, angle); 
+    this->appendCRC(); 
+  }
+
+  void setHorizontalAngle(uint8_t angle) { 
+    this->m_setValue(6, 0x0A); 
+    this->m_setValue(9, angle); 
+    this->appendCRC(); 
+  }
+};
+
 }  // namespace ac
 }  // namespace midea
 }  // namespace dudanov

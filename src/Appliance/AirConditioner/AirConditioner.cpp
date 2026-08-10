@@ -127,6 +127,10 @@ void AirConditioner::setPowerState(bool state) {
 }
 
 void AirConditioner::m_getPowerUsage() {
+  if (!this->m_powerUsagePolling)
+    return;
+  if (this->m_autoconfStatus == AUTOCONF_OK && !this->m_capabilities.powerCal())
+    return;
   QueryPowerData data{};
   LOG_D(TAG, "Enqueuing a GET_POWERUSAGE(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),

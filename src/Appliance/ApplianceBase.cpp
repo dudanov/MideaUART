@@ -243,5 +243,9 @@ void ApplianceBase::setBeeper(bool value) {
   this->m_beeper = value;
 }
 
+void ApplianceBase::setPowerAnalysisMethod(uint8_t value) {
+  this->m_powerMethod = value;
+}
+
 } // namespace midea
 } // namespace dudanov

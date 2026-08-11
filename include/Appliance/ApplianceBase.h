@@ -69,6 +69,7 @@ class ApplianceBase {
   uint8_t getNumAttempts() const { return this->m_numAttempts; }
   /// Set beeper feedback
   void setBeeper(bool value);
+  void setPowerAnalysisMethod(uint8_t method);
   /// Add listener for appliance state
   void addOnStateCallback(OnStateCallback cb) { this->m_stateCallbacks.push_back(cb); }
   void sendUpdate() {
@@ -86,6 +87,8 @@ class ApplianceBase {
   AutoconfStatus m_autoconfStatus{};
   // Beeper feedback flag
   bool m_beeper{};
+  // Power Analysis Method; 0 - BCD, 1 - Binary
+  uint8_t m_powerMethod;
 
   void m_queueNotify(FrameType type, FrameData data) { this->m_queueRequest(type, std::move(data), nullptr); }
   void m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSuccess = nullptr, Handler onError = nullptr);

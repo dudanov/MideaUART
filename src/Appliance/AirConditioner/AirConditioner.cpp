@@ -38,26 +38,52 @@ static bool checkConstraints(const Mode &mode, const Preset &preset) {
   }
 }
 
+// Overlays every field `src` has set onto `dst`, keeping dst's existing value for fields
+// `src` leaves unset. Used to accumulate/replay control() calls that arrive while a
+// SET_STATUS request is already in flight, instead of silently dropping them.
+static void mergeControl(Control &dst, const Control &src) {
+  if (src.targetTemp.hasValue())
+    dst.targetTemp = src.targetTemp.value();
+  if (src.mode.hasValue())
+    dst.mode = src.mode.value();
+  if (src.preset.hasValue())
+    dst.preset = src.preset.value();
+  if (src.fanMode.hasValue())
+    dst.fanMode = src.fanMode.value();
+  if (src.swingMode.hasValue())
+    dst.swingMode = src.swingMode.value();
+}
+
+static bool hasAnyValue(const Control &control) {
+  return control.targetTemp.hasValue() || control.mode.hasValue() || control.preset.hasValue() ||
+    control.fanMode.hasValue() || control.swingMode.hasValue();
+}
+
 void AirConditioner::control(const Control &control) {
-  if (this->m_sendControl)
+  if (this->m_sendControl) {
+    mergeControl(this->m_pendingControl, control);
     return;
+  }
+  Control effective = this->m_pendingControl;
+  mergeControl(effective, control);
+  this->m_pendingControl = Control{};
   StatusData status = this->m_status;
   Mode mode = this->m_mode;
   Preset preset = this->m_preset;
   bool hasUpdate = false;
   bool isModeChanged = false;
-  if (control.mode.hasUpdate(mode)) {
+  if (effective.mode.hasUpdate(mode)) {
     hasUpdate = true;
     isModeChanged = true;
-    mode = control.mode.value();
+    mode = effective.mode.value();
     if (this->m_mode == Mode::MODE_OFF)
       preset = this->m_lastPreset;
     else if (!checkConstraints(mode, preset))
       preset = Preset::PRESET_NONE;
   }
-  if (control.preset.hasUpdate(preset) && checkConstraints(mode, control.preset.value())) {
+  if (effective.preset.hasUpdate(preset) && checkConstraints(mode, effective.preset.value())) {
     hasUpdate = true;
-    preset = control.preset.value();
+    preset = effective.preset.value();
   }
   if (mode != Mode::MODE_OFF) {
     if (mode == Mode::MODE_AUTO || preset != Preset::PRESET_NONE) {
@@ -65,18 +91,18 @@ void AirConditioner::control(const Control &control) {
         hasUpdate = true;
         status.setFanMode(FanMode::FAN_AUTO);
       }
-    } else if (control.fanMode.hasUpdate(this->m_fanMode)) {
+    } else if (effective.fanMode.hasUpdate(this->m_fanMode)) {
       hasUpdate = true;
-      status.setFanMode(control.fanMode.value());
+      status.setFanMode(effective.fanMode.value());
     }
-    if (control.swingMode.hasUpdate(this->m_swingMode)) {
+    if (effective.swingMode.hasUpdate(this->m_swingMode)) {
       hasUpdate = true;
-      status.setSwingMode(control.swingMode.value());
+      status.setSwingMode(effective.swingMode.value());
     }
   }
-  if (control.targetTemp.hasUpdate(this->m_targetTemp)) {
+  if (effective.targetTemp.hasUpdate(this->m_targetTemp)) {
     hasUpdate = true;
-    status.setTargetTemp(control.targetTemp.value());
+    status.setTargetTemp(effective.targetTemp.value());
   }
   if (hasUpdate) {
     this->m_sendControl = true;
@@ -109,13 +135,23 @@ void AirConditioner::m_setStatus(StatusData status) {
     // onSuccess
     [this]() {
       this->m_sendControl = false;
+      this->m_flushPendingControl();
     },
     // onError
     [this]() {
       LOG_W(TAG, "SET_STATUS(0x40) request failed...");
       this->m_sendControl = false;
+      this->m_flushPendingControl();
     }
   );
+}
+
+void AirConditioner::m_flushPendingControl() {
+  if (!hasAnyValue(this->m_pendingControl))
+    return;
+  Control pending = this->m_pendingControl;
+  this->m_pendingControl = Control{};
+  this->control(pending);
 }
 
 void AirConditioner::setPowerState(bool state) {

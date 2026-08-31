@@ -43,6 +43,7 @@ class AirConditioner : public ApplianceBase {
   void m_getCapabilities();
   void m_getStatus();
   void m_setStatus(StatusData status);
+  void m_flushPendingControl();
   void m_displayToggle();
   ResponseStatus m_readStatus(FrameData data);
   Capabilities m_capabilities{};
@@ -59,6 +60,7 @@ class AirConditioner : public ApplianceBase {
   Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
   bool m_sendControl{};
+  Control m_pendingControl{};
 };
 
 }  // namespace ac

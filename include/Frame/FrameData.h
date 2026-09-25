@@ -18,7 +18,12 @@ class FrameData {
   const uint8_t *data() const { return this->m_data.data(); }
   uint8_t size() const { return this->m_data.size(); }
   bool hasID(uint8_t value) const { return this->m_data[0] == value; }
-  bool hasStatus() const { return this->hasID(0xC0); }
+  bool hasStatus() const {
+    // Basic status fields occupy bytes 0..15, followed by an integrity byte.
+    // Some units use an additive payload checksum instead of CRC8.
+    return this->m_data.size() >= 17 && this->hasID(0xC0) &&
+           (this->hasValidCRC() || this->hasValidChecksum());
+  }
   bool hasPowerInfo() const { return this->hasID(0xC1); }
   void appendCRC() { this->m_data.push_back(this->m_calcCRC()); }
   void updateCRC() {
@@ -26,6 +31,14 @@ class FrameData {
     this->appendCRC();
   }
   bool hasValidCRC() const { return !this->m_calcCRC(); }
+  bool hasValidChecksum() const {
+    if (this->m_data.empty())
+      return false;
+    uint8_t sum = 0;
+    for (uint8_t value : this->m_data)
+      sum += value;
+    return sum == 0;
+  }
  protected:
   std::vector<uint8_t> m_data;
   static uint8_t m_id;

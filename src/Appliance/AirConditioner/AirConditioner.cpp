@@ -203,7 +203,8 @@ ResponseStatus AirConditioner::m_readStatus(FrameData data) {
     return ResponseStatus::RESPONSE_WRONG;
   LOG_D(TAG, "New status data received. Parsing...");
   bool hasUpdate = false;
-  const StatusData newStatus = data.to<StatusData>();
+  // The integrity byte must not be decoded as an optional status field.
+  const StatusData newStatus(FrameData(data.data(), data.size() - 1));
   this->m_status.copyStatus(newStatus);
   if (this->m_mode != newStatus.getMode()) {
     hasUpdate = true;

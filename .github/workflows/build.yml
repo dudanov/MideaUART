@@ -4,6 +4,16 @@ on:
   pull_request:
 
 jobs:
+  status-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Run status validation regression tests
+        run: python test/run_status_validation.py
+
   build:
     runs-on: ubuntu-latest
     strategy:

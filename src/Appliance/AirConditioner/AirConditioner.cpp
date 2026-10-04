@@ -8,6 +8,33 @@ namespace ac {
 
 static const char *TAG = "AirConditioner";
 
+bool AirConditioner::requestGroup7Power(std::function<void(float)> onData, Handler onError) {
+  if (this->m_group7Pending)
+    return false;
+  this->m_group7Pending = true;
+  FrameData query({0x41, 0x21, 0x01, 0x47, 0x00, 0x01});
+  query.appendCRC();
+  this->m_queueRequest(DEVICE_QUERY, std::move(query),
+    [this](FrameData data) -> ResponseStatus {
+      // The payload includes its CRC, but excludes the outer frame checksum.
+      if (data.size() < 13 || data.data()[0] != 0xC1 || data.data()[1] != 0x21 ||
+          data.data()[2] != 0x01 || data.data()[3] != 0x47 || !data.hasValidCRC())
+        return RESPONSE_WRONG;
+      this->m_group7Power = static_cast<float>(data.data()[10] | (uint16_t(data.data()[11]) << 8));
+      return RESPONSE_OK;
+    },
+    [this, onData]() {
+      const float power = this->m_group7Power;
+      this->m_group7Pending = false;
+      if (onData) onData(power);
+    },
+    [this, onError]() {
+      this->m_group7Pending = false;
+      if (onError) onError();
+    }, 1);
+  return true;
+}
+
 void AirConditioner::m_setup() {
   if (this->m_autoconfStatus != AUTOCONF_DISABLED)
     this->m_getCapabilities();

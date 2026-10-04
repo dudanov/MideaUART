@@ -1,4 +1,5 @@
 #include "Appliance/AirConditioner/StatusData.h"
+#include <limits>
 
 namespace dudanov {
 namespace midea {
@@ -99,6 +100,8 @@ void StatusData::setPreset(Preset preset) {
 static uint8_t bcd2u8(uint8_t bcd) { return 10 * (bcd >> 4) + (bcd & 15); }
 
 float StatusData::getPowerUsage() const {
+  if (!this->hasPowerInfo())
+    return std::numeric_limits<float>::quiet_NaN();
   uint32_t power = 0;
   const uint8_t *ptr = this->m_data.data() + 18;
   for (uint32_t weight = 1;; weight *= 100, --ptr) {

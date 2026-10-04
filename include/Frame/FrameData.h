@@ -19,7 +19,13 @@ class FrameData {
   uint8_t size() const { return this->m_data.size(); }
   bool hasID(uint8_t value) const { return this->m_data[0] == value; }
   bool hasStatus() const { return this->hasID(0xC0); }
-  bool hasPowerInfo() const { return this->hasID(0xC1); }
+  // Group 4 power uses bytes 16..18, followed by at least its payload CRC.
+  // Other diagnostic groups also start with C1 and must not complete this query.
+  bool hasPowerInfo() const {
+    return this->m_data.size() >= 20 && this->m_data[0] == 0xC1 &&
+           this->m_data[1] == 0x21 && this->m_data[2] == 0x01 &&
+           this->m_data[3] == 0x44 && this->hasValidCRC();
+  }
   void appendCRC() { this->m_data.push_back(this->m_calcCRC()); }
   void updateCRC() {
     this->m_data.pop_back();

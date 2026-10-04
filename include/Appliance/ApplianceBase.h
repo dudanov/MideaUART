@@ -88,7 +88,7 @@ class ApplianceBase {
   bool m_beeper{};
 
   void m_queueNotify(FrameType type, FrameData data) { this->m_queueRequest(type, std::move(data), nullptr); }
-  void m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSuccess = nullptr, Handler onError = nullptr);
+  void m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSuccess = nullptr, Handler onError = nullptr, uint8_t attempts = 0);
   void m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData = nullptr, Handler onSuccess = nullptr, Handler onError = nullptr);
   void m_sendFrame(FrameType type, const FrameData &data);
   // Setup for appliances
@@ -106,6 +106,7 @@ class ApplianceBase {
     Handler onSuccess;
     Handler onError;
     FrameType requestType;
+    uint8_t attempts;  // 0 inherits the configured retry policy.
     ResponseStatus callHandler(const Frame &data);
   };
   class FrameReceiver : public Frame {
@@ -116,7 +117,7 @@ class ApplianceBase {
   void m_sendNetworkNotify(FrameType msg_type = NETWORK_NOTIFY);
   void m_handler(const Frame &frame);
   bool m_isWaitForResponse() const { return this->m_request != nullptr; }
-  void m_resetAttempts() { this->m_remainAttempts = this->m_numAttempts; }
+  void m_resetAttempts() { this->m_remainAttempts = this->m_request->attempts ? this->m_request->attempts : this->m_numAttempts; }
   void m_destroyRequest();
   void m_resetTimeout();
   void m_sendRequest(Request *request) { this->m_sendFrame(request->requestType, request->request); }

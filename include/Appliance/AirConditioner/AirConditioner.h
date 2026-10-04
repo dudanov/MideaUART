@@ -24,6 +24,10 @@ class AirConditioner : public ApplianceBase {
   void m_setup() override;
   void m_onIdle() override { this->m_getStatus(); }
   void control(const Control &control);
+  // Explicit opt-in query; one transmission, using the configured response timeout.
+  // Returns false if another Group 7 query is already queued or awaiting a reply.
+  // onData receives watts; onError runs if no valid reply arrives before the deadline.
+  bool requestGroup7Power(std::function<void(float)> onData, Handler onError = nullptr);
   void setPowerState(bool state);
   bool getPowerState() const { return this->m_mode != Mode::MODE_OFF; }
   void togglePowerState() { this->setPowerState(this->m_mode == Mode::MODE_OFF); }
@@ -59,6 +63,8 @@ class AirConditioner : public ApplianceBase {
   Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
   bool m_sendControl{};
+  bool m_group7Pending{};
+  float m_group7Power{};
 };
 
 }  // namespace ac

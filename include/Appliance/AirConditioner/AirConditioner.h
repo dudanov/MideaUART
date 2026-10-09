@@ -36,6 +36,7 @@ class AirConditioner : public ApplianceBase {
   SwingMode getSwingMode() const { return this->m_swingMode; }
   FanMode getFanMode() const { return this->m_fanMode; }
   Preset getPreset() const { return this->m_preset; }
+  Display getLight() const { return this->m_light; }
   const Capabilities &getCapabilities() const { return this->m_capabilities; }
   void displayToggle() { this->m_displayToggle(); }
  protected:
@@ -52,6 +53,7 @@ class AirConditioner : public ApplianceBase {
   float m_outdoorTemp{};
   float m_targetTemp{};
   float m_powerUsage{};
+  Display m_light{};
   Mode m_mode{Mode::MODE_OFF};
   Preset m_preset{Preset::PRESET_NONE};
   FanMode m_fanMode{FanMode::FAN_AUTO};

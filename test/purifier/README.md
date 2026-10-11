@@ -1,17 +1,12 @@
 # Purifier tests
 
-From the repository root:
+Run from the repository root with Python 3 and C++17 `g++` (`CXX` overrides it):
 
 ```sh
 python3 test/purifier/run_tests.py
 python3 test/purifier/run_tests.py --sanitize
-python3 test/purifier/run_tests.py remote_only_status_reaches_feedback
 ```
 
-Requires Python 3 and a C++17 compiler (`g++` by default; override with `CXX`).
-Tests compile all real library sources and exercise the parser, framing, queue,
-timers and callbacks with an in-memory Stream and synthetic status bodies.
-No hardware or network access; this is not an embedded firmware test.
-
-`--sanitize` enables ASan/UBSan. Leak detection is disabled because the upstream
-request queue has no owning destructor.
+Tests exercise the real library parser, queue and callbacks with synthetic UART
+frames. They do not access hardware or the network.
+ASan/UBSan leak checks are disabled because the upstream request queue has no owning destructor.

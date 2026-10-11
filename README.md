@@ -81,39 +81,24 @@ void loop() {
 
 ## Purifier / ionizer (experimental)
 
-Adds control for the purifier feature, also called Air Magic or ionizer on some
-models. See [#29](https://github.com/dudanov/MideaUART/issues/29).
+Adds Air Magic/ionizer control on supported models. See [#29](https://github.com/dudanov/MideaUART/issues/29).
 
 ```cpp
-ac.addOnPurifierStatusCallback([](bool on) {
-  // Update your switch from the AC's reported state.
-});
-
+ac.addOnPurifierStatusCallback([](bool on) { /* Update your switch. */ });
 bool queued = ac.setPurifier(true);
 ```
 
-`true` means the command was queued, not that the AC accepted it. Wait for the
-callback before changing the displayed state. Commands need a valid status no
-older than 15 seconds; stale, busy and duplicate requests return `false`.
-The library does not turn the purifier on or off at startup or reconnect.
+`true` means queued, not confirmed. Writes need valid status within 15 seconds
+(or your chosen `maxAge`); stale, busy and duplicate requests return `false`.
+State comes from AC feedback. There are no startup or reconnect writes.
 
-`getPurifier()` reads the last confirmed state. Check `hasFreshStatus()` first:
-the initial `false` is not a confirmed OFF reading. `setPurifier()` and
-`hasFreshStatus()` accept an optional freshness limit in milliseconds.
+`getPurifier()` returns the last confirmed state; check `hasFreshStatus()` first.
+The initial `false` does not confirm OFF.
 
-The original version was tested on one AC with an ESP8266 UART adapter, including
-changes made with the remote. This version passes host tests and firmware builds
-but hasn't been flashed for a hardware test. Support on other models isn't confirmed.
+The earlier prototype was tested on one AC. This rewritten version has not been
+flashed for a hardware test.
 
-Run the tests with Python 3 and a C++17 compiler:
-
-```sh
-python3 test/purifier/run_tests.py
-python3 test/purifier/run_tests.py --sanitize
-```
-
-More detail: [test notes](test/purifier/README.md) and
-[API reference](docs/purifier-api.json).
+[Host tests](test/purifier/README.md).
 
 ## My thanks
 

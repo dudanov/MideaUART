@@ -1,0 +1,72 @@
+{
+  "contract_version": 1,
+  "namespace": "dudanov::midea::ac",
+  "header": "Appliance/AirConditioner/AirConditioner.h",
+  "class": "AirConditioner",
+  "methods": {
+    "setPurifier": "bool setPurifier(bool state, uint32_t maxAge = 15000)",
+    "getPurifier": "bool getPurifier() const",
+    "hasFreshStatus": "bool hasFreshStatus(uint32_t maxAge = 15000) const",
+    "addOnPurifierStatusCallback": "void addOnPurifierStatusCallback(OnPurifierStatusCallback cb)"
+  },
+  "callback_type": "std::function<void(bool)>",
+  "semantics": {
+    "set_true": "Queued only, not an acknowledgement; may be cancelled before dispatch/retry.",
+    "set_false": [
+      "missing_or_invalid_status",
+      "age_greater_than_maxAge",
+      "maxAge_zero",
+      "climate_or_purifier_control_busy",
+      "requested_value_already_confirmed"
+    ],
+    "initial_get": false,
+    "initial_get_is_confirmed": false,
+    "freshness": "Feature-local trusted C0; age <= maxAge milliseconds, using uint32_t elapsed time.",
+    "callback": "Every trusted C0 handled by normal query/control/display response parsing, including unchanged and opposite-to-request values; no callback on registration or malformed C0.",
+    "snapshot": "Separate from ordinary climate cache; malformed C0 invalidates freshness; newer C0 supersedes queued writes.",
+    "writes": "Explicit only; no optimistic changes, startup/reconnect/restore commands, or automatic busy-command replay.",
+    "guard": "Check freshness and snapshot revision before dispatch and each retry; cancellation releases the busy-control flag.",
+    "preserved": [
+      "power",
+      "raw_mode",
+      "raw_fan",
+      "swing",
+      "target_temperature",
+      "preset"
+    ],
+    "ordinary_climate": "Existing callbacks/control semantics retained, including busy control drop behavior."
+  },
+  "protocol": {
+    "candidate": true,
+    "status_body_id": "0xC0",
+    "command_body_id": "0x40",
+    "body_offset_zero_based": 9,
+    "aa_frame_offset_zero_based": 19,
+    "mask": "0x20",
+    "minimum_status_prefix_bytes": 16,
+    "integrity": [
+      "CRC8",
+      "legacy_additive_checksum_mod256_zero"
+    ],
+    "integrity_excluded_from_feature_optional_fields": true
+  },
+  "integration": {
+    "publish_from_callback_only": true,
+    "check_freshness_for_availability": true,
+    "restore_mode": "Do not send a saved state on startup/reconnection.",
+    "public_esphome_access": "Not established; follow-up must verify the actual ESPHome parent API.",
+    "capability_detection": false
+  },
+  "scope": {
+    "hardware_evidence": "One Midea-compatible AC with an ESP8266 UART adapter; ON/OFF and physical remote feedback.",
+    "universal_support": false,
+    "short_legacy_formats": "Synthetic host coverage only, not hardware confirmation.",
+    "global_climate_validation": "Out of scope; separate open proposal #50. A minimal memcpy bound is included.",
+    "busy_climate_replay": "Out of scope; separate open proposal #48."
+  },
+  "related": {
+    "feature_issue": "https://github.com/dudanov/MideaUART/issues/29",
+    "validation_proposal": "https://github.com/dudanov/MideaUART/pull/50",
+    "busy_control_proposal": "https://github.com/dudanov/MideaUART/pull/48"
+  }
+}

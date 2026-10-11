@@ -104,6 +104,10 @@ class StatusData : public FrameData {
   Preset getPreset() const;
   void setPreset(Preset preset);
 
+  /* PURIFIER */
+  bool getPurifier() const { return this->m_getValue(9, 0x20); }
+  void setPurifier(bool state) { this->m_setMask(9, state, 0x20); }
+
   /* POWER USAGE */
   float getPowerUsage() const;
 

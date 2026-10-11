@@ -4,6 +4,15 @@ on:
   pull_request:
 
 jobs:
+  purifier-host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run purifier regression tests
+        run: python3 test/purifier/run_tests.py
+      - name: Run purifier sanitizer tests
+        run: python3 test/purifier/run_tests.py --sanitize
+
   build:
     runs-on: ubuntu-latest
     strategy:

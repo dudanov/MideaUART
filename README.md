@@ -85,9 +85,11 @@ The generic `AirConditioner` purifier API addresses
 [Fresh/ionizer function missing (#29)](https://github.com/dudanov/MideaUART/issues/29).
 The candidate mapping is C0 status and 0x40 command body byte 9, bit 5 (`0x20`),
 counting the body identifier as byte 0 (full AA-frame byte 19).
-ON/OFF control and physical-remote feedback have been tested on **one
-Midea-compatible AC using an ESP8266 UART adapter**. This is not a claim of
-universal model support, nor a capability-detection mechanism.
+The protocol mapping was verified with a local prototype on **one
+Midea-compatible AC using an ESP8266 UART adapter**, including ON/OFF control
+and physical-remote feedback. This upstream implementation has host-test and
+compile-only coverage; it has not been flashed for a separate hardware test.
+This is not a claim of universal model support or a capability-detection mechanism.
 
 ```cpp
 // Register before setup(); publish only confirmed appliance feedback.

@@ -8,6 +8,15 @@ using namespace dudanov::midea;
 using namespace dudanov::midea::ac;
 #define REQUIRE(expr) do { if (!(expr)) throw std::runtime_error(#expr); } while (0)
 
+static_assert(std::is_same_v<decltype(&AirConditioner::setPurifier),
+  bool (AirConditioner::*)(bool, uint32_t)>);
+static_assert(std::is_same_v<decltype(&AirConditioner::getPurifier),
+  bool (AirConditioner::*)() const>);
+static_assert(std::is_same_v<decltype(&AirConditioner::hasFreshStatus),
+  bool (AirConditioner::*)(uint32_t) const>);
+static_assert(std::is_same_v<decltype(&AirConditioner::addOnPurifierStatusCallback),
+  void (AirConditioner::*)(OnPurifierStatusCallback)>);
+
 class TestAC : public AirConditioner {
  public:
   using AirConditioner::m_readStatus;
@@ -213,6 +222,10 @@ void malformed_status_cannot_refresh_or_publish() {
   REQUIRE(f.ac.m_readStatus(FrameData({0xC0})) == RESPONSE_WRONG);
   REQUIRE(f.ac.m_readStatus(FrameData(uint8_t(0))) == RESPONSE_WRONG);
   FrameData shortBody({0xC0, 1, 0x48, 40, 0x7F, 0x7F, 0, 0x3C, 0, 0x20, 0});
+  // The legacy climate minimum remains accepted; integrity-free getters must
+  // not shorten the source of copyStatus() into an out-of-bounds prefix copy.
+  REQUIRE(f.ac.m_readStatus(shortBody) == RESPONSE_OK);
+  REQUIRE(actual.empty() && !fresh(f.ac));
   shortBody.appendCRC();
   REQUIRE(f.ac.m_readStatus(shortBody) == RESPONSE_OK);
   REQUIRE(actual.empty() && !fresh(f.ac));
@@ -425,9 +438,184 @@ void malformed_uart_ack_revokes_write_permission() {
   REQUIRE(actual.size() == 2 && actual.back() && f.ac.hasFreshStatus());
 }
 
+void purifier_command_does_not_echo_response_bits() {
+  for (bool powered : {false, true}) {
+    for (uint8_t rawFan : {30, 50}) {
+      Fixture f;
+      std::vector<uint8_t> bytes(24, 0);
+      bytes[0] = 0xC0; bytes[1] = 0x80 | powered;
+      bytes[2] = 0x55; bytes[3] = rawFan;
+      bytes[4] = 0x12; bytes[5] = 0x34; bytes[6] = 0xFF;
+      bytes[7] = 0xBF; bytes[8] = 0x01; bytes[9] = 0x5F;
+      bytes[10] = 0xFC; bytes[11] = 84; bytes[12] = 72; bytes[13] = 15;
+      FrameData data(bytes.data(), bytes.size()); data.appendCRC();
+      REQUIRE(f.ac.m_readStatus(data) == RESPONSE_OK);
+      REQUIRE(requestPurifier(f.ac, true)); f.ac.loop();
+      REQUIRE(f.stream.tx.size() == 1);
+      const auto &tx = f.stream.tx.back();
+      std::vector<uint8_t> expected(24, 0);
+      expected[0] = 0x40; expected[1] = powered ? 3 : 2;
+      expected[2] = 0x5B; expected[3] = rawFan;
+      expected[4] = expected[5] = 0x7F; expected[7] = 0x3F;
+      expected[9] = 0xA0; expected[10] = 4; expected[18] = 15;
+      for (unsigned i = 0; i < expected.size(); i++) {
+        if (tx[10 + i] != expected[i])
+          throw std::runtime_error("command byte " + std::to_string(i) +
+            " expected " + std::to_string(expected[i]) + " got " + std::to_string(tx[10 + i]));
+      }
+      f.stream.receive(statusFrame(true)); f.ac.loop();
+    }
+  }
+}
+
+void purifier_toggle_preserves_independent_preset_flags() {
+  // ECO+SLEEP in COOL, TURBO+SLEEP in COOL, and FREEZE+SLEEP in HEAT.
+  for (uint8_t flags : {5, 6, 12}) {
+    for (bool alternateTurbo : {false, true}) {
+      Fixture f;
+      std::vector<uint8_t> bytes(24, 0);
+      bytes[0] = 0xC0; bytes[1] = 1;
+      bytes[2] = flags == 12 ? 0x88 : 0x48; bytes[3] = 30; bytes[7] = 0x8C;
+      bytes[9] = (flags & 1) ? 0x10 : 0;
+      bytes[8] = (flags & 2) && !alternateTurbo ? 0x20 : 0;
+      bytes[10] = ((flags & 4) ? 1 : 0) | ((flags & 2) && alternateTurbo ? 2 : 0);
+      bytes[21] = (flags & 8) ? 0x80 : 0;
+      FrameData data(bytes.data(), bytes.size()); data.appendCRC();
+      REQUIRE(f.ac.m_readStatus(data) == RESPONSE_OK);
+      REQUIRE(requestPurifier(f.ac, true)); f.ac.loop();
+      const auto &tx = f.stream.tx.back();
+      REQUIRE(tx[13] == 30);  // feature-only toggle cannot apply preset fan constraints
+      REQUIRE((tx[19] & 0x80) == ((flags & 1) ? 0x80 : 0));
+      REQUIRE((tx[18] & 0x20) == ((flags & 2) ? 0x20 : 0));
+      REQUIRE((tx[20] & 2) == ((flags & 2) ? 2 : 0));
+      REQUIRE((tx[20] & 1) == ((flags & 4) ? 1 : 0));
+      REQUIRE((tx[31] & 0x80) == ((flags & 8) ? 0x80 : 0));
+      f.stream.receive(statusFrame(true)); f.ac.loop();
+    }
+  }
+}
+
+void nonstatus_uart_reply_preserves_guarded_retry() {
+  for (const FrameData &reply : {FrameData({0xFF, 0x00}),  // busy body
+                                 FrameData({0x40, 0x00}),  // short ACK, not C0
+                                 FrameData(uint8_t(0)),   // empty nonstatus body
+                                 FrameData({0xB5, 0x00, 0x00})}) {
+    Fixture f;
+    f.ac.setNumAttempts(3);
+    unsigned climateUpdates = 0, purifierUpdates = 0;
+    f.ac.addOnStateCallback([&]() { climateUpdates++; });
+    feedback(f.ac, [&](bool) { purifierUpdates++; });
+    REQUIRE(f.ac.m_readStatus(statusFrame(false)) == RESPONSE_OK);
+    REQUIRE(requestPurifier(f.ac, true)); f.ac.loop();
+    REQUIRE(f.stream.tx.size() == 1);
+    const auto original = f.stream.tx.back();
+    test_millis += 4;
+    f.stream.receive(reply); f.ac.loop();
+    REQUIRE(f.ac.hasFreshStatus());
+    REQUIRE(!f.ac.getPurifier());
+    REQUIRE(climateUpdates == 1 && purifierUpdates == 1);
+    // Actual source classifies these as WRONG, not PARTIAL: the original
+    // response deadline must survive, rather than being reset by busy/ACK.
+    test_millis += 7; f.ac.loop();
+    REQUIRE(f.stream.tx.size() == 2);
+    const auto &retry = f.stream.tx.back();
+    REQUIRE(retry.size() == original.size() && retry[9] == DEVICE_CONTROL);
+    // Receiving a frame learns protocol 2; only the SET body must be identical.
+    REQUIRE(std::equal(original.begin() + 10, original.end() - 1, retry.begin() + 10));
+    f.stream.receive(statusFrame(true)); f.ac.loop();
+    REQUIRE(f.ac.getPurifier() && purifierUpdates == 2);
+  }
+}
+
+void truncated_c0_uart_reply_revokes_guarded_retry() {
+  Fixture f;
+  f.ac.setNumAttempts(3);
+  unsigned purifierUpdates = 0;
+  feedback(f.ac, [&](bool) { purifierUpdates++; });
+  f.ac.m_readStatus(statusFrame(false));
+  REQUIRE(requestPurifier(f.ac, true)); f.ac.loop();
+  f.stream.receive(FrameData({0xC0, 0x01})); f.ac.loop();
+  REQUIRE(!f.ac.hasFreshStatus() && !f.ac.getPurifier());
+  REQUIRE(purifierUpdates == 1);
+  test_millis += 11; f.ac.loop();
+  REQUIRE(f.stream.tx.size() == 1);  // invalid snapshot cannot be retried
+  REQUIRE(!requestPurifier(f.ac, true));
+  f.ac.m_readStatus(statusFrame(false));
+  REQUIRE(requestPurifier(f.ac, true)); f.ac.loop();
+  f.stream.receive(statusFrame(true)); f.ac.loop();
+}
+
+void seventeen_byte_payload_has_no_phantom_humidity() {
+  // Qualify the reported 18-byte CRC8 C0 against the actual bounds-checking reader.
+  for (uint8_t suffix = 14; suffix <= 31; suffix++) {
+    TestAC ac;
+    auto full = statusFrame(false);
+    std::vector<uint8_t> bytes(full.data(), full.data() + 17);
+    bytes[16] = suffix;
+    FrameData data(bytes.data(), bytes.size()); data.appendCRC();
+    REQUIRE(data.size() == 18 && data.hasValidCRC());
+    REQUIRE(ac.m_readStatus(data) == RESPONSE_OK);
+    REQUIRE(ac.hasFreshStatus());
+    REQUIRE(ac.getIndoorHum() == 0);
+    REQUIRE(ac.getIndoorTemp() == 17 && ac.getOutdoorTemp() == 11);
+  }
+}
+
+void climate_optional_fields_exclude_reply_integrity() {
+  for (unsigned payloadSize : {19, 21, 24}) {
+    for (bool legacy : {false, true}) {
+      Fixture f;
+      auto full = statusFrame(false);
+      std::vector<uint8_t> bytes(full.data(), full.data() + payloadSize);
+      if (payloadSize == 24) { bytes[19] = 45; bytes[21] = 0x80; }
+      // Force a nonzero integrity byte at absent humidity/freeze field offsets.
+      FrameData data(bytes.data(), bytes.size());
+      if (legacy) {
+        uint8_t sum = 0; for (uint8_t byte : bytes) sum += byte;
+        bytes[16] += uint8_t(0x7F - sum);  // additive integrity byte becomes 0x81
+        bytes.push_back(0x81);
+        data = FrameData(bytes.data(), bytes.size());
+      } else {
+        data.appendCRC();
+        REQUIRE(data.data()[payloadSize] != 0);
+      }
+      unsigned climateUpdates = 0;
+      f.ac.addOnStateCallback([&]() {
+        climateUpdates++;
+        const float expectedHumidity = payloadSize == 24 ? 45 : 0;
+        if (f.ac.getIndoorHum() != expectedHumidity)
+          throw std::runtime_error("payload " + std::to_string(payloadSize) +
+            " humidity expected " + std::to_string(expectedHumidity) +
+            " got " + std::to_string(f.ac.getIndoorHum()));
+        REQUIRE(f.ac.getPreset() == (payloadSize == 24 ? PRESET_FREEZE_PROTECTION : PRESET_NONE));
+        REQUIRE(f.ac.getMode() == MODE_COOL && f.ac.getTargetTemp() == 24);
+        REQUIRE(f.ac.getIndoorTemp() == 17 && f.ac.getOutdoorTemp() == 11);
+      });
+      REQUIRE(f.ac.m_readStatus(data) == RESPONSE_OK);
+      REQUIRE(f.ac.hasFreshStatus() && climateUpdates == 1);
+      f.ac.m_readStatus(data); REQUIRE(climateUpdates == 1);
+      Control control; control.targetTemp = 26.5f; f.ac.control(control); f.ac.loop();
+      REQUIRE(f.stream.tx.size() == 1 && f.stream.tx.back()[9] == DEVICE_CONTROL);
+      const auto &tx = f.stream.tx.back();
+      REQUIRE((tx[12] & 0x1F) == 0x1A && (tx[12] & 0xE0) == 0x40);
+      // Ordinary climate controls intentionally retain their preset fan constraints.
+      REQUIRE(tx[13] == (payloadSize == 24 ? FAN_AUTO : FAN_LOW));
+      REQUIRE(FrameData(tx.data() + 10, tx.size() - 11).hasValidCRC());
+      // Complete this request without changing the callback expectations.
+      f.stream.receive(data); f.ac.loop();
+    }
+  }
+}
+
 using Test = std::pair<const char *, void(*)()>;
 int main(int argc, char **argv) {
   const Test tests[] = {
+    {"seventeen_byte_payload_has_no_phantom_humidity", seventeen_byte_payload_has_no_phantom_humidity},
+    {"climate_optional_fields_exclude_reply_integrity", climate_optional_fields_exclude_reply_integrity},
+    {"nonstatus_uart_reply_preserves_guarded_retry", nonstatus_uart_reply_preserves_guarded_retry},
+    {"truncated_c0_uart_reply_revokes_guarded_retry", truncated_c0_uart_reply_revokes_guarded_retry},
+    {"purifier_toggle_preserves_independent_preset_flags", purifier_toggle_preserves_independent_preset_flags},
+    {"purifier_command_does_not_echo_response_bits", purifier_command_does_not_echo_response_bits},
     {"malformed_uart_ack_revokes_write_permission", malformed_uart_ack_revokes_write_permission},
     {"changed_snapshot_cancels_pending_write", changed_snapshot_cancels_pending_write},
     {"integrity_byte_is_not_an_optional_preset", integrity_byte_is_not_an_optional_preset},

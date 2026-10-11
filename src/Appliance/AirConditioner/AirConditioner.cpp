@@ -235,30 +235,47 @@ static bool hasTrustedPurifierStatus(const FrameData &data) {
 }
 
 ResponseStatus AirConditioner::m_readStatus(FrameData data) {
+  // Busy/ACK/nonstatus bodies cannot revoke or supersede a confirmed snapshot.
+  // Guard the identifier lookup too: FrameData::hasStatus() requires byte zero.
+  if (!data.size() || !data.hasStatus())
+    return ResponseStatus::RESPONSE_WRONG;
   // copyStatus() needs ten bytes after the identifier. Avoid its existing
-  // unchecked memcpy on truncated inputs, without imposing a new full length.
+  // unchecked memcpy on truncated C0 inputs, without imposing a new full length.
   if (data.size() < 11) {
     this->m_hasStatus = false;
     return ResponseStatus::RESPONSE_WRONG;
   }
-  if (!data.hasStatus())
-    return ResponseStatus::RESPONSE_WRONG;
   ++this->m_statusRevision;
   this->m_hasStatus = hasTrustedPurifierStatus(data);
   if (this->m_hasStatus) {
     // Strip integrity byte before reading optional fields in shorter replies.
     const StatusData confirmed(FrameData(data.data(), data.size() - 1));
-    this->m_purifierStatus.copyStatus(confirmed);
-    // Status and command encode extended target temperature and ECO differently.
+    // Build from the SET template, never echo C0 reserved/response bits.
+    const StatusData commandTemplate;
+    std::vector<uint8_t> command(commandTemplate.data(), commandTemplate.data() + commandTemplate.size());
+    command[1] = confirmed.data()[1] & 0x01;  // power, including OFF
+    command[2] = confirmed.data()[2] & 0xE0;  // raw mode, even while OFF
+    command[3] = confirmed.data()[3];         // raw fan: do not normalize 30/50
+    const bool turbo = (confirmed.data()[8] & 0x20) || (confirmed.data()[10] & 0x02);
+    command[8] = turbo ? 0x20 : 0;
+    command[9] = (confirmed.data()[9] & 0x10) ? 0x80 : 0;  // ECO status -> SET
+    command[10] = (confirmed.data()[10] & 0x05) | (turbo ? 0x02 : 0);  // SLEEP, units, TURBO
+    if (confirmed.size() > 21)
+      command[21] = confirmed.data()[21] & 0x80;  // freeze protection is optional
+    this->m_purifierStatus = StatusData(FrameData(command.data(), command.size()));
+    this->m_purifierStatus.setSwingMode(confirmed.getSwingMode());
     this->m_purifierStatus.setTargetTemp(confirmed.getTargetTemp());
-    this->m_purifierStatus.setPreset(confirmed.getPreset());
+    this->m_purifierStatus.setPurifier(confirmed.getPurifier());
     this->m_statusReceivedAt = millis();
     this->m_purifier = confirmed.getPurifier();
   }
   LOG_D(TAG, "New status data received. Parsing...");
   bool hasUpdate = false;
-  const StatusData newStatus = data.to<StatusData>();
-  this->m_status.copyStatus(newStatus);
+  // Climate getters must not interpret the trailing integrity byte as an
+  // optional field either. Keep the legacy ten-byte command-cache copy from
+  // the original C0 prefix (also safe for the existing 11-byte minimum).
+  const StatusData newStatus(FrameData(data.data(), data.size() - 1));
+  this->m_status.copyStatus(StatusData(data));
   if (this->m_mode != newStatus.getMode()) {
     hasUpdate = true;
     this->m_mode = newStatus.getMode();

@@ -81,24 +81,15 @@ void loop() {
 
 ## Purifier / ionizer (experimental)
 
-Adds Air Magic/ionizer control on supported models. See [#29](https://github.com/dudanov/MideaUART/issues/29).
-
+On supported models ([#29](https://github.com/dudanov/MideaUART/issues/29)):
 ```cpp
 ac.addOnPurifierStatusCallback([](bool on) { /* Update your switch. */ });
 bool queued = ac.setPurifier(true);
 ```
-
-`true` means queued, not confirmed. Writes need valid status within 15 seconds
-(or your chosen `maxAge`); stale, busy and duplicate requests return `false`.
-State comes from AC feedback. There are no startup or reconnect writes.
-
-`getPurifier()` returns the last confirmed state; check `hasFreshStatus()` first.
-The initial `false` does not confirm OFF.
-
-The earlier prototype was tested on one AC. This rewritten version has not been
-flashed for a hardware test.
-
-[Host tests](test/purifier/README.md).
+`true` means queued, not confirmed. Writes require valid status within `maxAge`
+(default 15000 ms); unknown, stale, busy or duplicate requests return `false`.
+`getPurifier()` is the last confirmed state; use `hasFreshStatus()` to check it.
+Initial `false` is unknown. No startup/reconnect writes; this version is not hardware-tested.
 
 ## My thanks
 

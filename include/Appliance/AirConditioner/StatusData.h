@@ -104,6 +104,28 @@ class StatusData : public FrameData {
   Preset getPreset() const;
   void setPreset(Preset preset);
 
+  /* PURIFIER */
+  bool getPurifier() const { return this->m_getValue(9, 0x20); }
+  void setPurifier(bool state) { this->m_setMask(9, state, 0x20); }
+
+  // Map a confirmed C0 payload (without integrity byte) to a clean SET template.
+  // Preserve independent preset flags and raw fan/mode; never echo reserved bits.
+  StatusData toCommand() const {
+    StatusData command;
+    command.m_setPower(this->m_getPower());
+    command.m_setValue(2, this->m_getValue(2, 0xE0));
+    command.m_setValue(3, this->m_getValue(3));
+    command.setTargetTemp(this->getTargetTemp());
+    command.setSwingMode(this->getSwingMode());
+    command.m_setEco(this->m_getEco());
+    command.m_setTurbo(this->m_getTurbo());
+    command.m_setSleep(this->m_getSleep());
+    command.m_setFreezeProtection(this->m_getFreezeProtection());
+    command.setFahrenheits(this->isFahrenheits());
+    command.setPurifier(this->getPurifier());
+    return command;
+  }
+
   /* POWER USAGE */
   float getPowerUsage() const;
 

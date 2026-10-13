@@ -9,6 +9,8 @@ namespace dudanov {
 namespace midea {
 namespace ac {
 
+using OnPurifierStatusCallback = std::function<void(bool)>;
+
 // Air conditioner control command
 struct Control {
   Optional<float> targetTemp{};
@@ -38,11 +40,19 @@ class AirConditioner : public ApplianceBase {
   Preset getPreset() const { return this->m_preset; }
   const Capabilities &getCapabilities() const { return this->m_capabilities; }
   void displayToggle() { this->m_displayToggle(); }
+  /// Last purifier value confirmed by a status response (initially false).
+  bool getPurifier() const { return this->m_purifierStatus.getPurifier(); }
+  /// True means queued, not confirmed; rejects unknown/stale, busy or duplicate.
+  bool setPurifier(bool state, uint32_t maxAge = 15000);
+  /// maxAge is in milliseconds; zero disables freshness (and purifier writes).
+  bool hasFreshStatus(uint32_t maxAge = 15000) const;
+  /// Called on each trusted status, even if unchanged.
+  void addOnPurifierStatusCallback(OnPurifierStatusCallback cb) { this->m_purifierCallbacks.push_back(cb); }
  protected:
   void m_getPowerUsage();
   void m_getCapabilities();
   void m_getStatus();
-  void m_setStatus(StatusData status);
+  void m_setStatus(StatusData status, RequestGuard canSend = nullptr);
   void m_displayToggle();
   ResponseStatus m_readStatus(FrameData data);
   Capabilities m_capabilities{};
@@ -59,6 +69,12 @@ class AirConditioner : public ApplianceBase {
   Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
   bool m_sendControl{};
+  // Last trusted C0 payload, separate from the legacy climate command cache.
+  StatusData m_purifierStatus{};
+  bool m_hasStatus{};
+  uint32_t m_statusReceivedAt{};
+  uint32_t m_statusRevision{};
+  std::vector<OnPurifierStatusCallback> m_purifierCallbacks;
 };
 
 }  // namespace ac

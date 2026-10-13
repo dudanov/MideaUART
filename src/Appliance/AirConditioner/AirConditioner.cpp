@@ -101,7 +101,28 @@ void AirConditioner::control(const Control &control) {
   }
 }
 
-void AirConditioner::m_setStatus(StatusData status) {
+bool AirConditioner::hasFreshStatus(uint32_t maxAge) const {
+  return this->m_hasStatus && maxAge &&
+    static_cast<uint32_t>(millis() - this->m_statusReceivedAt) <= maxAge;
+}
+
+bool AirConditioner::setPurifier(bool state, uint32_t maxAge) {
+  if (this->m_sendControl || !this->hasFreshStatus(maxAge) || state == this->getPurifier())
+    return false;
+  // Do not use control(): its preset/mode constraints can coerce the raw fan.
+  StatusData status = this->m_purifierStatus.toCommand();
+  status.setPurifier(state);
+  status.setBeeper(this->m_beeper);
+  status.appendCRC();
+  this->m_sendControl = true;
+  const uint32_t revision = this->m_statusRevision;
+  this->m_setStatus(std::move(status), [this, maxAge, revision]() {
+    return this->hasFreshStatus(maxAge) && this->m_statusRevision == revision;
+  });
+  return true;
+}
+
+void AirConditioner::m_setStatus(StatusData status, RequestGuard canSend) {
   LOG_D(TAG, "Enqueuing a priority SET_STATUS(0x40) request...");
   this->m_queueRequestPriority(FrameType::DEVICE_CONTROL, std::move(status),
     // onData
@@ -114,7 +135,8 @@ void AirConditioner::m_setStatus(StatusData status) {
     [this]() {
       LOG_W(TAG, "SET_STATUS(0x40) request failed...");
       this->m_sendControl = false;
-    }
+    },
+    std::move(canSend)
   );
 }
 
@@ -198,9 +220,34 @@ void setProperty(T &property, const T &value, bool &update) {
   }
 }
 
+// Purifier writes accept a 16-byte C0 prefix plus CRC8 or legacy checksum.
+static bool hasTrustedPurifierStatus(const FrameData &data) {
+  if (data.size() < 17)
+    return false;
+  if (data.hasValidCRC())
+    return true;
+  uint8_t sum = 0;
+  for (unsigned i = 0; i < data.size(); i++)
+    sum += data.data()[i];
+  return sum == 0;
+}
+
 ResponseStatus AirConditioner::m_readStatus(FrameData data) {
-  if (!data.hasStatus())
+  // Nonstatus replies must not supersede a confirmed snapshot.
+  if (!data.size() || !data.hasStatus())
     return ResponseStatus::RESPONSE_WRONG;
+  // Minimum for the existing copyStatus() below, not the purifier integrity gate.
+  if (data.size() < 11) {
+    this->m_hasStatus = false;
+    return ResponseStatus::RESPONSE_WRONG;
+  }
+  ++this->m_statusRevision;
+  this->m_hasStatus = hasTrustedPurifierStatus(data);
+  if (this->m_hasStatus) {
+    // Keep the integrity byte out of optional fields in the feature snapshot.
+    this->m_purifierStatus = StatusData(FrameData(data.data(), data.size() - 1));
+    this->m_statusReceivedAt = millis();
+  }
   LOG_D(TAG, "New status data received. Parsing...");
   bool hasUpdate = false;
   const StatusData newStatus = data.to<StatusData>();
@@ -220,6 +267,9 @@ ResponseStatus AirConditioner::m_readStatus(FrameData data) {
   setProperty(this->m_indoorHumidity, newStatus.getHumiditySetpoint(), hasUpdate);
   if (hasUpdate)
     this->sendUpdate();
+  if (this->m_hasStatus)
+    for (auto &cb : this->m_purifierCallbacks)
+      cb(this->getPurifier());
   return ResponseStatus::RESPONSE_OK;
 }
 

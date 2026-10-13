@@ -81,6 +81,12 @@ void ApplianceBase::loop() {
   this->m_request = this->m_queue.front();
   this->m_queue.pop_front();
   LOG_D(TAG, "Getting and sending a request from the queue...");
+  if (this->m_request->canSend && !this->m_request->canSend()) {
+    if (this->m_request->onError != nullptr)
+      this->m_request->onError();
+    this->m_destroyRequest();
+    return;
+  }
   this->m_sendRequest(this->m_request);
   if (this->m_request->onData != nullptr) {
     this->m_resetAttempts();
@@ -196,7 +202,8 @@ void ApplianceBase::m_sendNetworkNotify(FrameType msgType) {
 void ApplianceBase::m_resetTimeout() {
   this->m_responseTimer.setCallback([this](Timer *timer) {
     LOG_D(TAG, "Response timeout...");
-    if (!--this->m_remainAttempts) {
+    if (!--this->m_remainAttempts ||
+        (this->m_request->canSend && !this->m_request->canSend())) {
       if (this->m_request->onError != nullptr)
         this->m_request->onError();
       this->m_destroyRequest();
@@ -233,9 +240,9 @@ void ApplianceBase::m_queueRequest(FrameType type, FrameData data, ResponseHandl
   this->m_queue.push_back(new Request{std::move(data), std::move(onData), std::move(onSuccess), std::move(onError), type});
 }
 
-void ApplianceBase::m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData, Handler onSuccess, Handler onError) {
+void ApplianceBase::m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData, Handler onSuccess, Handler onError, RequestGuard canSend) {
   LOG_D(TAG, "Priority request queuing...");
-  this->m_queue.push_front(new Request{std::move(data), std::move(onData), std::move(onSuccess), std::move(onError), type});
+  this->m_queue.push_front(new Request{std::move(data), std::move(onData), std::move(onSuccess), std::move(onError), type, std::move(canSend)});
 }
 
 void ApplianceBase::setBeeper(bool value) {

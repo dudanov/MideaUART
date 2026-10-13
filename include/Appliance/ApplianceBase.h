@@ -41,6 +41,7 @@ enum FrameType : uint8_t {
 };
 
 using Handler = std::function<void()>;
+using RequestGuard = std::function<bool()>;
 using ResponseHandler = std::function<ResponseStatus(FrameData)>;
 using OnStateCallback = std::function<void()>;
 
@@ -89,7 +90,7 @@ class ApplianceBase {
 
   void m_queueNotify(FrameType type, FrameData data) { this->m_queueRequest(type, std::move(data), nullptr); }
   void m_queueRequest(FrameType type, FrameData data, ResponseHandler onData, Handler onSuccess = nullptr, Handler onError = nullptr);
-  void m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData = nullptr, Handler onSuccess = nullptr, Handler onError = nullptr);
+  void m_queueRequestPriority(FrameType type, FrameData data, ResponseHandler onData = nullptr, Handler onSuccess = nullptr, Handler onError = nullptr, RequestGuard canSend = nullptr);
   void m_sendFrame(FrameType type, const FrameData &data);
   // Setup for appliances
   virtual void m_setup() {}
@@ -106,6 +107,8 @@ class ApplianceBase {
     Handler onSuccess;
     Handler onError;
     FrameType requestType;
+    // Optional feature-local guard; ordinary requests retain existing behavior.
+    RequestGuard canSend{};
     ResponseStatus callHandler(const Frame &data);
   };
   class FrameReceiver : public Frame {

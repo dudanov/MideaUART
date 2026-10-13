@@ -79,6 +79,18 @@ void loop() {
 }
 ```
 
+## Purifier / ionizer (experimental)
+
+On supported models ([#29](https://github.com/dudanov/MideaUART/issues/29)):
+```cpp
+ac.addOnPurifierStatusCallback([](bool on) { /* Update your switch. */ });
+bool queued = ac.setPurifier(true);
+```
+`true` means queued, not confirmed. Writes require valid status within `maxAge`
+(default 15000 ms); unknown, stale, busy or duplicate requests return `false`.
+`getPurifier()` is the last confirmed state; use `hasFreshStatus()` to check it.
+Initial `false` is unknown. No startup/reconnect writes; this version is not hardware-tested.
+
 ## My thanks
 
 to the following people for their contributions to reverse engineering the UART protocol and source code in the following repositories:

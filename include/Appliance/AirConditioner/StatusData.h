@@ -64,6 +64,14 @@ enum Preset : uint8_t {
   PRESET_FREEZE_PROTECTION,
 };
 
+/// How the unit encodes the power value (bytes 16-18 of the 0xC1 group 0x44 reply)
+enum PowerFormat : uint8_t {
+  /// Binary-coded decimal (original behaviour, default)
+  POWER_FORMAT_BCD,
+  /// Plain big-endian binary
+  POWER_FORMAT_BINARY,
+};
+
 class StatusData : public FrameData {
  public:
   StatusData() : FrameData({0x40, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00,
@@ -105,7 +113,7 @@ class StatusData : public FrameData {
   void setPreset(Preset preset);
 
   /* POWER USAGE */
-  float getPowerUsage() const;
+  float getPowerUsage(PowerFormat format = POWER_FORMAT_BCD) const;
 
   void setBeeper(bool state) {
     this->m_setMask(1, true, 2);

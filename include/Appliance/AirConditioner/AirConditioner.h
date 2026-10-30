@@ -32,6 +32,8 @@ class AirConditioner : public ApplianceBase {
   float getOutdoorTemp() const { return this->m_outdoorTemp; }
   float getIndoorHum() const { return this->m_indoorHumidity; }
   float getPowerUsage() const { return this->m_powerUsage; }
+  void setPowerFormat(PowerFormat format) { this->m_powerFormat = format; }
+  PowerFormat getPowerFormat() const { return this->m_powerFormat; }
   Mode getMode() const { return this->m_mode; }
   SwingMode getSwingMode() const { return this->m_swingMode; }
   FanMode getFanMode() const { return this->m_fanMode; }
@@ -58,6 +60,7 @@ class AirConditioner : public ApplianceBase {
   SwingMode m_swingMode{SwingMode::SWING_OFF};
   Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
+  PowerFormat m_powerFormat{POWER_FORMAT_BCD};
   bool m_sendControl{};
 };
 

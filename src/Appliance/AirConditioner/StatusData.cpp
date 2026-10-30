@@ -98,14 +98,14 @@ void StatusData::setPreset(Preset preset) {
 
 static uint8_t bcd2u8(uint8_t bcd) { return 10 * (bcd >> 4) + (bcd & 15); }
 
-float StatusData::getPowerUsage() const {
-  uint32_t power = 0;
-  const uint8_t *ptr = this->m_data.data() + 18;
-  for (uint32_t weight = 1;; weight *= 100, --ptr) {
-    power += weight * bcd2u8(*ptr);
-    if (weight == 10000)
-      return static_cast<float>(power) * 0.1F;
-  }
+float StatusData::getPowerUsage(PowerFormat format) const {
+  const uint8_t *p = this->m_data.data() + 16;
+  uint32_t power;
+  if (format == POWER_FORMAT_BINARY)
+    power = (uint32_t(p[0]) << 16) | (uint32_t(p[1]) << 8) | p[2];
+  else
+    power = 10000u * bcd2u8(p[0]) + 100u * bcd2u8(p[1]) + bcd2u8(p[2]);
+  return static_cast<float>(power) * 0.1F;
 }
 
 }  // namespace ac

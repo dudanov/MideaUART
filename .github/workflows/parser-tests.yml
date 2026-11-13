@@ -1,0 +1,14 @@
+name: Parser regression tests
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  parser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run parser tests with address and undefined behavior sanitizers
+        env:
+          SANITIZE: '1'
+        run: bash test/parser/run.sh

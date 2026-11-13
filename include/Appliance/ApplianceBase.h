@@ -109,9 +109,22 @@ class ApplianceBase {
     ResponseStatus callHandler(const Frame &data);
   };
   class FrameReceiver : public Frame {
-  public:
-    bool read(Stream *stream);
+   public:
+    bool read(Stream *stream, uint8_t appliance);
+
+    // Clear the delivered frame, preserving unprocessed input.
     void clear() { this->m_data.clear(); }
+
+   private:
+    // Length excludes the start byte: maximum candidate is 256 bytes.
+    uint8_t m_input[256]{};
+    size_t m_inputSize{};
+
+    static constexpr uint32_t PARTIAL_IDLE_MS = 500;
+    uint32_t m_lastByteAt{};
+
+    bool extractFrame(uint8_t appliance, bool expire_partial = false);
+    void consume(size_t count);
   };
   void m_sendNetworkNotify(FrameType msg_type = NETWORK_NOTIFY);
   void m_handler(const Frame &frame);
@@ -120,7 +133,7 @@ class ApplianceBase {
   void m_destroyRequest();
   void m_resetTimeout();
   void m_sendRequest(Request *request) { this->m_sendFrame(request->requestType, request->request); }
-  // Frame receiver with dynamic buffer
+  // Frame receiver with bounded pending input and extracted frame
   FrameReceiver m_receiver{};
   // Network status timer
   Timer m_networkTimer{};

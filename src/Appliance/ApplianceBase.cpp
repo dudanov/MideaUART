@@ -1,5 +1,6 @@
 #include "Appliance/ApplianceBase.h"
 #include "Helpers/Log.h"
+#include <cstring>
 
 #ifdef ARDUINO
   #ifdef ARDUINO_ARCH_ESP32
@@ -27,23 +28,105 @@ ResponseStatus ApplianceBase::Request::callHandler(const Frame &frame) {
   return this->onData(frame.getData());
 }
 
-bool ApplianceBase::FrameReceiver::read(Stream *stream) {
+bool ApplianceBase::FrameReceiver::read(
+    Stream *stream, uint8_t appliance) {
+  // A previous extraction may have left a complete buffered frame.
+  if (this->extractFrame(appliance))
+    return true;
+
   while (stream->available()) {
-    const uint8_t data = stream->read();
-    const uint8_t length = this->m_data.size();
-    if (length == OFFSET_START && data != START_BYTE)
-      continue;
-    if (length == OFFSET_LENGTH && data <= OFFSET_DATA) {
-      this->m_data.clear();
-      continue;
-    }
-    this->m_data.push_back(data);
-    if (length > OFFSET_DATA && length >= this->m_data[OFFSET_LENGTH]) {
-      if (this->isValid())
-        return true;
-      this->m_data.clear();
-    }
+    const int value = stream->read();
+
+    // An unreadable byte does not establish that the UART is idle.
+    if (value < 0)
+      return false;
+
+    // Extraction consumes or rejects complete candidates before
+    // another byte is appended, leaving at most 255 pending bytes.
+    this->m_input[this->m_inputSize++] =
+        static_cast<uint8_t>(value);
+    this->m_lastByteAt = static_cast<uint32_t>(millis());
+
+    if (this->extractFrame(appliance))
+      return true;
   }
+
+  // Drain queued continuation bytes before considering expiry.
+  const uint32_t idle_ms =
+      static_cast<uint32_t>(millis()) - this->m_lastByteAt;
+
+  return this->extractFrame(
+      appliance, idle_ms >= PARTIAL_IDLE_MS);
+}
+
+void ApplianceBase::FrameReceiver::consume(size_t count) {
+  this->m_inputSize -= count;
+
+  if (this->m_inputSize) {
+    std::memmove(
+        this->m_input,
+        this->m_input + count,
+        this->m_inputSize);
+  }
+}
+
+bool ApplianceBase::FrameReceiver::extractFrame(
+    uint8_t appliance, bool expire_partial) {
+  while (this->m_inputSize) {
+    size_t prefix = 0;
+    while (prefix < this->m_inputSize &&
+           this->m_input[prefix] != START_BYTE) {
+      ++prefix;
+    }
+    this->consume(prefix);
+
+    if (!this->m_inputSize)
+      return false;
+
+    if (this->m_inputSize >= 2 &&
+        this->m_input[OFFSET_LENGTH] <= OFFSET_DATA) {
+      this->consume(1);
+      continue;
+    }
+
+    // Reject false alignment before trusting the declared length.
+    if (this->m_inputSize > OFFSET_APPTYPE &&
+        this->m_input[OFFSET_APPTYPE] != appliance) {
+      this->consume(1);
+      continue;
+    }
+
+    const size_t total =
+        this->m_inputSize >= 2
+            ? size_t(this->m_input[OFFSET_LENGTH]) + 1
+            : 2;
+
+    if (this->m_inputSize < total) {
+      if (!expire_partial)
+        return false;
+
+      // Abandon only this candidate's leading byte.
+      this->consume(1);
+      continue;
+    }
+
+    uint8_t checksum = 0;
+    for (size_t i = OFFSET_LENGTH; i < total; ++i)
+      checksum += this->m_input[i];
+
+    if (checksum != 0) {
+      // Preserve possible frame starts inside the failed candidate.
+      this->consume(1);
+      continue;
+    }
+
+    // Consume a valid frame whole, including embedded AA bytes.
+    this->m_data.assign(
+        this->m_input, this->m_input + total);
+    this->consume(total);
+    return true;
+  }
+
   return false;
 }
 
@@ -66,7 +149,7 @@ void ApplianceBase::loop() {
   // Loop for appliances
   m_loop();
   // Frame receiving
-  while (this->m_receiver.read(this->m_stream)) {
+  while (this->m_receiver.read(this->m_stream, this->m_appType)) {
     this->m_protocol = this->m_receiver.getProtocol();
     LOG_D(TAG, "RX: %s", this->m_receiver.toString().c_str());
     this->m_handler(this->m_receiver);

@@ -82,6 +82,9 @@ void AirConditioner::control(const Control &control) {
     this->m_sendControl = true;
     status.setMode(mode);
     status.setPreset(preset);
+    if (this->m_preset == Preset::PRESET_SLEEP && control.preset == Preset::PRESET_NONE) {
+      status.clearPowerSaving();
+    }
     status.setBeeper(this->m_beeper);
     status.appendCRC();
     if (isModeChanged && preset != Preset::PRESET_NONE && preset != Preset::PRESET_SLEEP) {

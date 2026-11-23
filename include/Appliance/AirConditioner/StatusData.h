@@ -103,6 +103,7 @@ class StatusData : public FrameData {
   /* PRESET */
   Preset getPreset() const;
   void setPreset(Preset preset);
+  void clearPowerSaving() { this->m_setMask(8, false, 0x08); }
 
   /* POWER USAGE */
   float getPowerUsage() const;

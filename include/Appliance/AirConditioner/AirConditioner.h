@@ -38,6 +38,8 @@ class AirConditioner : public ApplianceBase {
   Preset getPreset() const { return this->m_preset; }
   const Capabilities &getCapabilities() const { return this->m_capabilities; }
   void displayToggle() { this->m_displayToggle(); }
+  /// Report an external room temperature in °C ("Follow Me"). Repeat at least every few minutes.
+  void setFollowMeTemp(float temp);
  protected:
   void m_getPowerUsage();
   void m_getCapabilities();

@@ -1,6 +1,7 @@
 #include "Appliance/AirConditioner/AirConditioner.h"
 #include "Helpers/Timer.h"
 #include "Helpers/Log.h"
+#include <cmath>
 
 namespace dudanov {
 namespace midea {
@@ -184,6 +185,21 @@ void AirConditioner::m_getStatus() {
 void AirConditioner::m_displayToggle() {
   DisplayToggleData data{};
   LOG_D(TAG, "Enqueuing a priority TOGGLE_LIGHT(0x41) request...");
+  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+    // onData
+    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1)
+  );
+}
+
+void AirConditioner::setFollowMeTemp(float temp) {
+  // Encoding: celsius * 2 + 50. 0xFF means "no temperature", so the valid range is -25 °C .. 102 °C.
+  if (!std::isfinite(temp) || temp < -25.0F || temp > 102.0F) {
+    LOG_W(TAG, "Follow Me temperature out of range, not sent.");
+    return;
+  }
+  const uint8_t value = static_cast<uint8_t>(std::lround(temp * 2.0F) + 50);
+  FollowMeData data(value, this->m_beeper);
+  LOG_D(TAG, "Enqueuing a FOLLOW_ME(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
     std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1)

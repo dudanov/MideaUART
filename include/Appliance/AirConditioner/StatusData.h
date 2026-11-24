@@ -161,7 +161,10 @@ class DisplayToggleData : public FrameData {
 // Reports an external room temperature ("Follow Me"). The appliance enables Follow Me by itself,
 // replies with a regular status frame and falls back to its own sensor after about 7 minutes
 // without a new report, so callers must repeat it periodically (like the IR remote does).
-// Temperature byte: celsius * 2 + 50 (0.5 °C resolution).
+// While Follow Me is active, the indoor temperature in status replies is the reported value,
+// not the appliance's own sensor. Switching the appliance off clears Follow Me.
+// Temperature byte: celsius * 2 + 50 (0.5 °C resolution). One tested unit clamped values to
+// about -9 .. 70 °C and ignored 0xFF.
 class FollowMeData : public FrameData {
  public:
   FollowMeData(uint8_t encodedTemp, bool beeper)

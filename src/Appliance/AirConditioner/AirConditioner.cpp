@@ -192,13 +192,19 @@ void AirConditioner::m_displayToggle() {
 }
 
 void AirConditioner::setFollowMeTemp(float temp) {
-  // Encoding: celsius * 2 + 50. 0xFF means "no temperature", so the valid range is -25 °C .. 102 °C.
-  if (!std::isfinite(temp) || temp < -25.0F || temp > 102.0F) {
+  if (!std::isfinite(temp)) {
+    LOG_W(TAG, "Follow Me temperature is not a number, not sent.");
+    return;
+  }
+  // Encode first (celsius * 2 + 50), then check the byte. The pre-clamp only keeps lround() away from
+  // huge values; anything outside it is out of range after encoding anyway.
+  const long value = std::lround(std::fmax(-1000.0F, std::fmin(temp, 1000.0F)) * 2.0F) + 50;
+  // 0xFF is not a temperature: the appliance ignores it (keeps the previous value).
+  if (value < 0x00 || value > 0xFE) {
     LOG_W(TAG, "Follow Me temperature out of range, not sent.");
     return;
   }
-  const uint8_t value = static_cast<uint8_t>(std::lround(temp * 2.0F) + 50);
-  FollowMeData data(value, this->m_beeper);
+  FollowMeData data(static_cast<uint8_t>(value), this->m_beeper);
   LOG_D(TAG, "Enqueuing a FOLLOW_ME(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData

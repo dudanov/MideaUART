@@ -158,6 +158,22 @@ class DisplayToggleData : public FrameData {
                                    0x00, FrameData::m_getRandom()}) { this->appendCRC(); }
 };
 
+// Reports an external room temperature ("Follow Me"). The appliance enables Follow Me by itself,
+// replies with a regular status frame and falls back to its own sensor after about 7 minutes
+// without a new report, so callers must repeat it periodically (like the IR remote does).
+// While Follow Me is active, the indoor temperature in status replies is the reported value,
+// not the appliance's own sensor. Switching the appliance off clears Follow Me.
+// Temperature byte: celsius * 2 + 50 (0.5 °C resolution). One tested unit clamped values to
+// about -9 .. 70 °C and ignored 0xFF.
+class FollowMeData : public FrameData {
+ public:
+  FollowMeData(uint8_t encodedTemp, bool beeper)
+      : FrameData({0x41, static_cast<uint8_t>(beeper ? 0x61 : 0x21), 0x00, 0xFF, 0x01, encodedTemp, 0x00, 0x00, 0x00,
+                   0x00, 0x00, 0x00, 0x00, FrameData::m_getID()}) {
+    this->appendCRC();
+  }
+};
+
 class GetCapabilitiesData : public FrameData {
  public:
   GetCapabilitiesData() : FrameData({0xB5, 0x01, 0x11}) { this->appendCRC(); }

@@ -57,6 +57,12 @@ static inline void changeAuto25() {
   ac.control(control);
 }
 
+// Example how can report the room temperature from an external sensor ("Follow Me").
+// The appliance falls back to its own sensor after ~7 minutes, so repeat this periodically.
+static inline void reportRoomTemp(float celsius) {
+  ac.setFollowMeTemp(celsius);
+}
+
 // Here you may get new properties states
 void onStateChange() {
   ac.getTargetTemp();

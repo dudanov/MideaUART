@@ -1,6 +1,7 @@
 #include "Appliance/AirConditioner/AirConditioner.h"
 #include "Helpers/Timer.h"
 #include "Helpers/Log.h"
+#include <cmath>
 
 namespace dudanov {
 namespace midea {
@@ -184,6 +185,27 @@ void AirConditioner::m_getStatus() {
 void AirConditioner::m_displayToggle() {
   DisplayToggleData data{};
   LOG_D(TAG, "Enqueuing a priority TOGGLE_LIGHT(0x41) request...");
+  this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
+    // onData
+    std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1)
+  );
+}
+
+void AirConditioner::setFollowMeTemp(float temp) {
+  if (!std::isfinite(temp)) {
+    LOG_W(TAG, "Follow Me temperature is not a number, not sent.");
+    return;
+  }
+  // Encode first (celsius * 2 + 50), then check the byte. The pre-clamp only keeps lround() away from
+  // huge values; anything outside it is out of range after encoding anyway.
+  const long value = std::lround(std::fmax(-1000.0F, std::fmin(temp, 1000.0F)) * 2.0F) + 50;
+  // 0xFF is not a temperature: the appliance ignores it (keeps the previous value).
+  if (value < 0x00 || value > 0xFE) {
+    LOG_W(TAG, "Follow Me temperature out of range, not sent.");
+    return;
+  }
+  FollowMeData data(static_cast<uint8_t>(value), this->m_beeper);
+  LOG_D(TAG, "Enqueuing a FOLLOW_ME(0x41) request...");
   this->m_queueRequest(FrameType::DEVICE_QUERY, std::move(data),
     // onData
     std::bind(&AirConditioner::m_readStatus, this, std::placeholders::_1)
